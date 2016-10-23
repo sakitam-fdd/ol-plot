@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="40" height="40" useHandCursor="true" buttonMode="true" rollOver="mouseOverHandler()" rollOut="mouseOutHandler()">
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable]
+			public var imageSource:String;
+			
+			private function mouseOverHandler():void{
+				glow.play([this], true);
+			}
+			
+			private function mouseOutHandler():void{
+				glow.play([this], false);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<mx:Glow id="glow" color="0xffff00" duration="500" strength="10"/>
+	</fx:Declarations>
+	<s:Ellipse width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor color="0x3DB29E"/>
+		</s:fill>
+	</s:Ellipse>
+	<s:Image width="60%" height="60%" horizontalCenter="0" smooth="true" source="{imageSource}"
+			 verticalCenter="0"/>
+</s:Group>

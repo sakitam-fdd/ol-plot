@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="100%" height="100%" gap="16" paddingBottom="5" paddingLeft="5" paddingRight="5"
+		  paddingTop="5">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]
+			private var fonts:ArrayCollection = new ArrayCollection(["楷体", "黑体", "宋体", "微软雅黑","华文行楷"]);
+			
+			private function updateLabel():void{
+				this.labelPreview.text = this.labelText.text;
+				this.labelPreview.setStyle("fontFamily", this.fontNames.selectedItem);
+				this.labelPreview.setStyle("fontSize", this.fontSize.value);
+				this.labelPreview.setStyle("color", this.fontColor.value);
+				this.labelPreview.setStyle("fontWeight", this.fontBold.selected ? "bold" : "normal");
+				this.labelPreview.setStyle("fontStyle", this.fontItalic.selected ? "italic" : "normal");
+				this.labelPreview.setStyle("textDecoration", this.fontUnderline.selected ? "underline" : "none");
+			}
+			
+			public function get textFormat():TextFormat{
+				var format:TextFormat = new TextFormat();
+				format.font = this.fontNames.selectedItem as String;
+				format.size = this.fontSize.value;
+				format.color = this.fontColor.value;
+				format.bold = this.fontBold.selected; 
+				format.italic = this.fontItalic.selected;
+				format.underline = this.fontUnderline.selected;
+				return format;
+			}
+			
+			public function set label(value:String):void{
+				this.labelText.text = value;
+			}
+			
+			public function get label():String{
+				return this.labelText.text;
+			}
+			
+			public function set textFormat(format:TextFormat):void{
+				this.fontNames.selectedItem = format.font;
+				this.fontSize.value = format.size as Number;
+				this.fontColor.selectedColor = format.color as Number;
+				this.fontBold.selected = format.bold;
+				this.fontItalic.selected = format.italic;
+				this.fontUnderline.selected = format.underline;
+				this.updateLabel();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup gap="10" verticalAlign="middle">
+		<s:Label text="标注文本"/>
+		<s:TextInput id="labelText" width="100%" color="0x0" change="updateLabel()"/>
+	</s:HGroup>
+	<s:HGroup gap="10" verticalAlign="middle">
+		<s:Label text="字体名称"/>
+		<s:ComboBox id="fontNames" change="updateLabel()" color="0x000000"
+					dataProvider="{this.fonts}" selectedIndex="0"/>
+	</s:HGroup>
+	<s:HGroup gap="10" verticalAlign="middle">
+		<s:Label text="字体大小"/>
+		<s:NumericStepper id="fontSize" change="updateLabel()" color="0x000000"
+						  maximum="60" minimum="14" value="20"/>
+	</s:HGroup>
+	<s:HGroup gap="10" verticalAlign="middle">
+		<s:Label text="标注颜色"/>
+		<mx:ColorPicker id="fontColor" width="24" height="24" change="updateLabel()"
+						selectedColor="0x0000FF"/>
+		<s:Spacer width="10"/>
+		<s:HGroup gap="4">
+			<s:ToggleButton id="fontBold" width="32" height="26" label="B" change="updateLabel()"
+							color="0x000000" fontWeight="bold"/>
+			<s:ToggleButton id="fontItalic" label="I" change="updateLabel()" color="0x000000"
+							fontStyle="italic" width="32" height="26"/>
+			<s:ToggleButton id="fontUnderline" label="U" change="updateLabel()" color="0x000000"
+							textDecoration="underline" width="32" height="26"/>
+		</s:HGroup>
+	</s:HGroup>
+	<s:HGroup width="100%" height="80" gap="10" verticalAlign="middle">
+		<s:Label text="标注预览"/>
+		<s:Group width="100%" height="100%">
+			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<s:SolidColor color="0xffffff"/>
+				</s:fill>
+			</s:Rect>
+			<s:Label id="labelPreview" horizontalCenter="0" verticalCenter="0"/>
+		</s:Group>
+	</s:HGroup>
+</s:VGroup>

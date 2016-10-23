@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>gispace plot4ol3 V1.0.1</title>
+    <link rel="stylesheet" href="css/ol.css">
+    <link rel="stylesheet" href="css/p-ol3.min.css">
+    <link rel="stylesheet" href="css/defaults.css">
+</head>
+<body onload="init()">
+<div id="map"></div>
+<div id="header">
+    <div id="logoandtitle">GISpace动态标绘演示系统 V1.0.1（for OL3）<span id="aboutLabel" onclick="showAbout()">关 于</span></div>
+    <div id="version">— powered by Plot API V1.0.1 for OL3</div>
+</div>
+<div id="menu">
+    <div>
+        点标
+        <button type="button" onclick="activate(P.PlotTypes.MARKER)">点</button>
+    </div>
+    <div>
+        线标
+        <button type="button" onclick="activate(P.PlotTypes.ARC)">弧线</button>
+        <button type="button" onclick="activate(P.PlotTypes.CURVE)">曲线</button>
+        <button type="button" onclick="activate(P.PlotTypes.POLYLINE)">折线</button>
+        <button type="button" onclick="activate(P.PlotTypes.FREEHAND_LINE)">自由线</button>
+    </div>
+    <div>
+        面标
+        <button type="button" onclick="activate(P.PlotTypes.CIRCLE)">圆</button>
+        <button type="button" onclick="activate(P.PlotTypes.ELLIPSE)">椭圆</button>
+        <button type="button" onclick="activate(P.PlotTypes.LUNE)">弓形</button>
+        <button type="button" onclick="activate(P.PlotTypes.SECTOR)">扇形</button>
+        <button type="button" onclick="activate(P.PlotTypes.CLOSED_CURVE)">曲线面</button>
+        <button type="button" onclick="activate(P.PlotTypes.POLYGON)">多边形</button>
+        <button type="button" onclick="activate(P.PlotTypes.RECTANGLE)">矩形</button>
+        <button type="button" onclick="activate(P.PlotTypes.FREEHAND_POLYGON)">自由面</button>
+        <button type="button" onclick="activate(P.PlotTypes.GATHERING_PLACE)">聚集地</button>
+    </div>
+    <div>
+        箭头
+        <button type="button" onclick="activate(P.PlotTypes.DOUBLE_ARROW)">钳击</button>
+        <button type="button" onclick="activate(P.PlotTypes.STRAIGHT_ARROW)">直箭头</button>
+        <button type="button" onclick="activate(P.PlotTypes.FINE_ARROW)">细直箭头</button>
+        <button type="button" onclick="activate(P.PlotTypes.ASSAULT_DIRECTION)">突击方向</button>
+        <button type="button" onclick="activate(P.PlotTypes.ATTACK_ARROW)">进攻方向</button>
+        <button type="button" onclick="activate(P.PlotTypes.TAILED_ATTACK_ARROW)">进攻方向（尾）</button>
+        <button type="button" onclick="activate(P.PlotTypes.SQUAD_COMBAT)">分队战斗行动</button>
+        <button type="button" onclick="activate(P.PlotTypes.TAILED_SQUAD_COMBAT)">分队战斗行动（尾）</button>
+    </div>
+</div>
+<div id="aboutContainer">
+    <div id="aboutTitle">关于...<span id="closeBtn" onclick="hideAbout()">X</span></div>
+    <div id="aboutContent">
+        <p class="aboutText">伴随着全国信息化进程的不断推进，以GIS为基础的动态标绘、资源部署、情报展示、应急指挥等可视化动态图形展示在应急、军事、海洋、地震、民政等行业得到越来越多的应用。标绘已经成为一种新的数据表达方式。</p>
+        <p class="aboutText">plot4ol3是GISpace动态标绘的OpenLayers3版本，旨在为基于开源GIS技术的项目提供标绘API（<a href="http://7xlbfq.com1.z0.glb.clouddn.com/plot4flex/index.html">ArcGIS Flex版本</a>）。当前版本实现了常用符号的绘制，下一版本将实现符号编辑、序列化和反序列化。</p>
+        <p class="aboutText">欢迎使用和反馈，开发者：@平凡的世界 （QQ：21587252）</p>
+    </div>
+</div>
+<div id="delete-wrapper">
+    <div id="btn-delete" style="display:none;">删 除</div>
+</div>
+<script src="js/ol.js"></script>
+<script src="js/p-ol3.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

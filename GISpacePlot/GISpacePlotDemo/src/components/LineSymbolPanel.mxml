@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  initialize="init()" gap="16" paddingBottom="5" paddingLeft="5" paddingRight="5"
+		  paddingTop="5" width="100%" height="100%">
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.symbols.SimpleLineSymbol;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.UIComponent;
+			
+			private var lineStyles:Array = ["solid", "dot", "dash", "dashdot", "dashdotdot"];
+			
+			private function init():void{
+				var patterns:ArrayCollection = new ArrayCollection(lineStyles);
+				this.linePattern.dataProvider = patterns;
+				this.linePattern.selectedIndex = 0;
+			}
+			
+			public function get symbol():SimpleLineSymbol{
+				var color:Number = lineColor.selectedColor;
+				var width:Number = lineWidth.value;
+				var alpha:Number = lineAlpha.value;
+				var style:String = linePattern.selectedItem;
+				var symbol:SimpleLineSymbol = new SimpleLineSymbol(style, color, alpha, width);
+				return symbol;
+			}
+			
+			private function updateThumbnail():void{
+				var swatch:UIComponent = symbol.createSwatch(this.thumbnailContainer.width, 20);
+				this.thumbnailContainer.removeAllElements();
+				this.thumbnailContainer.addElement(swatch);
+			}
+			
+			public function set symbol(symbol:SimpleLineSymbol):void{
+				this.lineColor.selectedColor = symbol.color;
+				this.lineWidth.value = symbol.width;
+				this.lineAlpha.value = symbol.alpha;
+				this.linePattern.selectedItem = symbol.style;
+				this.updateThumbnail();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup verticalAlign="middle" gap="10">
+		<s:Label text="颜   色"/>
+		<mx:ColorPicker id="lineColor" width="24" height="24" selectedColor="0x0000FF" change="updateThumbnail()"/>
+		<s:Spacer width="10"/>
+		<s:Label text="宽   度"/>
+		<s:NumericStepper id="lineWidth" width="60" color="0x000000" value="1" maximum="10" minimum="1" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10">
+		<s:Label text="样   式"/>
+		<s:ComboBox id="linePattern" width="100%" color="0x000000" selectedItem="solid" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10">
+		<s:Label text="透明度"/>
+		<mx:HSlider id="lineAlpha" width="100%" maximum="1" minimum="0" snapInterval="0.1"
+					tickColor="0xeeeeee" tickInterval="0.1" value="1" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10">
+		<s:Label text="缩略图"/>
+		<s:Group width="100%" height="100%">
+			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<s:SolidColor color="0xffffff"/>
+				</s:fill>
+			</s:Rect>
+			<s:Group id="thumbnailContainer" width="145" height="100%" horizontalCenter="0"/>
+		</s:Group>
+	</s:HGroup>
+</s:VGroup>

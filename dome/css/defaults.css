@@ -1,0 +1,146 @@
+html, body, #map {
+    font-family: "微软雅黑", sans-serif;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+
+}
+
+#map{
+
+}
+
+.hide{
+    display: none;
+}
+
+@font-face{
+    font-family:'heydings';
+    src:url('assets/font/heydings.eot');
+    src:url('assets/font/heydings.eot') format('embedded-opentype'), url('assets/font/heydings.woff') format('woff'), url('assets/font/heydings.ttf') format('truetype'), url('assets/font/heydings.svg') format('svg');
+    font-weight:normal;
+    font-style:normal;
+}
+
+#header{
+    position: absolute;
+    top: 0;
+    height: 70px;
+    background: rgba(100, 100, 100, 0.85);
+    width: 100%;
+}
+
+#logoandtitle {
+    background-image: url(../assets/pencil.png);
+    background-size: 60px 60px;
+    background-position: center left;
+    background-repeat: no-repeat;
+    padding-left: 70px;
+    padding-right: 20px;
+    font-family: "微软雅黑";
+    font-size: 20px;
+    font-weight: bold;
+    color: #eeeeee;
+    margin: 0;
+    margin-left: 10px;
+    height: 100%;
+    line-height: 50px;
+}
+
+#version{
+    font-size: 16px;
+    margin-top:-28px;
+    margin-left:84px;
+    color: #eeeeee;
+}
+
+#menu{
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    background: rgba(100, 100, 100, 0.85);
+    padding: 10px;
+    color: #cccccc;
+}
+
+#download{
+    float: right;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 70px;
+    margin-right: 20px;
+}
+
+#aboutLabel{
+    float: right;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 70px;
+}
+
+#aboutContainer{
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 450px;
+    visibility: hidden;
+    color: #eeeeee;
+}
+
+#aboutTitle{
+    position: absolute;
+    top: 0;
+    height: 35px;
+    line-height: 35px;
+    width: 100%;
+    background: rgba(100, 100, 100, 255);
+    padding-left: 10px;
+}
+
+#aboutContent{
+    padding-left: 10px;
+    position: absolute;
+    top: 35px;
+    opacity: 0.8;
+    height: 230px;
+    width: 100%;
+    background: rgba(100, 100, 100, 200);
+    font-size: 14px;
+}
+
+.aboutText{
+    padding-left: 5px;
+    padding-right: 10px;
+    text-indent: 26px;
+}
+
+#closeBtn{
+    float: right;
+    font-size: 16px;
+    cursor: pointer;
+    padding-right: 10px;
+}
+
+button{
+    font-family: "微软雅黑", sans-serif;
+    opacity: 1;
+    min-width: 55px;
+    padding: 4px 6px;
+}
+
+#delete-wrapper{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 8px;
+}
+
+#delete-wrapper #btn-delete{
+    padding: 8px 16px;
+    display: inline-block;
+    color: #fff;
+    cursor: pointer;
+    background: rgba(255, 8, 53, 0.85);
+}

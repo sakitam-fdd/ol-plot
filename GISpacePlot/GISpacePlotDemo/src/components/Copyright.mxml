@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" bottom="15" right="15">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			protected function clickHandler(event:MouseEvent):void{
+				navigateToURL(new URLRequest("http://blog.csdn.net/gispace"), "_blank");				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label buttonMode="true" click="clickHandler(event)" color="0xffffff" fontFamily="Consolas"
+			 fontSize="26" fontWeight="bold" text="GISpace" useHandCursor="true">
+		<s:filters>
+			<s:GlowFilter color="0x000000" quality="6"/>
+		</s:filters>
+	</s:Label>
+</s:Group>

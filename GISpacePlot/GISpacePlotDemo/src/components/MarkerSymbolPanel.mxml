@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  gap="16" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" initialize="init()">
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.symbols.SimpleLineSymbol;
+			import com.esri.ags.symbols.SimpleMarkerSymbol;
+			import com.esri.ags.symbols.Symbol;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.UIComponent;
+			
+			import events.PlotEvent;
+			
+			private var lineStyles:Array = ["solid", "dot", "dash", "dashdot", "dashdotdot"];
+			private var markerStyles:Array = ["circle", "cross", "diamond", "square", "triangle", "x"];
+			
+			private function init():void{
+				var patterns:ArrayCollection = new ArrayCollection(lineStyles);
+				this.outlinePattern.dataProvider = patterns;
+				this.outlinePattern.selectedIndex = 0;
+				patterns = new ArrayCollection(markerStyles);
+				this.markerPattern.dataProvider = patterns;
+				this.markerPattern.selectedIndex = 0;
+			}
+			
+			public function get symbol():SimpleMarkerSymbol{
+				var fColor:Number = markerColor.selectedColor;
+				var fStyle:String = markerPattern.selectedItem;
+				var lineWidth:Number = outlineWidth.value;
+				var lineColor:Number = outlineColor.selectedColor;
+				var lineStyle:String = outlinePattern.selectedItem;
+				var alpha:Number = fillAlpha.value;
+				var fSize:Number = markerSize.value;
+				var outline:SimpleLineSymbol = new SimpleLineSymbol(lineStyle, lineColor, alpha, lineWidth);
+				var symbol:SimpleMarkerSymbol = new SimpleMarkerSymbol(fStyle, fSize, fColor, alpha, 0, 0, 0, outline); 
+				return symbol;
+			}
+			
+			private function updateThumbnail():void{
+				var symbol:SimpleMarkerSymbol = this.symbol as SimpleMarkerSymbol;
+				var swatch:UIComponent = symbol.createSwatch(0, 0);
+				this.thumbnailContainer.removeAllElements();
+				this.thumbnailContainer.addElement(swatch);
+			}
+			
+			public function set symbol(symbol:SimpleMarkerSymbol):void{
+				markerColor.selectedColor = symbol.color;
+				markerPattern.selectedItem = symbol.style;
+				fillAlpha.value = symbol.alpha;
+				markerSize.value = symbol.size;
+				var line:SimpleLineSymbol = symbol.outline;
+				if(line){
+					outlineWidth.value = line.width;
+					outlineColor.selectedColor = line.color;
+					outlinePattern.selectedItem = line.style;
+				}
+				this.updateThumbnail();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="颜色"/>
+		<mx:ColorPicker id="markerColor" width="24" height="24" selectedColor="0x00FF00" change="updateThumbnail()"/>	
+		<s:Label text="尺寸"/>
+		<s:NumericStepper id="markerSize" width="60" color="0x000000" value="15" maximum="45" minimum="15" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup verticalAlign="middle" width="100%">
+		<s:Label text="样式"/>
+		<s:ComboBox id="markerPattern" color="0x000000" width="100%" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="轮廓颜色"/>
+		<mx:ColorPicker id="outlineColor" width="24" height="24" selectedColor="0xFF0000" change="updateThumbnail()"/>
+		<s:Label text="轮廓宽度"/>
+		<s:NumericStepper id="outlineWidth" width="60" color="0x000000" value="1" maximum="10" minimum="1" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10">
+		<s:Label text="轮廓样式"/>
+		<s:ComboBox id="outlinePattern" width="100%" color="0x000000" selectedItem="solid" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10">
+		<s:Label text="透明度"/>
+		<mx:HSlider id="fillAlpha" width="100%" maximum="1" minimum="0" snapInterval="0.1"
+					tickColor="0xeeeeee" tickInterval="0.1" value="1" change="updateThumbnail()"/>
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle" gap="10" height="50">
+		<s:Label text="缩略图"/>
+		<s:Group width="100%" height="100%">
+			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<s:SolidColor color="0xffffff"/>
+				</s:fill>
+			</s:Rect>
+			<s:HGroup id="thumbnailContainer" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle"/>
+		</s:Group>
+	</s:HGroup>
+</s:VGroup>

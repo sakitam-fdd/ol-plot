@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.layers.GraphicsLayer;
+			
+			import gispace.plot.display.PlotGraphic;
+			import gispace.plot.utils.PlotDecoder;
+			import gispace.plot.utils.PlotEncoder;
+			
+			public var plotLayer:GraphicsLayer;
+			
+			private var fileReader:FileReference;
+			
+			private function init():void{
+				this.fileReader = new FileReference();
+				this.fileReader.addEventListener(Event.SELECT, onFileSelect);
+				this.fileReader.addEventListener(Event.COMPLETE, onFileLoad);
+				this.fileReader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+			}
+			
+			private function onIOError(event:IOErrorEvent):void{
+				trace('io error');
+			}
+			
+			private function open():void{
+				this.fileReader.browse();
+			}
+			
+			private function onFileSelect(event:Event):void{
+				this.fileReader.load();
+			}
+			
+			private function onFileLoad(event:Event):void{
+				var jsonStr:String = this.fileReader.data.readMultiByte(this.fileReader.data.length, "utf-8");
+				//trace(jsonStr);
+				var jsons:Array = JSON.parse(jsonStr) as Array;
+				this.plotLayer.clear();
+				for each(var plot:Object in jsons){
+					// 反序列化单个符号
+					var graphic:PlotGraphic = PlotDecoder.decode(plot);
+					this.plotLayer.add(graphic);
+				}
+			}
+			
+			private function save():void{
+				var resultStr:String = "[";
+				if(this.plotLayer && this.plotLayer.numGraphics>0){
+					for each(var graphic:Graphic in this.plotLayer.graphicProvider){
+						// 序列化单个标绘符号
+						if(graphic is PlotGraphic){
+							var jsonStr:String = PlotEncoder.encode(graphic as PlotGraphic);
+							resultStr += jsonStr + ",";
+						}
+					}
+				}
+				resultStr = resultStr.substr(0, resultStr.length-1) + "]";
+				//trace(resultStr);
+				// 此处可根据项目实际需求，决定如何保存：文件、数据库。
+				// 此处方便演示，保存成json文件
+				var file:FileReference = new FileReference();
+				file.save(resultStr, "plot.json");
+			}
+			
+			private function clear():void{
+				if(this.plotLayer)
+					this.plotLayer.clear();
+			}
+			
+		]]>
+	</fx:Script>
+	<!--s:Rect width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor alpha="0.7" color="0x555555"/>
+		</s:fill>
+	</s:Rect-->
+	<s:HGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+		<s:Button label="打 开" click="open()"/>
+		<s:Button label="保 存" click="save()"/>
+		<s:Button label="清 除" click="clear()"/>
+	</s:HGroup>
+</s:Group>
