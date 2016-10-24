@@ -63,11 +63,12 @@ gulp.task('compact-js', function () {
             './src/gispace/PlotFactory.js',
             './src/gispace/tool/PlotDraw.js',
             './src/gispace/tool/PlotEdit.js'])
-        .pipe(concat('p-ol3.min.js'))
-        .pipe(uglify())
+        .pipe(concat('p-ol3-debug.js'))
+        //.pipe(uglify())
         .pipe(gulp.dest('./build/'))
         .pipe(gulp.dest('./sample/'));
 });
+
 
 gulp.task('compact-css', function () {
     return gulp.src('src/*.css')
