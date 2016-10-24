@@ -241,13 +241,22 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
             return circle;
         },
         setRadius: function (radius) {
-            var projRadius = transformRadius(lineStringFea.getGeometry().getCenter(), radius);
             var circle = this.getCircle();
-            circle.setRadius(projRadius);
-            var polygon = ol.geom.Polygon.fromCircle(circle);
-            var coordinates = polygon.getCoordinates();
-            var multiLineString = new ol.geom.MultiLineString(coordinates);
-            lineStringFea.setGeometry(multiLineString);
+            var projRadius = transformRadius(circle.getCenter(), radius);
+            currentMeterRadius = radius;
+            if (projRadius >= obj.minProjectRadius && projRadius <= obj.maxProjectRadius) {
+                circle.setRadius(projRadius);
+                var polygon = ol.geom.Polygon.fromCircle(circle);
+                var coordinates = polygon.getCoordinates();
+                var multiLineString = new ol.geom.MultiLineString(coordinates);
+                lineStringFea.setGeometry(multiLineString);
+                currentMeterRadius = Math.floor(currentMeterRadius);
+                if (currentMeterRadius > obj.maxRadius) {
+                    currentMeterRadius = obj.maxRadius;
+                }
+                $(("#" + eidtId)).html(currentMeterRadius + "m");
+                markerOverlay.setPosition(circle.getLastCoordinate());
+            }
         },
         getExtent: function () {
             return this.getCircle().getExtent();
