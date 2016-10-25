@@ -1,22 +1,18 @@
 
-P.Plot.ClosedCurve = function(points){
+P.Plot.ClosedCurve = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.CLOSED_CURVE;
     this.t = 0.3;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.ClosedCurve, ol.geom.Polygon);
 goog.mixin(P.Plot.ClosedCurve.prototype, P.Plot.prototype);
 
 P.Plot.ClosedCurve.prototype.generate = function(){
-    var count = this.getPointCount();
-    if(count < 2) {
-        return;
-    }
-    if(count == 2) {
+    if(this.getPointCount()==2)
         this.setCoordinates([this.points]);
-    }
     else{
         var pnts = this.getPoints();
         pnts.push(pnts[0], pnts[1]);

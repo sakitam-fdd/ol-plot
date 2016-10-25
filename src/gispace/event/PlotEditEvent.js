@@ -8,3 +8,4 @@ goog.inherits(P.Event.PlotEditEvent, goog.events.Event);
 
 P.Event.PlotEditEvent.EDIT_START = "edit_start";
 P.Event.PlotEditEvent.EDIT_END = "edit_end";
+P.Event.PlotEditEvent.ACTIVE_PLOT_CHANGE = "active_plot_change";

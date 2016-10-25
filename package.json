@@ -1,12 +1,13 @@
 {
   "name": "gispace-plot-api",
   "author": "cuifudong",
-  "devDependencies":{
-    "gulp-util": "^3.0.7",
+  "devDependencies": {
+    "gulp": "^3.9.1",
     "gulp-concat": "*",
-    "gulp-uglify": "^0.2.0",
-    "gulp-replace": "*",
     "gulp-cssnano": "*",
+    "gulp-replace": "*",
+    "gulp-uglify": "^0.2.0",
+    "gulp-util": "^3.0.7",
     "supertest": "*"
   }
 }

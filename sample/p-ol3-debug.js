@@ -11818,7 +11818,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
     var lineStringFea = new ol.Feature({});
     var centerFea = new ol.Feature({});
     var sphare = new ol.Sphere(6378137);
-    var circle, isMoving;
+    var circle, isMoving, CircleObj;
     var eidtId = "nbHandleLabel" + Math.floor((Math.random() + Math.random()) * 1000);
     var ismousedown = false;
     obj.minProjectRadius = transformRadius(obj.center, obj.minRadius);
@@ -11928,7 +11928,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
         $(document).on('mouseup', function (event) {
             if (ismousedown && isMoving) {
                 if (obj.onRadiusChangeEnd) {
-                    obj.onRadiusChangeEnd(circle);
+                    obj.onRadiusChangeEnd(CircleObj);
                 }
             }
             ismousedown = false;
@@ -11941,7 +11941,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
         $(vienna).on("mouseup", function (event) {
             if (ismousedown && isMoving) {
                 if (obj.onRadiusChangeEnd) {
-                    obj.onRadiusChangeEnd(circle);
+                    obj.onRadiusChangeEnd(CircleObj);
                 }
             }
             ismousedown = false;
@@ -11998,8 +11998,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
         var dy = center[1] - lastcoord[1];
         return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     }
-
-    return {
+    CircleObj = {
         feature: lineStringFea,
         centerFeature: centerFea,
         markerOverLay: markerOverlay,
@@ -12029,12 +12028,15 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
                 var coordinates = polygon.getCoordinates();
                 var multiLineString = new ol.geom.MultiLineString(coordinates);
                 lineStringFea.setGeometry(multiLineString);
-                currentMeterRadius = Math.floor(currentMeterRadius) + 1;
+                currentMeterRadius = Math.floor(currentMeterRadius);
                 if (currentMeterRadius > obj.maxRadius) {
                     currentMeterRadius = obj.maxRadius;
                 }
                 $(("#" + eidtId)).html(currentMeterRadius + "m");
                 markerOverlay.setPosition(circle.getLastCoordinate());
+            }
+            if (obj.onRadiusChangeEnd) {
+                obj.onRadiusChangeEnd(CircleObj);
             }
         },
         getExtent: function () {
@@ -12050,6 +12052,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
             obj.map.removeOverlay(markerOverlay);
         }
     };
+    return CircleObj;
 };
 
 

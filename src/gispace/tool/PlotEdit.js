@@ -1,6 +1,5 @@
-
-P.PlotEdit = function(map){
-    if(!map){
+P.PlotEdit = function (map) {
+    if (!map) {
         return;
     }
     goog.base(this, []);
@@ -23,39 +22,39 @@ P.PlotEdit.prototype.Constants = {
     HELPER_CONTROL_POINT_DIV: 'p-helper-control-point-div'
 };
 
-P.PlotEdit.prototype.initHelperDom = function(){
-    if(!this.map || !this.activePlot){
+P.PlotEdit.prototype.initHelperDom = function () {
+    if (!this.map || !this.activePlot) {
         return;
     }
     var parent = this.getMapParentElement();
-    if(!parent){
-       return;
+    if (!parent) {
+        return;
     }
     var hiddenDiv = P.DomUtils.createHidden('div', parent, this.Constants.HELPER_HIDDEN_DIV);
-
+    // ���ݿ��Ƶ������div
     var cPnts = this.getControlPoints();
-    for(var i=0; i<cPnts.length; i++){
+    for (var i = 0; i < cPnts.length; i++) {
         var id = this.Constants.HELPER_CONTROL_POINT_DIV + '-' + i;
         P.DomUtils.create('div', this.Constants.HELPER_CONTROL_POINT_DIV, hiddenDiv, id);
         this.elementTable[id] = i;
     }
 };
 
-P.PlotEdit.prototype.getMapParentElement = function() {
+P.PlotEdit.prototype.getMapParentElement = function () {
     var mapElement = this.map.getTargetElement();
-    if(!mapElement){
+    if (!mapElement) {
         return;
     }
     return mapElement.parentNode;
 };
 
-P.PlotEdit.prototype.destroyHelperDom = function(){
+P.PlotEdit.prototype.destroyHelperDom = function () {
     //
-    if(this.controlPoints){
-        for(var i=0; i<this.controlPoints.length; i++){
+    if (this.controlPoints) {
+        for (var i = 0; i < this.controlPoints.length; i++) {
             this.map.removeOverlay(this.controlPoints[i]);
             var element = P.DomUtils.get(this.Constants.HELPER_CONTROL_POINT_DIV + '-' + i);
-            if(element){
+            if (element) {
                 P.DomUtils.removeListener(element, 'mousedown', this.controlPointMouseDownHandler, this);
                 P.DomUtils.removeListener(element, 'mousemove', this.controlPointMouseMoveHandler2, this);
             }
@@ -65,18 +64,18 @@ P.PlotEdit.prototype.destroyHelperDom = function(){
     //
     var parent = this.getMapParentElement();
     var hiddenDiv = P.DomUtils.get(this.Constants.HELPER_HIDDEN_DIV);
-    if(hiddenDiv && parent){
+    if (hiddenDiv && parent) {
         P.DomUtils.remove(hiddenDiv, parent);
     }
 };
 
-P.PlotEdit.prototype.initControlPoints = function(){
-    if(!this.map){
+P.PlotEdit.prototype.initControlPoints = function () {
+    if (!this.map) {
         return;
     }
     this.controlPoints = [];
     var cPnts = this.getControlPoints();
-    for(var i=0; i<cPnts.length; i++){
+    for (var i = 0; i < cPnts.length; i++) {
         var id = this.Constants.HELPER_CONTROL_POINT_DIV + '-' + i;
         var element = P.DomUtils.get(id);
         var pnt = new ol.Overlay({
@@ -92,20 +91,20 @@ P.PlotEdit.prototype.initControlPoints = function(){
     }
 };
 
-P.PlotEdit.prototype.controlPointMouseMoveHandler2 = function(e){
+P.PlotEdit.prototype.controlPointMouseMoveHandler2 = function (e) {
     e.stopImmediatePropagation();
 };
 
-P.PlotEdit.prototype.controlPointMouseDownHandler = function(e){
+P.PlotEdit.prototype.controlPointMouseDownHandler = function (e) {
     var id = e.target.id;
     this.activeControlPointId = id;
     goog.events.listen(this.mapViewport, P.Event.EventType.MOUSEMOVE, this.controlPointMouseMoveHandler, false, this);
     goog.events.listen(this.mapViewport, P.Event.EventType.MOUSEUP, this.controlPointMouseUpHandler, false, this);
 };
 
-P.PlotEdit.prototype.controlPointMouseMoveHandler = function(e){
-    var coordinate = map.getCoordinateFromPixel([e.offsetX, e.offsetY]);
-    if(this.activeControlPointId){
+P.PlotEdit.prototype.controlPointMouseMoveHandler = function (e) {
+    var coordinate = this.map.getCoordinateFromPixel([e.offsetX, e.offsetY]);
+    if (this.activeControlPointId) {
         var plot = this.activePlot.getGeometry();
         var index = this.elementTable[this.activeControlPointId];
         plot.updatePoint(coordinate, index);
@@ -114,56 +113,60 @@ P.PlotEdit.prototype.controlPointMouseMoveHandler = function(e){
     }
 };
 
-P.PlotEdit.prototype.controlPointMouseUpHandler = function(e){
+P.PlotEdit.prototype.controlPointMouseUpHandler = function (e) {
     goog.events.unlisten(this.mapViewport, P.Event.EventType.MOUSEMOVE,
         this.controlPointMouseMoveHandler, false, this);
     goog.events.unlisten(this.mapViewport, P.Event.EventType.MOUSEUP,
         this.controlPointMouseUpHandler, false, this);
 };
 
-P.PlotEdit.prototype.activate = function(plot){
-
-    if(!plot || !(plot instanceof ol.Feature) || plot == this.activePlot) {
+P.PlotEdit.prototype.activate = function (plot) {
+    var self = this;
+    if (!plot || !(plot instanceof ol.Feature) || plot == this.activePlot) {
         return;
     }
 
     var geom = plot.getGeometry();
-    if(!geom.isPlot()){
+    if (!geom.isPlot()) {
         return;
     }
 
     this.deactivate();
 
     this.activePlot = plot;
+    setTimeout(function () {
+        self.dispatchEvent(new P.Event.PlotEditEvent(P.Event.PlotEditEvent.ACTIVE_PLOT_CHANGE, self.activePlot));
+    }, 500);
+
     //
     this.map.on("pointermove", this.plotMouseOverOutHandler, this);
-    
+    // ��ӱ༭���߸�ע��ǩ
     this.initHelperDom();
     //
     this.initControlPoints();
     //
 };
 
-P.PlotEdit.prototype.getControlPoints = function(){
-    if(!this.activePlot){
+P.PlotEdit.prototype.getControlPoints = function () {
+    if (!this.activePlot) {
         return [];
     }
     var geom = this.activePlot.getGeometry();
     return geom.getPoints();
 };
 
-P.PlotEdit.prototype.plotMouseOverOutHandler = function(e){
-    var feature = map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+P.PlotEdit.prototype.plotMouseOverOutHandler = function (e) {
+    var feature = this.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
         return feature;
     });
-    if(feature && feature == this.activePlot){
-        if(!this.mouseOver){
+    if (feature && feature == this.activePlot) {
+        if (!this.mouseOver) {
             this.mouseOver = true;
             this.map.getViewport().style.cursor = 'move';
             this.map.on('pointerdown', this.plotMouseDownHandler, this);
         }
-    }else{
-        if(this.mouseOver){
+    } else {
+        if (this.mouseOver) {
             this.mouseOver = false;
             this.map.getViewport().style.cursor = 'default';
             this.map.un('pointerdown', this.plotMouseDownHandler, this);
@@ -171,7 +174,7 @@ P.PlotEdit.prototype.plotMouseOverOutHandler = function(e){
     }
 };
 
-P.PlotEdit.prototype.plotMouseDownHandler = function(e){
+P.PlotEdit.prototype.plotMouseDownHandler = function (e) {
     this.ghostControlPoints = this.getControlPoints();
     this.startPoint = e.coordinate;
     this.disableMapDragPan();
@@ -179,12 +182,12 @@ P.PlotEdit.prototype.plotMouseDownHandler = function(e){
     this.map.on('pointerdrag', this.plotMouseMoveHandler, this);
 };
 
-P.PlotEdit.prototype.plotMouseMoveHandler = function(e){
+P.PlotEdit.prototype.plotMouseMoveHandler = function (e) {
     var point = e.coordinate;
     var dx = point[0] - this.startPoint[0];
     var dy = point[1] - this.startPoint[1];
     var newPoints = [];
-    for(var i=0; i<this.ghostControlPoints.length; i++){
+    for (var i = 0; i < this.ghostControlPoints.length; i++) {
         var p = this.ghostControlPoints[i];
         var coordinate = [p[0] + dx, p[1] + dy];
         newPoints.push(coordinate);
@@ -197,7 +200,7 @@ P.PlotEdit.prototype.plotMouseMoveHandler = function(e){
     plot.setPoints(newPoints);
 };
 
-P.PlotEdit.prototype.plotMouseUpHandler = function(e){
+P.PlotEdit.prototype.plotMouseUpHandler = function (e) {
     this.enableMapDragPan();
     this.map.un('pointerup', this.plotMouseUpHandler, this);
     this.map.un('pointerdrag', this.plotMouseMoveHandler, this);
@@ -214,7 +217,7 @@ P.PlotEdit.prototype.disconnectEventHandlers = function () {
     this.map.un('pointerdrag', this.plotMouseMoveHandler, this);
 };
 
-P.PlotEdit.prototype.deactivate = function(){
+P.PlotEdit.prototype.deactivate = function () {
     this.activePlot = null;
     this.mouseOver = false;
     this.destroyHelperDom();

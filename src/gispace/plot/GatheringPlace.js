@@ -1,20 +1,20 @@
 
-P.Plot.GatheringPlace = function(points){
+P.Plot.GatheringPlace = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.GATHERING_PLACE;
     this.t = 0.4;
     this.fixPointCount = 3;
     this.setPoints(points);
-}
+    this.set("params",params);
+};
 
 goog.inherits(P.Plot.GatheringPlace, ol.geom.Polygon);
 goog.mixin(P.Plot.GatheringPlace.prototype, P.Plot.prototype);
 
 P.Plot.GatheringPlace.prototype.generate = function(){
     var pnts = this.getPoints();
-    if(pnts.length<2){
+    if(pnts.length<2)
         return;
-    }
     if(this.getPointCount()==2){
         var mid = P.PlotUtils.mid(pnts[0], pnts[1]);
         var d = P.PlotUtils.distance(pnts[0], mid)/0.9;

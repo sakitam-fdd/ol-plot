@@ -1,5 +1,5 @@
 
-P.Plot.TailedAttackArrow = function(points){
+P.Plot.TailedAttackArrow = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.TAILED_ATTACK_ARROW;
     this.headHeightFactor = 0.18;
@@ -11,15 +11,12 @@ P.Plot.TailedAttackArrow = function(points){
     this.swallowTailFactor = 1;
     this.swallowTailPnt = null;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.TailedAttackArrow, P.Plot.AttackArrow);
 
 P.Plot.TailedAttackArrow.prototype.generate = function(){
-    var count = this.getPointCount();
-    if(count < 2) {
-        return;
-    }
     if(this.getPointCount() == 2){
         this.setCoordinates([this.points]);
         return;

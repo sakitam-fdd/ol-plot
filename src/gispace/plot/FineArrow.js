@@ -1,24 +1,21 @@
 
-P.Plot.FineArrow = function(points){
+P.Plot.FineArrow = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.FINE_ARROW;
-    this.tailWidthFactor = 0.15;
+    this.tailWidthFactor = 0.1;
     this.neckWidthFactor = 0.2;
     this.headWidthFactor = 0.25;
     this.headAngle = Math.PI / 8.5;
     this.neckAngle = Math.PI / 13;
     this.fixPointCount = 2;
     this.setPoints(points);
-}
+    this.set("params",params);
+};
 
 goog.inherits(P.Plot.FineArrow, ol.geom.Polygon);
 goog.mixin(P.Plot.FineArrow.prototype, P.Plot.prototype);
 
 P.Plot.FineArrow.prototype.generate = function(){
-    var count = this.getPointCount();
-    if(count < 2) {
-        return;
-    }
     var pnts = this.getPoints();
     var pnt1 = pnts[0];
     var pnt2 = pnts[1];

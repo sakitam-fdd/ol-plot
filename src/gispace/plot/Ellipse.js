@@ -1,19 +1,18 @@
 
-P.Plot.Ellipse = function(points){
+P.Plot.Ellipse = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.ELLIPSE;
     this.fixPointCount = 2;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.Ellipse, ol.geom.Polygon);
 goog.mixin(P.Plot.Ellipse.prototype, P.Plot.prototype);
 
 P.Plot.Ellipse.prototype.generate = function(){
-    var count = this.getPointCount();
-    if(count < 2) {
+    if(this.getPointCount()<2)
         return;
-    }
     var pnt1 = this.points[0];
     var pnt2 = this.points[1];
     var center = P.PlotUtils.mid(pnt1, pnt2);

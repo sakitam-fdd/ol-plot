@@ -1,18 +1,18 @@
 
-P.Plot.Lune = function(points){
+P.Plot.Lune = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.LUNE;
     this.fixPointCount = 3;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.Lune, ol.geom.Polygon);
 goog.mixin(P.Plot.Lune.prototype, P.Plot.prototype);
 
 P.Plot.Lune.prototype.generate = function(){
-    if(this.getPointCount()<2) {
+    if(this.getPointCount()<2)
         return;
-    }
     var pnts = this.getPoints();
     if(this.getPointCount()==2){
         var mid = P.PlotUtils.mid(pnts[0], pnts[1]);

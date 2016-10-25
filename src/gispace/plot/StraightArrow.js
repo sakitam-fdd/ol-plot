@@ -1,20 +1,20 @@
 
-P.Plot.StraightArrow = function(points){
+P.Plot.StraightArrow = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.STRAIGHT_ARROW;
     this.fixPointCount = 2;
     this.maxArrowLength = 3000000;
     this.arrowLengthScale = 5;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.StraightArrow, ol.geom.LineString);
 goog.mixin(P.Plot.StraightArrow.prototype, P.Plot.prototype);
 
 P.Plot.StraightArrow.prototype.generate = function(){
-    if(this.getPointCount()<2) {
+    if(this.getPointCount()<2)
         return;
-    }
     var pnts = this.getPoints();
     var pnt1 = pnts[0];
     var pnt2 = pnts[1];

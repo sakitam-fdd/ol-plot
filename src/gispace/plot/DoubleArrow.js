@@ -1,5 +1,5 @@
 
-P.Plot.DoubleArrow = function(points){
+P.Plot.DoubleArrow = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.DOUBLE_ARROW;
     this.headHeightFactor = 0.25;
@@ -10,6 +10,7 @@ P.Plot.DoubleArrow = function(points){
     this.tempPoint4 = null;
     this.fixPointCount = 4;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.DoubleArrow, ol.geom.Polygon);
@@ -23,11 +24,7 @@ P.Plot.DoubleArrow.prototype.finishDrawing = function(){
 };
 
 P.Plot.DoubleArrow.prototype.generate = function(){
-    var count = this.getPointCount();
-    if(count<2) {
-        return;
-    }
-    if(count == 2){
+    if(this.getPointCount() == 2){
         this.setCoordinates([this.points]);
         return;
     }

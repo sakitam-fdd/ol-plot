@@ -1,9 +1,10 @@
 
-P.Plot.Sector = function(points){
+P.Plot.Sector = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.SECTOR;
     this.fixPointCount = 3;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.Sector, ol.geom.Polygon);

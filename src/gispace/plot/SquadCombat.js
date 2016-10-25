@@ -1,5 +1,5 @@
 
-P.Plot.SquadCombat = function(points){
+P.Plot.SquadCombat = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.SQUAD_COMBAT;
     this.headHeightFactor = 0.18;
@@ -8,15 +8,12 @@ P.Plot.SquadCombat = function(points){
     this.neckWidthFactor = 0.15;
     this.tailWidthFactor = 0.1;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.SquadCombat, P.Plot.AttackArrow);
 
 P.Plot.SquadCombat.prototype.generate = function () {
-    var count = this.getPointCount();
-    if(count < 2) {
-        return;
-    }
     var pnts = this.getPoints();
     var tailPnts = this.getTailPoints(pnts);
     var headPnts = this.getArrowHeadPoints(pnts, tailPnts[0], tailPnts[1]);

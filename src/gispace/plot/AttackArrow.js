@@ -1,5 +1,5 @@
 
-P.Plot.AttackArrow = function(points){
+P.Plot.AttackArrow = function(points,params){
     goog.base(this, []);
     this.type = P.PlotTypes.ATTACK_ARROW;
     this.headHeightFactor = 0.18;
@@ -8,15 +8,15 @@ P.Plot.AttackArrow = function(points){
     this.neckWidthFactor = 0.15;
     this.headTailFactor = 0.8;
     this.setPoints(points);
+    this.set("params",params);
 };
 
 goog.inherits(P.Plot.AttackArrow, ol.geom.Polygon);
 goog.mixin(P.Plot.AttackArrow.prototype, P.Plot.prototype);
 
 P.Plot.AttackArrow.prototype.generate = function () {
-    if (this.getPointCount() < 2){
+    if (this.getPointCount() < 2)
         return;
-    }
     if (this.getPointCount() == 2) {
         this.setCoordinates([this.points]);
         return;
