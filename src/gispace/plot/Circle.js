@@ -38,6 +38,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
     var currentMeterRadius = obj.radius;
     var lineStringFea = new ol.Feature({});
     var centerFea = new ol.Feature({});
+    var polygonFea = new ol.Feature({});
     var sphare = new ol.Sphere(6378137);
     var circle, isMoving, CircleObj;
     var eidtId = "nbHandleLabel" + Math.floor((Math.random() + Math.random()) * 1000);
@@ -105,6 +106,11 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
         obj.projectRadius = transformRadius(center, radius);
         circle = new ol.geom.Circle(center, obj.projectRadius);
         var polygon = ol.geom.Polygon.fromCircle(circle);
+        polygonFea.setGeometry(polygon);
+        targetLayer.getSource().addFeature(polygonFea)
+        if(obj.style && obj.style instanceof ol.style.Style){
+            polygonFea.setStyle(obj.style);
+        }
         var coordinates = polygon.getCoordinates();
         var multiLineString = new ol.geom.MultiLineString(coordinates);
         lineStringFea.setGeometry(multiLineString);
@@ -186,6 +192,7 @@ P.Plot.Circle.createCircleByCenterRadius = function (obj) {
                     if (radius >= obj.minProjectRadius && radius <= obj.maxProjectRadius) {
                         circle.setRadius(radius);
                         var polygon = ol.geom.Polygon.fromCircle(circle);
+                        polygonFea.setGeometry(polygon);
                         var coordinates = polygon.getCoordinates();
                         var multiLineString = new ol.geom.MultiLineString(coordinates);
                         lineStringFea.setGeometry(multiLineString);
