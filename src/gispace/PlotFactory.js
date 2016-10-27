@@ -47,6 +47,8 @@ P.PlotFactory.createPlot = function (type, points, params) {
             return new P.Plot.Polyline(points, params);
         case P.PlotTypes.Rectangle:
             return new P.Plot.Rectangle(points, params);
+        case P.PlotTypes.MEASURE:
+            return new P.Plot.Polyline(points, params);
     }
     return null;
 };

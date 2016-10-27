@@ -73,9 +73,9 @@ function init() {
 // 绘制结束后，添加到FeatureOverlay显示。
 function onDrawEnd(event) {
     var feature = event.feature;
-    drawOverlay.getSource().addFeature(feature);
     // 开始编辑
-    //plotEdit.activate(feature);
+    plotEdit.activate(feature);
+    drawOverlay.getSource().addFeature(feature);
 }
 
 // 指定标绘类型，开始绘制。

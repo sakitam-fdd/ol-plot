@@ -45,6 +45,7 @@ gulp.task('compact-js', function () {
             './src/gispace/plot/TailedAttackArrow.js',
             './src/gispace/plot/TailedSquadCombat.js',
             './src/gispace/plot/Circle.js',
+            './src/gispace/plot/Measure.js',
             './src/gispace/plot/ClosedCurve.js',
             './src/gispace/plot/Curve.js',
             './src/gispace/plot/DoubleArrow.js',
@@ -63,8 +64,9 @@ gulp.task('compact-js', function () {
             './src/gispace/PlotFactory.js',
             './src/gispace/tool/PlotDraw.js',
             './src/gispace/tool/PlotEdit.js'])
+        .pipe(concat('p-ol3.min.js'))
+        .pipe(uglify())
         .pipe(concat('p-ol3-debug.js'))
-        //.pipe(uglify())
         .pipe(gulp.dest('./build/'))
         .pipe(gulp.dest('./sample/'));
 });
