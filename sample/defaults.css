@@ -111,3 +111,23 @@ button{
     opacity: 1;
     min-width: 55px;
 }
+.menus{
+    position: absolute;
+}
+.menus ul{
+    list-style: none;
+}
+.menus ul li{
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-family: "微软雅黑", sans-serif;
+    cursor: pointer;
+    background-color: #cccccc;
+    color: #131313;
+}
+.menus ul li:hover{
+    background-color: #0000ff;
+    color: #ffffff;
+}

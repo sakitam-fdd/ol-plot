@@ -17,6 +17,8 @@
 var map, plotDraw, plotEdit, drawOverlay, drawStyle;
 
 function init() {
+    //创建全局对象
+    window.ObservableObj = new ol.Object();
     // 初始化地图，底图使用openstreetmap在线地图
     map = new ol.Map({
         target: 'map',
@@ -68,6 +70,7 @@ function init() {
     });
     drawOverlay.setStyle(drawStyle);
     drawOverlay.setMap(map);
+    initEvent();
 }
 
 // 绘制结束后，添加到FeatureOverlay显示。
