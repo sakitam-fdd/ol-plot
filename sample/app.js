@@ -1,19 +1,3 @@
-/**
- * 动态标绘API plot4ol3，基于OpenLayer3开发，旨在为基于开源GIS技术做项目开发提供标绘API。
- * 当前版本1.0，提供的功能：绘制基本标绘符号。
- * 绘制接口：PlotDraw
- * 具体用法请参考演示系统源码。
- *
- * 开发者：@平凡的世界
- * QQ号：21587252
- * 邮箱：gispace@yeah.net
- * 博客：http://blog.csdn.net/gispace
- * 动态标绘交流QQ群：318659439
- *
- * 如果想要收到API更新邮件，请在博客评论或者资源下载页面留下您的邮箱地址。
- *
- * */
-
 var map, plotDraw, plotEdit, drawOverlay, drawStyle;
 
 function init() {
@@ -108,3 +92,23 @@ window.testHX = function () {
 window.testCircle = function () {
     var mm = P.Plot.Circle.createCircleByCenterRadius([1359967.607249856, 1066449.4186347784], 500,map);
 };
+
+function creatCircle () {
+  var style = new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: 'rgba(65,105,225, 0.5)'
+    })
+  });
+  var projection = ol.proj.get("EPSG:3857");
+  var radius = ol.proj.fromLonLat([5000, 0], projection)[0]
+  var zuobiao = ol.proj.transform([5000, 0], 'EPSG:102100', 'EPSG:4326')
+  var config = {
+    radius: radius,
+    maxRadius: 500000,
+    map: map,
+    layerName: 'layerName',
+    style: style,
+    center: [1359967.607249856, 1066449.4186347784]
+  };
+  P.Custom.CustomCircle([1359967.607249856, 1066449.4186347784],config)
+}
