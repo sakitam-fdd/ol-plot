@@ -22,6 +22,5 @@ P.PlotTypes = {
     RECTANGLE          : "rectangle",
     POINT              : "point",
     TRIANGLE           : "triangle",
-    Rectangle          : "rectangle",
-    CustomCircle       : "CustomCircle"
+    Rectangle          : "rectangle"
 };

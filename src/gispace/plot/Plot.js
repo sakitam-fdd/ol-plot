@@ -49,5 +49,3 @@ P.Plot.prototype = {
 
     }
 };
-
-P.Custom = function () {}
