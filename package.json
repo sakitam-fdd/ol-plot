@@ -1,13 +1,35 @@
 {
-  "name": "gispace-plot-api",
-  "author": "cuifudong",
+  "name": "ol-plot",
+  "version": "1.0.0",
+  "description": "ol-plot",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node build/development.js",
+    "build": "node build/build.js",
+    "start": "node build/dev-server.js"
+  },
+  "keywords": [
+    "openlayers",
+    "canvas",
+    "plot"
+  ],
+  "author": "FDD <smileFDD@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "http://sakitam-fdd@211.101.37.244/TDD/WEBGIS/ol-plot.git"
+  },
+  ,
+  "dependencies": {
+    "google-closure-library": "^20170806.0.0"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-concat": "*",
-    "gulp-cssnano": "*",
-    "gulp-replace": "*",
-    "gulp-uglify": "^0.2.0",
-    "gulp-util": "^3.0.7",
-    "supertest": "*"
-  }
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-replace": "^0.6.1",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "supertest": "^3.0.0"
+  },
+  "license": "MIT"
 }

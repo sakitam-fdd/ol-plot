@@ -3,32 +3,10 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var cssnano = require('gulp-cssnano');
-
+var name_ = 'ol-plot';
 gulp.task('compact-js', function () {
-  return gulp.src(['./lib/goog/base.js',
-    './lib/goog/idisposable.js',
-    './lib/goog/disposable.js',
-    './lib/goog/eventid.js',
-    './lib/goog/event.js',
-    './lib/goog/error.js',
-    './lib/goog/nodetype.js',
-    './lib/goog/string.js',
-    './lib/goog/asserts.js',
-    './lib/goog/array.js',
-    './lib/goog/object.js',
-    './lib/goog/util.js',
-    './lib/goog/browser.js',
-    './lib/goog/engine.js',
-    './lib/goog/reflect.js',
-    './lib/goog/useragent.js',
-    './lib/goog/eventtype.js',
-    './lib/goog/browserfeature.js',
-    './lib/goog/browserevent.js',
-    './lib/goog/entrypointregistry.js',
-    './lib/goog/listenable.js',
-    './lib/goog/listener.js',
-    './lib/goog/listenermap.js',
-    './lib/goog/events.js',
+  return gulp.src([
+    './node_modules/google-closure-library/closure/goog/**/*.js',
     './src/gispace/GISpace.js',
     './src/gispace/Constants.js',
     './src/gispace/util/Utils.js',
@@ -64,19 +42,18 @@ gulp.task('compact-js', function () {
     './src/gispace/PlotFactory.js',
     './src/gispace/tool/PlotDraw.js',
     './src/gispace/tool/PlotEdit.js'])
-    .pipe(concat('p-ol3.js'))
-    .pipe(gulp.dest('./build/'))
-    .pipe(uglify())
-    .pipe(concat('p-ol3.min.js'))
-    .pipe(gulp.dest('./build/'))
+    .pipe(concat(name_ + '.js'))
+    .pipe(gulp.dest('./dist/'))
+    // .pipe(uglify())
+    .pipe(concat(name_ + '.min.js'))
+    .pipe(gulp.dest('./dist/'))
 });
 
 
 gulp.task('compact-css', function () {
   return gulp.src('src/*.css')
-    .pipe(concat('p-ol3.min.css'))
-    // .pipe(gulp.dest('./build/'))
-    .pipe(gulp.dest('./sample/'))
+    .pipe(concat(name_ + '.min.css'))
+    .pipe(gulp.dest('./dist/'))
     .pipe(cssnano());
 });
 

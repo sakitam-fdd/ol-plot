@@ -1,4 +1,4 @@
-
+require('google-closure-library')
 var P = {
     version: "1.0.0"
 };
