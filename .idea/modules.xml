@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/GISpacePlot.iml" filepath="$PROJECT_DIR$/.idea/GISpacePlot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ol-plot.iml" filepath="$PROJECT_DIR$/.idea/ol-plot.iml" />
     </modules>
   </component>
 </project>
