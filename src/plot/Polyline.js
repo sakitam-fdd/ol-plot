@@ -1,14 +1,11 @@
-
-P.Plot.Polyline = function(points){
-    goog.base(this, []);
-    this.type = P.PlotTypes.POLYLINE;
+olPlot.Plot.Polyline = function(points){
+  olPlot.Utils.base(this, []);
+    this.type = olPlot.PlotTypes.POLYLINE;
     this.setPoints(points);
 };
-
-goog.inherits(P.Plot.Polyline, ol.geom.LineString);
-goog.mixin(P.Plot.Polyline.prototype, P.Plot.prototype);
-
-P.Plot.Polyline.prototype.generate = function(){
+olPlot.Utils.inherits(olPlot.Plot.Polyline, ol.geom.LineString);
+olPlot.Utils.mixin(olPlot.Plot.Polyline.prototype, olPlot.Plot.prototype);
+olPlot.Plot.Polyline.prototype.generate = function(){
     var count = this.getPointCount();
     if(count < 2) {
         return;

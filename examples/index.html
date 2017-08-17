@@ -142,11 +142,11 @@
   });
 
   // 初始化标绘绘制工具，添加绘制结束事件响应
-  plotDraw = new P.PlotDraw(map);
-  plotDraw.on(P.Event.PlotDrawEvent.DRAW_END, onDrawEnd, false, this);
+  plotDraw = new olPlot.PlotDraw(map);
+  plotDraw.on(olPlot.Event.EventType.DRAW_END, onDrawEnd, this);
 
   // 初始化标绘编辑工具
-  plotEdit = new P.PlotEdit(map);
+  plotEdit = new olPlot.PlotEdit(map);
 
   // 设置标绘符号显示的默认样式
   var stroke = new ol.style.Stroke({color: '#7DC826', width: 2.5});

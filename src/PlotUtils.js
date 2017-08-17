@@ -1,35 +1,35 @@
 
-P.PlotUtils = {};
+olPlot.PlotUtils = {};
 
-P.PlotUtils.distance = function(pnt1, pnt2){
+olPlot.PlotUtils.distance = function(pnt1, pnt2){
     return Math.sqrt(Math.pow((pnt1[0] - pnt2[0]), 2) + Math.pow((pnt1[1] - pnt2[1]), 2));
 };
 
-P.PlotUtils.wholeDistance = function(points){
+olPlot.PlotUtils.wholeDistance = function(points){
     var distance = 0;
     for(var i=0; i<points.length-1; i++)
-    distance += P.PlotUtils.distance(points[i], points[i+1]);
+    distance += olPlot.PlotUtils.distance(points[i], points[i+1]);
     return distance;
 };
 
-P.PlotUtils.getBaseLength = function(points){
-    return Math.pow(P.PlotUtils.wholeDistance(points), 0.99);
-    //return P.PlotUtils.wholeDistance(points);
+olPlot.PlotUtils.getBaseLength = function(points){
+    return Math.pow(olPlot.PlotUtils.wholeDistance(points), 0.99);
+    //return olPlot.PlotUtils.wholeDistance(points);
 };
 
-P.PlotUtils.mid = function(pnt1, pnt2){
+olPlot.PlotUtils.mid = function(pnt1, pnt2){
     return [(pnt1[0]+pnt2[0])/2, (pnt1[1]+pnt2[1])/2];
 };
 
-P.PlotUtils.getCircleCenterOfThreePoints = function(pnt1, pnt2, pnt3){
+olPlot.PlotUtils.getCircleCenterOfThreePoints = function(pnt1, pnt2, pnt3){
     var pntA = [(pnt1[0]+pnt2[0])/2, (pnt1[1]+pnt2[1])/2];
     var pntB = [pntA[0]-pnt1[1]+pnt2[1], pntA[1]+pnt1[0]-pnt2[0]];
     var pntC = [(pnt1[0]+pnt3[0])/2, (pnt1[1]+pnt3[1])/2];
     var pntD = [pntC[0]-pnt1[1]+pnt3[1], pntC[1]+pnt1[0]-pnt3[0]];
-    return P.PlotUtils.getIntersectPoint(pntA, pntB, pntC, pntD);
+    return olPlot.PlotUtils.getIntersectPoint(pntA, pntB, pntC, pntD);
 };
 
-P.PlotUtils.getIntersectPoint = function(pntA, pntB, pntC, pntD){
+olPlot.PlotUtils.getIntersectPoint = function(pntA, pntB, pntC, pntD){
     if(pntA[1] == pntB[1]){
         var f = (pntD[0]-pntC[0])/(pntD[1]-pntC[1]);
         var x = f*(pntA[1]-pntC[1])+pntC[0];
@@ -49,13 +49,13 @@ P.PlotUtils.getIntersectPoint = function(pntA, pntB, pntC, pntD){
     return [x, y];
 };
 
-P.PlotUtils.getAzimuth = function(startPnt, endPnt){
+olPlot.PlotUtils.getAzimuth = function(startPnt, endPnt){
     var azimuth;
-    var angle=Math.asin(Math.abs(endPnt[1] - startPnt[1]) / P.PlotUtils.distance(startPnt, endPnt));
+    var angle=Math.asin(Math.abs(endPnt[1] - startPnt[1]) / olPlot.PlotUtils.distance(startPnt, endPnt));
     if (endPnt[1] >= startPnt[1] && endPnt[0] >= startPnt[0])
         azimuth=angle + Math.PI;
     else if (endPnt[1] >= startPnt[1] && endPnt[0] < startPnt[0])
-        azimuth=P.Constants.TWO_PI - angle;
+        azimuth=olPlot.Constants.TWO_PI - angle;
     else if (endPnt[1] < startPnt[1] && endPnt[0] < startPnt[0])
         azimuth=angle;
     else if (endPnt[1] < startPnt[1] && endPnt[0] >= startPnt[0])
@@ -63,22 +63,22 @@ P.PlotUtils.getAzimuth = function(startPnt, endPnt){
     return azimuth;
 };
 
-P.PlotUtils.getAngleOfThreePoints = function(pntA, pntB, pntC){
-    var angle=P.PlotUtils.getAzimuth(pntB, pntA) - P.PlotUtils.getAzimuth(pntB, pntC);
-    return (angle<0 ? angle + P.Constants.TWO_PI : angle);
+olPlot.PlotUtils.getAngleOfThreePoints = function(pntA, pntB, pntC){
+    var angle=olPlot.PlotUtils.getAzimuth(pntB, pntA) - olPlot.PlotUtils.getAzimuth(pntB, pntC);
+    return (angle<0 ? angle + olPlot.Constants.TWO_PI : angle);
 };
 
-P.PlotUtils.isClockWise = function(pnt1, pnt2, pnt3){
+olPlot.PlotUtils.isClockWise = function(pnt1, pnt2, pnt3){
     return ((pnt3[1]-pnt1[1])*(pnt2[0]-pnt1[0]) > (pnt2[1]-pnt1[1])*(pnt3[0]-pnt1[0]));
 };
 
-P.PlotUtils.getPointOnLine = function(t, startPnt, endPnt){
+olPlot.PlotUtils.getPointOnLine = function(t, startPnt, endPnt){
     var x = startPnt[0] + (t * (endPnt[0] - startPnt[0]));
     var y = startPnt[1] + (t * (endPnt[1] - startPnt[1]));
     return [x, y];
 };
 
-P.PlotUtils.getCubicValue = function(t, startPnt, cPnt1, cPnt2, endPnt){
+olPlot.PlotUtils.getCubicValue = function(t, startPnt, cPnt1, cPnt2, endPnt){
     t = Math.max(Math.min(t, 1), 0);
     var tp = 1 - t;
     var t2 = t * t;
@@ -90,21 +90,21 @@ P.PlotUtils.getCubicValue = function(t, startPnt, cPnt1, cPnt2, endPnt){
     return [x, y];
 };
 
-P.PlotUtils.getThirdPoint = function(startPnt, endPnt, angle, distance, clockWise){
-    var azimuth=P.PlotUtils.getAzimuth(startPnt, endPnt);
+olPlot.PlotUtils.getThirdPoint = function(startPnt, endPnt, angle, distance, clockWise){
+    var azimuth=olPlot.PlotUtils.getAzimuth(startPnt, endPnt);
     var alpha = clockWise ? azimuth+angle : azimuth-angle;
     var dx=distance * Math.cos(alpha);
     var dy=distance * Math.sin(alpha);
     return [endPnt[0] + dx, endPnt[1] + dy]; 
 };
 
-P.PlotUtils.getArcPoints = function(center, radius, startAngle, endAngle){
+olPlot.PlotUtils.getArcPoints = function(center, radius, startAngle, endAngle){
     var x, y, pnts=[];
     var angleDiff = endAngle - startAngle;
-    angleDiff = angleDiff < 0 ? angleDiff + P.Constants.TWO_PI : angleDiff;
-    for (var i=0; i<=P.Constants.FITTING_COUNT; i++)
+    angleDiff = angleDiff < 0 ? angleDiff + olPlot.Constants.TWO_PI : angleDiff;
+    for (var i=0; i<=olPlot.Constants.FITTING_COUNT; i++)
     {
-        var angle = startAngle + angleDiff * i / P.Constants.FITTING_COUNT;
+        var angle = startAngle + angleDiff * i / olPlot.Constants.FITTING_COUNT;
         x=center[0] + radius * Math.cos(angle);
         y=center[1] + radius * Math.sin(angle);
         pnts.push([x, y]);
@@ -112,15 +112,15 @@ P.PlotUtils.getArcPoints = function(center, radius, startAngle, endAngle){
     return pnts;
 };
 
-P.PlotUtils.getBisectorNormals = function(t, pnt1, pnt2, pnt3){
-    var normal = P.PlotUtils.getNormal(pnt1, pnt2, pnt3);
+olPlot.PlotUtils.getBisectorNormals = function(t, pnt1, pnt2, pnt3){
+    var normal = olPlot.PlotUtils.getNormal(pnt1, pnt2, pnt3);
     var dist = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
     var uX = normal[0]/dist;
     var uY = normal[1]/dist;
-    var d1 = P.PlotUtils.distance(pnt1, pnt2);
-    var d2 = P.PlotUtils.distance(pnt2, pnt3);
-    if(dist > P.Constants.ZERO_TOLERANCE){
-        if(P.PlotUtils.isClockWise(pnt1, pnt2, pnt3)){
+    var d1 = olPlot.PlotUtils.distance(pnt1, pnt2);
+    var d2 = olPlot.PlotUtils.distance(pnt2, pnt3);
+    if(dist > olPlot.Constants.ZERO_TOLERANCE){
+        if(olPlot.PlotUtils.isClockWise(pnt1, pnt2, pnt3)){
             var dt = t * d1;
             var x = pnt2[0] - dt*uY;
             var y = pnt2[1] + dt*uX;
@@ -152,7 +152,7 @@ P.PlotUtils.getBisectorNormals = function(t, pnt1, pnt2, pnt3){
     return [bisectorNormalRight, bisectorNormalLeft];
 };
 
-P.PlotUtils.getNormal = function(pnt1, pnt2, pnt3){
+olPlot.PlotUtils.getNormal = function(pnt1, pnt2, pnt3){
     var dX1 = pnt1[0] - pnt2[0];
     var dY1 = pnt1[1] - pnt2[1];
     var d1 = Math.sqrt(dX1*dX1 + dY1*dY1);
@@ -170,25 +170,25 @@ P.PlotUtils.getNormal = function(pnt1, pnt2, pnt3){
     return [uX, uY];
 };
 
-P.PlotUtils.getCurvePoints = function(t, controlPoints){
-    var leftControl = P.PlotUtils.getLeftMostControlPoint(controlPoints);
+olPlot.PlotUtils.getCurvePoints = function(t, controlPoints){
+    var leftControl = olPlot.PlotUtils.getLeftMostControlPoint(controlPoints);
     var normals = [leftControl];
     for(var i=0; i<controlPoints.length-2; i++){
         var pnt1 = controlPoints[i];
         var pnt2 = controlPoints[i+1];
         var pnt3 = controlPoints[i+2];
-        var normalPoints = P.PlotUtils.getBisectorNormals(t, pnt1, pnt2, pnt3);
+        var normalPoints = olPlot.PlotUtils.getBisectorNormals(t, pnt1, pnt2, pnt3);
         normals = normals.concat(normalPoints);
     }
-    var rightControl = P.PlotUtils.getRightMostControlPoint(controlPoints);
+    var rightControl = olPlot.PlotUtils.getRightMostControlPoint(controlPoints);
     normals.push(rightControl);
     var points = [];
     for(i=0; i<controlPoints.length-1; i++){
         pnt1 = controlPoints[i];
         pnt2 = controlPoints[i+1];
         points.push(pnt1);
-        for(var t=0; t<P.Constants.FITTING_COUNT; t++){
-            var pnt = P.PlotUtils.getCubicValue(t/P.Constants.FITTING_COUNT, pnt1, normals[i*2], normals[i*2+1], pnt2);
+        for(var t=0; t<olPlot.Constants.FITTING_COUNT; t++){
+            var pnt = olPlot.PlotUtils.getCubicValue(t/olPlot.Constants.FITTING_COUNT, pnt1, normals[i*2], normals[i*2+1], pnt2);
             points.push(pnt);
         }
         points.push(pnt2);
@@ -196,20 +196,20 @@ P.PlotUtils.getCurvePoints = function(t, controlPoints){
     return points;
 };
 
-P.PlotUtils.getLeftMostControlPoint = function(controlPoints){
+olPlot.PlotUtils.getLeftMostControlPoint = function(controlPoints){
     var pnt1 = controlPoints[0];
     var pnt2 = controlPoints[1];
     var pnt3 = controlPoints[2];
-    var pnts = P.PlotUtils.getBisectorNormals(0, pnt1, pnt2, pnt3);
+    var pnts = olPlot.PlotUtils.getBisectorNormals(0, pnt1, pnt2, pnt3);
     var normalRight = pnts[0];
-    var normal = P.PlotUtils.getNormal(pnt1, pnt2, pnt3);
+    var normal = olPlot.PlotUtils.getNormal(pnt1, pnt2, pnt3);
     var dist = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
-    if(dist > P.Constants.ZERO_TOLERANCE){
-        var mid = P.PlotUtils.mid(pnt1, pnt2);
+    if(dist > olPlot.Constants.ZERO_TOLERANCE){
+        var mid = olPlot.PlotUtils.mid(pnt1, pnt2);
         var pX = pnt1[0] - mid[0];
         var pY = pnt1[1] - mid[1];
 
-        var d1 = P.PlotUtils.distance(pnt1, pnt2);
+        var d1 = olPlot.PlotUtils.distance(pnt1, pnt2);
         // normal at midpoint
         var n  = 2.0/d1;
         var nX = -n*pY;
@@ -234,21 +234,21 @@ P.PlotUtils.getLeftMostControlPoint = function(controlPoints){
     return [controlX, controlY];
 };
 
-P.PlotUtils.getRightMostControlPoint = function(controlPoints){
+olPlot.PlotUtils.getRightMostControlPoint = function(controlPoints){
     var count = controlPoints.length;
     var pnt1 = controlPoints[count-3];
     var pnt2 = controlPoints[count-2];
     var pnt3 = controlPoints[count-1];
-    var pnts = P.PlotUtils.getBisectorNormals(0, pnt1, pnt2, pnt3);
+    var pnts = olPlot.PlotUtils.getBisectorNormals(0, pnt1, pnt2, pnt3);
     var normalLeft = pnts[1];
-    var normal = P.PlotUtils.getNormal(pnt1, pnt2, pnt3);
+    var normal = olPlot.PlotUtils.getNormal(pnt1, pnt2, pnt3);
     var dist = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
-    if(dist > P.Constants.ZERO_TOLERANCE){
-        var mid = P.PlotUtils.mid(pnt2, pnt3);
+    if(dist > olPlot.Constants.ZERO_TOLERANCE){
+        var mid = olPlot.PlotUtils.mid(pnt2, pnt3);
         var pX = pnt3[0] - mid[0];
         var pY = pnt3[1] - mid[1];
 
-        var d1 = P.PlotUtils.distance(pnt2, pnt3);
+        var d1 = olPlot.PlotUtils.distance(pnt2, pnt3);
         // normal at midpoint
         var n  = 2.0/d1;
         var nX = -n*pY;
@@ -273,7 +273,7 @@ P.PlotUtils.getRightMostControlPoint = function(controlPoints){
     return [controlX, controlY];
 };
 
-P.PlotUtils.getBezierPoints = function(points){
+olPlot.PlotUtils.getBezierPoints = function(points){
     if (points.length <= 2)
         return points;
 
@@ -282,7 +282,7 @@ P.PlotUtils.getBezierPoints = function(points){
     for (var t=0; t <= 1; t+=0.01){
         var x=y=0;
         for (var index=0; index <= n; index++){
-            var factor=P.PlotUtils.getBinomialFactor(n, index);
+            var factor=olPlot.PlotUtils.getBinomialFactor(n, index);
             var a=Math.pow(t, index);
             var b=Math.pow((1 - t), (n - index));
             x+=factor * a * b * points[index][0];
@@ -294,11 +294,11 @@ P.PlotUtils.getBezierPoints = function(points){
     return bezierPoints;
 };
 
-P.PlotUtils.getBinomialFactor = function(n, index){
-    return P.PlotUtils.getFactorial(n) / (P.PlotUtils.getFactorial(index) * P.PlotUtils.getFactorial(n - index));
+olPlot.PlotUtils.getBinomialFactor = function(n, index){
+    return olPlot.PlotUtils.getFactorial(n) / (olPlot.PlotUtils.getFactorial(index) * olPlot.PlotUtils.getFactorial(n - index));
 };
 
-P.PlotUtils.getFactorial = function(n){
+olPlot.PlotUtils.getFactorial = function(n){
     if (n <= 1)
         return 1;
     if (n == 2)
@@ -315,7 +315,7 @@ P.PlotUtils.getFactorial = function(n){
     return result;
 };
 
-P.PlotUtils.getQBSplinePoints = function(points){
+olPlot.PlotUtils.getQBSplinePoints = function(points){
     if (points.length <= 2 )
         return points;
 
@@ -328,7 +328,7 @@ P.PlotUtils.getQBSplinePoints = function(points){
         for (var t=0; t <= 1; t+=0.05){
             var x=y=0;
             for (var k=0; k <= n; k++){
-                var factor=P.PlotUtils.getQuadricBSplineFactor(k, t);
+                var factor=olPlot.PlotUtils.getQuadricBSplineFactor(k, t);
                 x+=factor * points[i + k][0];
                 y+=factor * points[i + k][1];
             }
@@ -339,7 +339,7 @@ P.PlotUtils.getQBSplinePoints = function(points){
     return bSplinePoints;
 };
 
-P.PlotUtils.getQuadricBSplineFactor = function(k, t){
+olPlot.PlotUtils.getQuadricBSplineFactor = function(k, t){
     if (k == 0)
         return Math.pow(t - 1, 2) / 2;
     if (k == 1)
