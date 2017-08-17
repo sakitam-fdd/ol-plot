@@ -40,6 +40,7 @@ gulp.task('compact-js', function () {
     './src/event/PlotDrawEvent.js',
     './src/event/PlotEditEvent.js',
     './src/plot/Plot.js',
+    './src/plot/Marker.js',
     './src/plot/Arc.js',
     './src/plot/AttackArrow.js',
     './src/plot/SquadCombat.js',
