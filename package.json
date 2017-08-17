@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "description": "ol-plot",
   "main": "src/index.js",
-  "scripts": {
-    "dev": "node build/development.js",
-    "build": "node build/build.js",
-    "start": "node build/dev-server.js"
-  },
   "keywords": [
     "openlayers",
     "canvas",
