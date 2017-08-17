@@ -13,10 +13,6 @@
     "type": "git",
     "url": "http://sakitam-fdd@211.101.37.244/TDD/WEBGIS/ol-plot.git"
   },
-  ,
-  "dependencies": {
-    "google-closure-library": "^20170806.0.0"
-  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
