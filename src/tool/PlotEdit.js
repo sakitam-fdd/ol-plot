@@ -242,3 +242,9 @@ olPlot.PlotEdit.prototype.enableMapDragPan = function () {
     this.mapDragPan = null;
   }
 };
+
+olPlot.PlotEdit.prototype.setMap = function (map) {
+  if (map && map instanceof ol.Map) {
+    this.map = map
+  }
+}

@@ -11,7 +11,7 @@
   "author": "FDD <smileFDD@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "http://sakitam-fdd@211.101.37.244/TDD/WEBGIS/ol-plot.git"
+    "url": "https://github.com/sakitam-fdd/ol-plot.git"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
