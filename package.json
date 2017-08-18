@@ -1,6 +1,6 @@
 {
   "name": "ol-plot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ol-plot",
   "main": "src/index.js",
   "keywords": [

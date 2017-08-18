@@ -28,10 +28,10 @@ gulp compact-css
 ### CDN
 
 ```bash
-https://unpkg.com/ol-plot@1.0.0/dist/ol-plot.min.js
-https://unpkg.com/ol-plot@1.0.0/dist/ol-plot.js
-https://unpkg.com/ol-plot@1.0.0/dist/ol-plot.css
-https://unpkg.com/ol-plot@1.0.0/dist/ol-plot.min.css
+https://unpkg.com/ol-plot@1.0.1/dist/ol-plot.min.js
+https://unpkg.com/ol-plot@1.0.1/dist/ol-plot.js
+https://unpkg.com/ol-plot@1.0.1/dist/ol-plot.css
+https://unpkg.com/ol-plot@1.0.1/dist/ol-plot.min.css
 ```
 
 ### NPM
