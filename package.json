@@ -19,6 +19,7 @@
     "gulp-cssnano": "^2.1.2",
     "gulp-replace": "^0.6.1",
     "gulp-uglify": "^3.0.0",
+    "gulp-umd": "^0.2.1",
     "gulp-util": "^3.0.8",
     "supertest": "^3.0.0"
   },

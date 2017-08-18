@@ -3,6 +3,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var cssnano = require('gulp-cssnano');
+var umd = require('gulp-umd');
 var name_ = 'ol-plot';
 gulp.task('compact-js', function () {
   return gulp.src([
@@ -42,8 +43,16 @@ gulp.task('compact-js', function () {
     './src/tool/PlotDraw.js',
     './src/tool/PlotEdit.js'])
     .pipe(concat(name_ + '.js'))
+    .pipe(umd({
+      exports: function(file) {
+        return 'olPlot';
+      },
+      namespace: function(file) {
+        return 'olPlot';
+      }
+    }))
     .pipe(gulp.dest('./dist/'))
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(concat(name_ + '.min.js'))
     .pipe(gulp.dest('./dist/'))
 });
@@ -51,9 +60,11 @@ gulp.task('compact-js', function () {
 
 gulp.task('compact-css', function () {
   return gulp.src('src/**/*.css')
-    .pipe(concat(name_ + '.min.css'))
+    .pipe(concat(name_ + '.css'))
     .pipe(gulp.dest('./dist/'))
-    .pipe(cssnano());
+    .pipe(cssnano())
+    .pipe(concat(name_ + '.min.css'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 gulp.task('default', function () {
