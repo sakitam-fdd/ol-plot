@@ -26,7 +26,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // extract css into its own file
     new ExtractTextPlugin({
-      filename: utils.assetsPath('css/' + config.base.libraryName + '.min.css'),
+      filename: utils.assetsPath('css/' + config.base.fileName + '.min.css'),
       allChunks: true
     }),
     // Compress extracted CSS. We are using this plugin so that possible

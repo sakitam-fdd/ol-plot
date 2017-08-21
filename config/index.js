@@ -13,8 +13,9 @@ module.exports = {
     cssSourceMap: true
   },
   base: {
-    libraryName: 'GISpacePlot',
+    libraryName: 'olPlot',
+    fileName: 'ol-plot',
     distDirectory: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static'
+    assetsSubDirectory: ''
   }
 }

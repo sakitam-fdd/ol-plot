@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "nature-dom-util": "^1.0.0",
+    "observable-emit": "^1.0.1",
     "openlayers": "^4.3.1"
   },
   "devDependencies": {

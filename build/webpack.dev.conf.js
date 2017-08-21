@@ -37,7 +37,7 @@ module.exports = merge(baseWebpackConfig, {
     new FriendlyErrorsPlugin(),
     // extract css into its own file
     new ExtractTextPlugin({
-      filename: utils.assetsPath('css/' + config.base.libraryName + '.css'),
+      filename: utils.assetsPath('/' + config.base.fileName + '.css'),
       allChunks: true
     })
   ]
