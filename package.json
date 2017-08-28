@@ -2,7 +2,7 @@
   "name": "ol-plot",
   "version": "3.0.0",
   "description": "openlayers plot",
-  "main": "src/index.js",
+  "main": "dist/ol-plot.js",
   "scripts": {
     "dev": "node build/development.js",
     "travisDev": "node build/development.js --env nowatch",
@@ -20,9 +20,12 @@
     "url": "https://github.com/sakitam-fdd/GISpacePlot.git"
   },
   "dependencies": {
+    "get-canvas-context": "^1.0.2",
+    "html2canvas": "^0.5.0-beta4",
     "nature-dom-util": "^1.0.0",
     "observable-emit": "^1.0.1",
-    "openlayers": "^4.3.1"
+    "openlayers": "^4.3.1",
+    "svg-to-image": "^1.1.3"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",

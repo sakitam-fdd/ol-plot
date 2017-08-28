@@ -162,23 +162,61 @@
     }
   }
 
-  function onblur_ (event) {
-    console.log(event)
-  }
-
-  function onfoucs_ (event) {
-    console.log(event)
+  function getuuid () {
+    var s = [], hexDigits = '0123456789abcdef'
+    for (var i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = '4'
+    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1)
+    s[8] = s[13] = s[18] = s[23] = '-'
+    return (s.join(''))
   }
 
   function creatTextArea (params) {
     var text = document.createElement('textarea')
+    var id = getuuid()
     text.style.width = params['width'] + 'px'
     text.style.height = params['height'] + 'px'
     text.setAttribute('autofocus', true)
+    text.setAttribute('id', id)
+    text.setAttribute('data-coordinates', JSON.stringify(params['center']))
     text.className = 'text-area'
-    text.onblur = onblur_
-    text.onfocus = onfoucs_
+    text.onblur = function (event) {
+      var _id = this.getAttribute('id')
+      var _center = this.getAttribute('data-coordinates')
+      var image_ = new olPlot.TextArea(this, {
+        width: params['width'],
+        height: params['height']
+      })
+      image_.getImage(text, {
+        width: params['width'],
+        height: params['height']
+      }).then(function (icon) {
+        var overlay_ = map.getOverlayById(_id)
+        map.removeOverlay(overlay_)
+        var feature_ = new ol.Feature({
+          geometry: new ol.geom.Point(JSON.parse(_center))
+        })
+        feature_.setId(id)
+        var _style = new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            opacity: 0.75,
+            src: icon.src
+          })
+        })
+        feature_.setStyle(_style)
+        source.addFeature(feature_)
+      })
+    }
+    text.onfocus = function (event) {
+      console.log(event)
+    }
     var overlay = new ol.Overlay({
+      id: id,
       element: text,
       position: params['center'],
       positioning: 'center-center'

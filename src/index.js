@@ -2,7 +2,13 @@
  * Created by FDD on 2017/7/21.
  * @desc 军事标绘
  */
+import 'core-js/es6/set'
+import 'core-js/es6/symbol'
+import 'core-js/es6/reflect'
+import 'core-js/es6/promise'
 import TextSprite from './text/index'
+import _CanvasText from './text/CanvasText'
+import _TextArea from './text/TextArea'
 class olPlot {
   constructor (map) {
     if (map && map instanceof ol.Map) {
@@ -21,6 +27,8 @@ class olPlot {
   getVersion () {
     return this.version
   }
+  static CanvasText = _CanvasText
+  static TextArea = _TextArea
 }
 
 export default olPlot
