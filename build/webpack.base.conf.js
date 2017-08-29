@@ -34,7 +34,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        include: [resolve('src'), resolve('node_modules/nature-dom-util'),resolve('test')]
       }
     ]
   },

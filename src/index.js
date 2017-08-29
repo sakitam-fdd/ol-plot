@@ -9,6 +9,7 @@ import 'core-js/es6/promise'
 import TextSprite from './text/index'
 import _CanvasText from './text/CanvasText'
 import _TextArea from './text/TextArea'
+import _StyleText from './text/StyleText'
 class olPlot {
   constructor (map) {
     if (map && map instanceof ol.Map) {
@@ -29,6 +30,7 @@ class olPlot {
   }
   static CanvasText = _CanvasText
   static TextArea = _TextArea
+  static StyleText = _StyleText
 }
 
 export default olPlot

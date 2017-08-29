@@ -1,22 +1,20 @@
 /**
- * Created by FDD on 2017/8/28.
- * @desc 采用文本框转换为canvas叠加到画布
+ * Created by FDD on 2017/8/29.
+ * @desc 采用openlayers内置文本样式构造动态文本框
  */
 import mixin from '../utils/mixins'
 import {getuuid} from '../utils/utils'
 import * as Events from 'nature-dom-util/src/events/Events'
 import {DYNAMIC_TEXT_LAYERNAME} from '../constants'
 import Observable from 'observable-emit'
-import html2canvas from 'html2canvas'
-class TextArea extends mixin(Observable) {
-  constructor (map, params) {
+class StyleText extends mixin(Observable) {
+  constructor (map) {
     super()
     if (map && map instanceof ol.Map) {
       this.map = map
     } else {
       throw new Error('传入的不是地图对象！')
     }
-    this.options = params || {}
     this.textOverlay = null
     this.draw = null
     this.vectorLayer = this.createVectorLayer(DYNAMIC_TEXT_LAYERNAME, {
@@ -24,7 +22,6 @@ class TextArea extends mixin(Observable) {
       create: true
     })
     this.activeInteraction()
-    this.map.getView().on('change:resolution', this._handleResolutionChange, this)
     Observable.call(this)
   }
 
@@ -124,33 +121,12 @@ class TextArea extends mixin(Observable) {
   }
 
   /**
-   * 处理分辨率变化事件
-   * @param event
-   * @private
-   */
-  _handleResolutionChange (event) {
-    if (this.options['zoomWithView'] && this.feature && this.feature instanceof ol.Feature) {
-      let attr = this.feature.getProperties()
-      let _style = new ol.style.Style({
-        image: new ol.style.Icon({
-          anchor: [0.5, 0.5],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          opacity: 0.75,
-          src: attr.src,
-          scale: (attr['resolution'] / event.target.getResolution())
-        })
-      })
-      this.feature.setStyle(_style)
-    }
-  }
-
-  /**
    * 交互结束事件
    * @param event
    */
   drawEnd (event) {
     if (event && event.feature) {
+      this.feature = event.feature
       this.map.removeInteraction(this.draw)
       let modify = new ol.interaction.Modify({source: this.vectorLayer.getSource()})
       this.map.addInteraction(modify)
@@ -196,34 +172,38 @@ class TextArea extends mixin(Observable) {
    * @param event
    */
   textOnBlur (event) {
-    this.getImage(event.target).then(icon => {
-      let _id = this.textOverlay.getElement().getAttribute('id')
-      let coordinates = this.textOverlay.getElement().getAttribute('data-coordinates')
-      this.feature = new ol.Feature({
-        geometry: new ol.geom.Point(JSON.parse(coordinates))
-      })
-      this.feature.setId(_id)
-      this.feature.setProperties({
-        coordinates: JSON.parse(coordinates),
-        layerName: DYNAMIC_TEXT_LAYERNAME,
-        id: _id,
-        src: icon.src,
-        resolution: this.map.getView().getResolution()
-      })
-      let _style = new ol.style.Style({
-        image: new ol.style.Icon({
-          anchor: [0.5, 0.5],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          opacity: 0.75,
-          src: icon.src
-        })
-      })
-      this.feature.setStyle(_style)
-      this.vectorLayer.getSource().addFeature(this.feature)
-      let overlay_ = this.map.getOverlayById(_id)
-      this.map.removeOverlay(overlay_)
+    let textStyle = this.decodeTextAreaToStyle(event)
+    let _style = this.vectorLayer.getStyle().clone()
+    _style.setText(textStyle)
+    this.feature.setStyle(_style)
+    let _id = this.textOverlay.getElement().getAttribute('id')
+    let overlay_ = this.map.getOverlayById(_id)
+    this.map.removeOverlay(overlay_)
+    this.vectorLayer.getSource().addFeature(this.feature)
+  }
+
+  /**
+   * 获取字体样式信息
+   * @param event
+   * @returns {ol.style.Text}
+   */
+  decodeTextAreaToStyle (event) {
+    let text = new ol.style.Text({
+      font: '',
+      offsetX: 0,
+      offsetY: 0,
+      scale: 1,
+      rotateWithView: true,
+      rotation: 0,
+      text: event.target.value,
+      textAlign: 'start',
+      textBaseline: 'alphabetic',
+      fill: new ol.style.Fill({
+        color: '#333'
+      }),
+      stroke: undefined
     })
+    return text
   }
 
   /**
@@ -249,40 +229,7 @@ class TextArea extends mixin(Observable) {
       this.textOverlay.setElement(text)
     }
   }
-
-  /**
-   * 获取dom canvas
-   * @param data
-   * @returns {*}
-   */
-  getCanvas (data) {
-    try {
-      return html2canvas(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  /**
-   * 获取dom image
-   * @param data
-   * @returns {Promise.<T>|*}
-   */
-  getImage (data) {
-    try {
-      let image_ = html2canvas(data).then(canvas => {
-        let _image = new Image()
-        _image.src = canvas.toDataURL('image/png')
-        return new Promise((resolve) => {
-          resolve(_image)
-        })
-      }).catch(error => {
-        console.info(error)
-      })
-      return image_
-    } catch (error) {
-      console.log(error)
-    }
-  }
 }
-export default TextArea
+
+export default StyleText
+
