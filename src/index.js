@@ -2,6 +2,7 @@
  * Created by FDD on 2017/7/21.
  * @desc 军事标绘
  */
+import './scss/index'
 import 'core-js/es6/set'
 import 'core-js/es6/symbol'
 import 'core-js/es6/reflect'
