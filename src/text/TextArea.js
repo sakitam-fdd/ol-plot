@@ -5,7 +5,7 @@
 import mixin from '../utils/mixins'
 import {getuuid} from '../utils/utils'
 import * as Events from 'nature-dom-util/src/events/Events'
-import {DYNAMIC_TEXT_LAYERNAME, DEF_TEXT_STYEL} from '../constants'
+import {DYNAMIC_TEXT_LAYERNAME, DEF_TEXT_STYEL, DYNAMIC_TEXT_LABEL_LAYERNAME} from '../constants'
 import Observable from 'observable-emit'
 import html2canvas from 'html2canvas'
 import autosize from 'autosize'
@@ -51,6 +51,19 @@ class TextArea extends mixin(Observable) {
     this.feature_ = null
 
     /**
+     * 关联空间信息
+     * @type {null}
+     */
+    this.labelGeomtory = null
+
+    /**
+     * 关联要素
+     * @type {null}
+     * @private
+     */
+    this._labelFeature = null
+
+    /**
      * 当前随机id（标识当前唯一）
      */
     this._uuid = getuuid()
@@ -60,6 +73,10 @@ class TextArea extends mixin(Observable) {
      * @type {*}
      */
     this.vectorLayer = this.createVectorLayer(DYNAMIC_TEXT_LAYERNAME, {
+      selectable: false,
+      create: true
+    })
+    this.labelVectorLayer = this.createVectorLayer(DYNAMIC_TEXT_LABEL_LAYERNAME, {
       selectable: false,
       create: true
     })
@@ -227,6 +244,7 @@ class TextArea extends mixin(Observable) {
       })
       this.modify.on('modifyend', this.modifyend, this)
       this.map.addInteraction(this.modify)
+      this.labelGeomtory = event.feature.getGeometry()
       let extent = event.feature.getGeometry().getExtent()
       this.center = [extent[2], extent[3]]
       let topLeft = this.map.getPixelFromCoordinate([extent[0], extent[1]])
@@ -277,6 +295,9 @@ class TextArea extends mixin(Observable) {
       this.feature = new ol.Feature({
         geometry: new ol.geom.Point(JSON.parse(coordinates))
       })
+      let _labelFeature = new ol.Feature({
+        geometry: this.labelGeomtory
+      })
       this.feature.setId(this._uuid)
       this.feature.setProperties({
         coordinates: JSON.parse(coordinates),
@@ -284,7 +305,8 @@ class TextArea extends mixin(Observable) {
         layerName: DYNAMIC_TEXT_LAYERNAME,
         id: this._uuid,
         src: icon.src,
-        resolution: this.map.getView().getResolution()
+        resolution: this.map.getView().getResolution(),
+        labelFeature: _labelFeature
       })
       let _style = new ol.style.Style({
         image: new ol.style.Icon({
@@ -295,8 +317,18 @@ class TextArea extends mixin(Observable) {
           src: icon.src
         })
       })
+      _labelFeature.setStyle(new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: 'rgba(255, 0, 0, 0)',
+          width: 2
+        })
+      }))
       this.feature.setStyle(_style)
       this.vectorLayer.getSource().addFeature(this.feature)
+      this.labelVectorLayer.getSource().addFeature(_labelFeature)
       let overlay_ = this.map.getOverlayById(this._uuid)
       this.map.removeOverlay(overlay_)
     })
@@ -342,7 +374,6 @@ class TextArea extends mixin(Observable) {
         this.updateTextArea()
       }
     }
-    console.log(event)
   }
 
   /**

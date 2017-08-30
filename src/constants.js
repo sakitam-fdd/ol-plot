@@ -5,6 +5,7 @@
 
 export const BASE_LAYERNAME = 'ol-plot-vector-layer' // 矢量图层名，（唯一标识）
 export const DYNAMIC_TEXT_LAYERNAME = 'dynamic-text-vector-layer' // 文本标绘图层
+export const DYNAMIC_TEXT_LABEL_LAYERNAME = 'dynamic-text-label_vector-layer' // 文本标绘图层
 export const DEF_TEXT_STYEL = { // 默认文本框样式
   backgroundColor: '#fff',
   borderRadius: '2px',

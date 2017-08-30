@@ -84,7 +84,6 @@
   <button class="btn btn-success" onclick="addLabel()">打开百度</button>
 </div>
 <script src="../node_modules/openlayers/dist/ol-debug.js"></script>
-<script src="../dist/ol-plot.js"></script>
 <script type="text/javascript">
   var source = new ol.source.Vector({wrapX: false});
   var vector = new ol.layer.Vector({
@@ -109,8 +108,34 @@
   })
 
   function addLabel () {
-    var text= new olPlot.TextArea(map)
-    console.log(text)
+    var json = {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [[[-5e6, -1e6], [-4e6, 1e6], [-3e6, -1e6]]]
+      }
+    }
+    var feature = new ol.Feature({
+      geometry: new ol.geom.Polygon([[[-5e6, -1e6], [-4e6, 1e6], [-3e6, -1e6]]])
+    })
+    var _style = new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.7)'
+      }),
+      stroke: new ol.style.Stroke({
+        color: 'rgba(255, 0, 0, 0.8)',
+        width: 2
+      }),
+      image: new ol.style.Icon({
+        anchor: [0.5, 0.5],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        opacity: 0.75,
+        src: '../asset/logo.png'
+      })
+    })
+    feature.setStyle(_style)
+    source.addFeature(feature)
   }
 </script>
 </body>
