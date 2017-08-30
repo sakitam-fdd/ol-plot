@@ -8,6 +8,7 @@ import * as Events from 'nature-dom-util/src/events/Events'
 import {DYNAMIC_TEXT_LAYERNAME, DEF_TEXT_STYEL} from '../constants'
 import Observable from 'observable-emit'
 import html2canvas from 'html2canvas'
+import autosize from 'autosize'
 class TextArea extends mixin(Observable) {
   constructor (map, params) {
     super()
@@ -28,6 +29,12 @@ class TextArea extends mixin(Observable) {
      * @type {null}
      */
     this.draw = null
+
+    /**
+     * 修改工具
+     * @type {null}
+     */
+    this.modify = null
 
     /**
      * 当前鼠标位置对于坐标
@@ -152,6 +159,22 @@ class TextArea extends mixin(Observable) {
   activeInteraction () {
     this.draw = new ol.interaction.Draw({
       // source: this.vectorLayer.getSource(),
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0.7)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: 'rgba(255, 0, 0, 0.8)',
+          width: 2
+        }),
+        image: new ol.style.Icon({
+          anchor: [1, 1],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          opacity: 0.75,
+          src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgklEQVQ4T41T0W3CQAy1lfwRqR0h/CE5UhkBJmiZADpB0wlKJwA2aDegE5QR+Igl/noj9OPuLydXPuXQEYUKS5FyPvvd87ONRDRFxEdr7c4Y8ws3WFmW90VRvIjIF1ZVtQaANxH59N6v8zwvRaQEgCMATDu88I+Ipm1bk2XZHhEfAOAdFW00Gh2YOQafOeidHoaYEdGHc65GDZhMJuXpdDJ99hqkPmZe9e9iTgCoqmrWNM0hDerq/FGftXbcZxFzAgARrZg5vBaNiGpE3OhZRF6Zedu7DzkRYMrMKlQKYBBRQVVgw8zj3n3IGWSg9ESkds6tiqJQbe4AYJ6WGVkPAqh4+romdP9LbXMqZh/gXIKqm+d5EK9vbduOY7d0AAdL6AYLmqbRAQtGRMc4ONF/wSC2RF/PsuwbABapqLEjKqb3fq4sLtoYh6Lbiydr7TbtuwYDgH5qB9XmPEjdKG+Y+Xmo7ms+Lcs5N0uX6ei9X9y4TGtEXIZlukb7PzbdmNcisv8DtQILak2vZsYAAAAASUVORK5CYII='
+        })
+      }),
       type: 'Circle',
       geometryFunction: ol.interaction.Draw.createBox()
     })
@@ -169,7 +192,7 @@ class TextArea extends mixin(Observable) {
       let attr = this.feature.getProperties()
       let _style = new ol.style.Style({
         image: new ol.style.Icon({
-          anchor: [0.5, 0.5],
+          anchor: [1, 0],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
           opacity: 0.75,
@@ -189,10 +212,23 @@ class TextArea extends mixin(Observable) {
   drawEnd (event) {
     if (event && event.feature) {
       this.map.removeInteraction(this.draw)
-      let modify = new ol.interaction.Modify({source: this.vectorLayer.getSource()})
-      this.map.addInteraction(modify)
+      this.modify = new ol.interaction.Modify({
+        source: this.vectorLayer.getSource(),
+        pixelTolerance: 30,
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            opacity: 0.75,
+            src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAArklEQVQ4T6WS0Q3CMAxEXzdhE9gARqAbMAIjwAZsAGzAKGUS0FWx5AaniYh/osi+l7Pjgc4YOvXUADfgA4ylh9YAEh+S8F6ClABHYAdMCbABXoCgi4gAElvhOVXb6XNzKgeYUIWKHPAzEw9Qcg9cnEe1oZB9ixPwsJlEgGsjYHYZteC/LWpBOmsx3IOuIZp7QbbA+59vNIgNVfent+0XoWWVFz23LFJes3qvOajCvieEIxEQO7YYAAAAAElFTkSuQmCC'
+          })
+        })
+      })
+      this.modify.on('modifyend', this.modifyend, this)
+      this.map.addInteraction(this.modify)
       let extent = event.feature.getGeometry().getExtent()
-      this.center = ol.extent.getCenter(extent)
+      this.center = [extent[2], extent[3]]
       let topLeft = this.map.getPixelFromCoordinate([extent[0], extent[1]])
       let bottomRight = this.map.getPixelFromCoordinate([extent[2], extent[3]])
       this.updateTextArea({
@@ -216,13 +252,15 @@ class TextArea extends mixin(Observable) {
     text.setAttribute('id', this._uuid)
     text.setAttribute('data-coordinates', JSON.stringify(params['center']))
     text.className = 'ol-plot-text-area'
+    autosize(text)
     Events.listen(text, 'blur', this.textOnBlur, this)
     Events.listen(text, 'focus', this.textOnFocus, this)
+    Events.listen(text, 'autosize:resized', this.textResized, this)
     this.textOverlay = new ol.Overlay({
       id: this._uuid,
       element: text,
       position: params['center'],
-      positioning: 'center-center'
+      positioning: 'top-right'
     })
     this.setTextAreaStyle(DEF_TEXT_STYEL)
     this.map.addOverlay(this.textOverlay)
@@ -250,7 +288,7 @@ class TextArea extends mixin(Observable) {
       })
       let _style = new ol.style.Style({
         image: new ol.style.Icon({
-          anchor: [0.5, 0.5],
+          anchor: [1.01, 0],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
           opacity: 0.75,
@@ -273,6 +311,41 @@ class TextArea extends mixin(Observable) {
   }
 
   /**
+   * 文本框大小变化
+   * @param event
+   */
+  textResized (event) {
+    console.log(event)
+  }
+
+  /**
+   * 修改要素位置
+   * @param event
+   */
+  modifyend (event) {
+    if (event && event.type === 'modifyend' && event.target) {
+      let features = event.features.getArray()
+      if (features.length > 0) {
+        event.features.getArray().every(feature => {
+          if (feature && feature instanceof ol.Feature && feature.getId() === this._uuid) {
+            let extent = feature.getGeometry().getExtent()
+            this.center = [extent[2], extent[3]]
+            this.updateTextArea()
+            return false
+          } else {
+            return true
+          }
+        })
+      } else if (this.feature) {
+        let extent = this.feature.getGeometry().getExtent()
+        this.center = [extent[2], extent[3]]
+        this.updateTextArea()
+      }
+    }
+    console.log(event)
+  }
+
+  /**
    * 更新文本框
    * @param params
    */
@@ -281,9 +354,8 @@ class TextArea extends mixin(Observable) {
       this.creatTextArea(params)
     } else {
       let text = this.textOverlay.getElement()
-      text.style.width = params['width'] + 'px'
-      text.style.height = params['height'] + 'px'
-      text.setAttribute('data-coordinates', JSON.stringify(params['center']))
+      text.setAttribute('data-coordinates', JSON.stringify(this.center))
+      this.textOverlay.setPosition(this.center)
       this.textOverlay.setElement(text)
       this.map.render()
     }
@@ -346,6 +418,8 @@ class TextArea extends mixin(Observable) {
       let feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
         return feature
       })
+      this.coordinate_ = evt.coordinate
+      this.feature_ = feature
       if (feature && feature.getId() === this._uuid) {
         this.featureOnFocus()
       }
@@ -357,7 +431,7 @@ class TextArea extends mixin(Observable) {
    * @param evt
    */
   _handleDragEvent (evt) {
-    if (!this.coordinate_) {
+    if (!this.coordinate_ || !this.feature_) {
       return
     }
     let deltaX = evt.coordinate[0] - this.coordinate_[0]
@@ -375,9 +449,7 @@ class TextArea extends mixin(Observable) {
    * @param evt
    */
   _handleMoveEvent (evt) {
-    if (this.feature_) {
-      this.feature_ = this.feature_
-    } else {
+    if (evt) {
       let map = evt.map
       this.feature_ = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
         return feature

@@ -20,6 +20,7 @@
     "url": "https://github.com/sakitam-fdd/GISpacePlot.git"
   },
   "dependencies": {
+    "autosize": "^4.0.0",
     "get-canvas-context": "^1.0.2",
     "html2canvas": "^0.5.0-beta4",
     "nature-dom-util": "^1.1.0",
