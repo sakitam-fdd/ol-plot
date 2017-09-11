@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "openlayers plot",
   "main": "dist/ol-plot.js",
+  "module": "src/index.js",
   "scripts": {
     "dev": "node build/development.js",
     "travisDev": "node build/development.js --env nowatch",

@@ -82,9 +82,7 @@ class TextArea extends mixin(Observable) {
     })
     this.activeInteraction()
     this.map.getView().on('change:resolution', this._handleResolutionChange, this)
-    this.map.on('singleclick', this._handleSingleClick, this)
     this.map.on('pointerdrag', this._handleDragEvent, this)
-    this.map.on('pointermove', this._handleMoveEvent, this)
     Observable.call(this)
   }
 
@@ -439,25 +437,6 @@ class TextArea extends mixin(Observable) {
   }
 
   /**
-   * 处理鼠标点击事件
-   * @param evt
-   * @returns {boolean}
-   */
-  _handleSingleClick (evt) {
-    if (evt.originalEvent.button === 0) {
-      let map = evt.map
-      let feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-        return feature
-      })
-      this.coordinate_ = evt.coordinate
-      this.feature_ = feature
-      if (feature && feature.getId() === this._uuid) {
-        this.featureOnFocus()
-      }
-    }
-  }
-
-  /**
    * 处理鼠标拖拽事件
    * @param evt
    */
@@ -473,19 +452,6 @@ class TextArea extends mixin(Observable) {
     this.coordinate_[0] = evt.coordinate[0]
     this.coordinate_[1] = evt.coordinate[1]
     this.feature_.dispatchEvent('featureMove')
-  }
-
-  /**
-   * 处理鼠标移动事件
-   * @param evt
-   */
-  _handleMoveEvent (evt) {
-    if (evt) {
-      let map = evt.map
-      this.feature_ = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-        return feature
-      })
-    }
   }
 
   /**

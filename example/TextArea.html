@@ -104,12 +104,20 @@
     ]
   })
 
+  var text = new olPlot.TextArea(map)
   map.on('click', function (event) {
-    console.log(event.coordinate)
+    if (event.originalEvent.button === 0) {
+      var map = event.map
+      var feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+        return feature
+      })
+      if (feature) {
+        text.featureOnFocus()
+      }
+    }
   })
 
   function addLabel () {
-    var text= new olPlot.TextArea(map)
     console.log(text)
   }
 </script>
