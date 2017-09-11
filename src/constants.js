@@ -1,11 +1,12 @@
 /**
- * Created by FDD on 2017/8/29.
- * @desc 相关静态常量
+ * Created by FDD on 2017/5/22.
+ * @desc 常用变量
  */
-
+export const FITTING_COUNT = 100
+export const HALF_PI = Math.PI / 2
 export const BASE_LAYERNAME = 'ol-plot-vector-layer' // 矢量图层名，（唯一标识）
-export const DYNAMIC_TEXT_LAYERNAME = 'dynamic-text-vector-layer' // 文本标绘图层
-export const DYNAMIC_TEXT_LABEL_LAYERNAME = 'dynamic-text-label_vector-layer' // 文本标绘图层
+export const BASE_HELP_CONTROL_POINT_ID = 'plot-helper-control-point-div' // 控制点要素的基类id
+export const BASE_HELP_HIDDEN = 'plot-helper-hidden-div' // 父类隐藏容器
 export const DEF_TEXT_STYEL = { // 默认文本框样式
   backgroundColor: '#fff',
   borderRadius: '2px',

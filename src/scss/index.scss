@@ -1,0 +1,21 @@
+/*标绘*/
+.plot-helper-control-point-div {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #000;
+  border-radius: 100%;
+  background-color: #ffffff;
+  opacity: 0.6;
+  cursor: move;
+}
+.ol-plot-text-area-content {
+  position: relative;
+  .ol-plot-text-area-editor {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+    background-color: #4cae4c;
+  }
+}

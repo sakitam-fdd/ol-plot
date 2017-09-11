@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>军事标绘(ol3-4)</title>
+  <link rel="stylesheet" href="../node_modules/openlayers/dist/ol.css" type="text/css">
+  <link rel="stylesheet" href="../dist/ol-plot.css">
+  <style>
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      font-family: "Microsoft YaHei";
+    }
+    .user-tool {
+      position: absolute;
+      top: 10px;
+      left: calc(50% - (50% - 50px));
+    }
+    .ol-viewport {
+      position: inherit!important;
+    }
+    .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 0;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.42857143;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      -ms-touch-action: manipulation;
+      touch-action: manipulation;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      background-image: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+    .btn:focus,
+    .btn:active:focus,
+    .btn.active:focus,
+    .btn.focus,
+    .btn:active.focus,
+    .btn.active.focus {
+      outline: 5px auto -webkit-focus-ring-color;
+      outline-offset: -2px;
+    }
+    .btn:hover,
+    .btn:focus,
+    .btn.focus {
+      color: #333;
+      text-decoration: none;
+    }
+    .btn:active,
+    .btn.active {
+      background-image: none;
+      outline: 0;
+      -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    }
+    .btn-success {
+      color: #fff;
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+    }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="user-tool">
+  <button class="btn btn-success" onclick="activate('TextArea')">测试文本标绘</button>
+  <button class="btn btn-success" onclick="activate('Point')">测试画点</button>
+  <button class="btn btn-success" onclick="activate('Polyline')">测试画线</button>
+  <button class="btn btn-success" onclick="activate('Curve')">测试画曲线</button>
+  <button class="btn btn-success" onclick="activate('Arc')">测试画弓形</button>
+  <button class="btn btn-success" onclick="activate('Circle')">测试画圆</button>
+
+  <button class="btn btn-success" onclick="activate('FreeLine')">测试画自由线</button>
+  <button class="btn btn-success" onclick="activate('RectAngle')">测试画矩形</button>
+  <button class="btn btn-success" onclick="activate('Ellipse')">测试椭圆</button>
+  <button class="btn btn-success" onclick="activate('Lune')">测试弓形</button>
+  <button class="btn btn-success" onclick="activate('Sector')">测试画扇形</button>
+  <button class="btn btn-success" onclick="activate('ClosedCurve')">测试画闭合曲面</button>
+  <button class="btn btn-success" onclick="activate('Polygon')">测试多边形</button>
+  <button class="btn btn-success" onclick="activate('FreePolygon')">测试自由面</button>
+  <button class="btn btn-success" onclick="activate('GatheringPlace')">测试集结地</button>
+
+  <button class="btn btn-success" onclick="activate('DoubleArrow')">测试双箭头</button>
+  <button class="btn btn-success" onclick="activate('StraightArrow')">测试细直箭头</button>
+  <button class="btn btn-success" onclick="activate('FineArrow')">测试粗单尖头箭头</button>
+  <button class="btn btn-success" onclick="activate('AttackArrow')">测试进攻方向</button>
+  <button class="btn btn-success" onclick="activate('AssaultDirection')">测试粗单直箭头</button>
+  <button class="btn btn-success" onclick="activate('TailedAttackArrow')">测试进攻方向（尾）</button>
+  <button class="btn btn-success" onclick="activate('SquadCombat')">测试分队战斗行动</button>
+  <button class="btn btn-success" onclick="activate('TailedSquadCombat')">测试分队战斗行动（尾）</button>
+</div>
+<script src="../node_modules/openlayers/dist/ol-debug.js"></script>
+<script src="./lib/GaoDe.js"></script>
+<script src="./lib/BaiDu.js"></script>
+<script src="../dist/ol-plot.js"></script>
+<script type="text/javascript">
+  var gaodeMapLayer = new ol.layer.Tile({
+    source: new ol.source.BAIDU({
+      projection: 'EPSG:3857',
+      origin: [43.88955327932, 12.590178885765],
+      url: 'http://shangetu{0-3}.map.bdimg.com/it/u=x={x};y={y};z={z};v=009;type=sate&fm=46&app=webearth2&v=009&udt=20170908'
+    })
+  });
+  var map = new ol.Map({
+    layers: [gaodeMapLayer],
+    view: new ol.View({
+//      center: [108.93, 34.27],
+      center: [12095486.34146684, 4085090.6140265367],
+      projection: 'EPSG:3857',
+      zoom: 5
+    }),
+    target: 'map'
+  });
+
+  map.on('click', function (event) {
+    var feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+      return feature
+    })
+    if (feature && feature.get('isPlot')) {
+      plot.plotEdit.activate(feature);
+    } else {
+      plot.plotEdit.deactivate();
+    }
+  })
+
+  var plot = new olPlot(map)
+
+  // 绘制结束后，添加到FeatureOverlay显示。
+  function onDrawEnd (event) {
+    var feature = event.feature;
+    // 开始编辑
+    plot.plotEdit.activate(feature);
+  }
+
+  plot.plotDraw.on('drawEnd', onDrawEnd)
+  // 指定标绘类型，开始绘制。
+  function activate (type) {
+    plot.plotEdit.deactivate();
+    plot.plotDraw.active(type);
+  }
+</script>
+</body>
+</html>

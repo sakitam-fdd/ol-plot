@@ -1,9 +1,8 @@
 {
   "name": "ol-plot",
-  "version": "3.0.0",
+  "version": "2.0.0",
   "description": "openlayers plot",
-  "main": "dist/ol-plot.js",
-  "module": "src/index.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "node build/development.js",
     "travisDev": "node build/development.js --env nowatch",
@@ -18,16 +17,15 @@
   "author": "FDD <smileFDD@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sakitam-fdd/GISpacePlot.git"
+    "url": "https://github.com/sakitam-fdd/ol-plot.git"
   },
   "dependencies": {
     "autosize": "^4.0.0",
-    "get-canvas-context": "^1.0.2",
+    "core-js": "^2.5.1",
     "html2canvas": "^0.5.0-beta4",
     "nature-dom-util": "^1.1.0",
     "observable-emit": "^1.0.1",
-    "openlayers": "^4.3.1",
-    "svg-to-image": "^1.1.3"
+    "openlayers": "^4.3.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
@@ -37,17 +35,14 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-transform-runtime": "^6.22.0",
-    "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.3.2",
     "babel-preset-es2015": "^6.0.0",
     "babel-preset-stage-2": "^6.22.0",
     "babel-register": "^6.22.0",
-    "yargs": "^6.0.0",
     "chai": "^3.5.0",
     "chalk": "^1.1.3",
     "compression-webpack-plugin": "^0.4.0",
     "copy-webpack-plugin": "^4.0.1",
-    "core-js": "^2.4.1",
     "css-loader": "^0.28.4",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^6.2.1",
@@ -71,7 +66,8 @@
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.18.0",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "yargs": "^6.0.0"
   },
   "engines": {
     "node": ">= 4.0.0",

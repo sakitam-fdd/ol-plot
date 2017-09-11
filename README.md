@@ -1,4 +1,4 @@
-# openlayers 扩展标绘V3.0
+# openlayers 扩展标绘V2.0
 
 [![Build Status](https://www.travis-ci.org/sakitam-fdd/ol-plot.svg?branch=master)](https://www.travis-ci.org/sakitam-fdd/ol-plot)
 [![NPM](https://nodei.co/npm/ol-plot.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ol-plot/)
