@@ -3,9 +3,9 @@
  * @desc 采用openlayers内置文本样式构造动态文本框
  */
 import mixin from '../utils/mixins'
-import {getuuid} from '../utils/utils'
+import {getuuid} from '../../Utils/utils'
 import * as Events from 'nature-dom-util/src/events/Events'
-import {DYNAMIC_TEXT_LAYERNAME} from '../constants'
+import {DYNAMIC_TEXT_LAYERNAME} from '../../Constants'
 import Observable from 'observable-emit'
 class StyleText extends mixin(Observable) {
   constructor (map) {

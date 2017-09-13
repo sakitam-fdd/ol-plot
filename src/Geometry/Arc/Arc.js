@@ -2,13 +2,13 @@
  * Created by FDD on 2017/5/22.
  * @desc 标绘画弓形算法，继承线要素相关方法和属性
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import {ARC} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 class Arc extends (ol.geom.LineString) {
   constructor (points, params) {
     super()
     ol.geom.LineString.call(this, [])
-    this.type = PlotTypes.ARC
+    this.type = ARC
     this.fixPointCount = 3
     this.set('params', params)
     this.setPoints(points)
@@ -73,7 +73,7 @@ class Arc extends (ol.geom.LineString) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

@@ -2,13 +2,13 @@
  * Created by FDD on 2017/5/22.
  * @desc 标绘曲线算法
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import {CURVE} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 class Curve extends (ol.geom.LineString) {
   constructor (points, params) {
     super()
     ol.geom.LineString.call(this, [])
-    this.type = PlotTypes.CURVE
+    this.type = CURVE
     this.t = 0.3
     this.set('params', params)
     this.setPoints(points)
@@ -18,7 +18,10 @@ class Curve extends (ol.geom.LineString) {
    * 执行动作
    */
   generate () {
-    if (this.getPointCount() === 2) {
+    let count = this.getPointCount()
+    if (count < 2) {
+      return
+    } else if (count === 2) {
       this.setCoordinates(this.points)
     } else {
       let points = PlotUtils.getCurvePoints(this.t, this.points)
@@ -60,7 +63,7 @@ class Curve extends (ol.geom.LineString) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

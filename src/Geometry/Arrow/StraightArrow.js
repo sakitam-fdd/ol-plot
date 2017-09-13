@@ -4,13 +4,13 @@
  * @Inherits ol.geom.LineString
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {STRAIGHT_ARROW} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 class StraightArrow extends (ol.geom.LineString) {
   constructor (points, params) {
     super()
     ol.geom.LineString.call(this, [])
-    this.type = PlotTypes.STRAIGHT_ARROW
+    this.type = STRAIGHT_ARROW
     this.fixPointCount = 2
     this.maxArrowLength = 3000000
     this.arrowLengthScale = 5
@@ -75,7 +75,7 @@ class StraightArrow extends (ol.geom.LineString) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

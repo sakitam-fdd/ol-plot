@@ -1,1 +1,0 @@
-import './textarea.scss'

@@ -4,14 +4,14 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {LUNE} from '../../Utils/PlotTypes'
 import * as Constants from '../../Constants'
 import * as PlotUtils from '../../Utils/utils'
 class Lune extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.LUNE
+    this.type = LUNE
     this.fixPointCount = 3
     this.set('params', params)
     this.setPoints(points)
@@ -83,7 +83,7 @@ class Lune extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

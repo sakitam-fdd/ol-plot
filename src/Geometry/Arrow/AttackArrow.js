@@ -4,14 +4,14 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {ATTACK_ARROW} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 import * as Constants from '../../Constants'
 class AttackArrow extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.ATTACK_ARROW
+    this.type = ATTACK_ARROW
     this.headHeightFactor = 0.18
     this.headWidthFactor = 0.3
     this.neckHeightFactor = 0.85
@@ -228,7 +228,7 @@ class AttackArrow extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

@@ -3,14 +3,14 @@
  * @desc 闭合曲面
  * @Inherits ol.geom.Polygon
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import {CLOSED_CURVE} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 import * as Constants from '../../Constants'
 class ClosedCurve extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.CLOSED_CURVE
+    this.type = CLOSED_CURVE
     this.t = 0.3
     this.set('params', params)
     this.setPoints(points)
@@ -21,7 +21,9 @@ class ClosedCurve extends (ol.geom.Polygon) {
    */
   generate () {
     let points = this.getPointCount()
-    if (points === 2) {
+    if (points < 2) {
+      return false
+    } else if (points === 2) {
       this.setCoordinates([this.points])
     } else {
       let pnts = this.getPoints()
@@ -81,7 +83,7 @@ class ClosedCurve extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

@@ -2,8 +2,8 @@
  * Created by FDD on 2017/5/15.
  * @desc 基于openlayer的动态标绘
  */
-import Plots from '../Geometry/index'
-import PlotTypes from '../Utils/PlotTypes'
+import * as Plots from '../Geometry/index'
+import * as PlotTypes from '../Utils/PlotTypes'
 class PlotFactory {
   constructor (map) {
     this.version = '1.0.0'

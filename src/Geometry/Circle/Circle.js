@@ -2,22 +2,27 @@
  * Created by FDD on 2017/5/22.
  * @desc 标绘画圆算法，继承面要素相关方法和属性
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import {CIRCLE} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 class Circle extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.CIRCLE
+    this.type = CIRCLE
     this.fixPointCount = 2
     this.set('params', params)
     this.setPoints(points)
   }
 
   generate () {
-    let center = this.points[0]
-    let radius = PlotUtils.MathDistance(center, this.points[1])
-    this.setCoordinates([this.generatePoints(center, radius)])
+    let count = this.getPointCount()
+    if (count < 2) {
+      return
+    } else {
+      let center = this.points[0]
+      let radius = PlotUtils.MathDistance(center, this.points[1])
+      this.setCoordinates([this.generatePoints(center, radius)])
+    }
   }
 
   /**
@@ -71,7 +76,7 @@ class Circle extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

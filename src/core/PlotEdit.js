@@ -182,7 +182,9 @@ class PlotEdit extends Observable {
       let index = this.elementTable[this.activeControlPointId]
       plot.updatePoint(coordinate, index)
       let overlay = this.map.getOverlayById(this.activeControlPointId)
-      overlay.setPosition(coordinate)
+      if (overlay) {
+        overlay.setPosition(coordinate)
+      }
     }
   }
 
@@ -353,8 +355,10 @@ class PlotEdit extends Observable {
           newPoints.push(coordinate)
           let id = BASE_HELP_CONTROL_POINT_ID + '-' + index
           let overlay = this.map.getOverlayById(id)
-          overlay.setPosition(coordinate)
-          overlay.setPositioning('center-center')
+          if (overlay) {
+            overlay.setPosition(coordinate)
+            overlay.setPositioning('center-center')
+          }
         })
       }
       let plot = this.activePlot.getGeometry()

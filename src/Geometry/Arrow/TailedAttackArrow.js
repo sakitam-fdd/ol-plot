@@ -4,14 +4,14 @@
  * @Inherits AttackArrow
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {TAILED_ATTACK_ARROW} from '../../Utils/PlotTypes'
 import AttackArrow from './AttackArrow'
 import * as PlotUtils from '../../Utils/utils'
 class TailedAttackArrow extends AttackArrow {
   constructor (points, params) {
     super()
     AttackArrow.call(this, points, params)
-    this.type = PlotTypes.TAILED_ATTACK_ARROW
+    this.type = TAILED_ATTACK_ARROW
     this.headHeightFactor = 0.18
     this.headWidthFactor = 0.3
     this.neckHeightFactor = 0.85

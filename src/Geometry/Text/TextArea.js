@@ -7,9 +7,12 @@ import * as Events from 'nature-dom-util/src/events/Events'
 import EventType from '../../Event/EventType'
 import html2canvas from 'html2canvas'
 import autosize from 'autosize'
+import Observable from 'observable-emit'
+import mixin from '../../Utils/mixin'
 import { DEF_TEXT_STYEL } from '../../Constants'
-class TextArea {
+class TextArea extends mixin(Observable) {
   constructor (map, layer, params = {}) {
+    super()
     if (map && map instanceof ol.Map) {
       this.map = map
     } else {
@@ -63,6 +66,7 @@ class TextArea {
     this._uuid = getuuid()
     this.activeInteraction()
     this.map.getView().on('change:resolution', this._handleResolutionChange, this)
+    Observable.call(this)
   }
 
   /**
@@ -133,6 +137,7 @@ class TextArea {
         width: parseInt(Math.abs(topLeft[0] - bottomRight[0])),
         height: parseInt(Math.abs(topLeft[1] - bottomRight[1]))
       })
+      this.dispatch('TextAreaDrawEnd', event)
     } else {
       console.info('未获取到要素！')
     }

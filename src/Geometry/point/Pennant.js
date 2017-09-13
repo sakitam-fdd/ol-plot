@@ -3,13 +3,12 @@
  * @desc 点要素
  * @Inherits ol.geom.Point
  */
-import PlotTypes from '../../Utils/PlotTypes'
-const GeomPoint = ol.geom.Point
-class Pennant extends GeomPoint {
+import {PENNANT} from '../../Utils/PlotTypes'
+class Pennant extends (ol.geom.Point) {
   constructor (point, params) {
     super()
     ol.geom.Point.call(this, [])
-    this.type = PlotTypes.PENNANT
+    this.type = PENNANT
     this.options = params || {}
     this.set('params', this.options)
     this.setPoints(point)
@@ -53,7 +52,7 @@ class Pennant extends GeomPoint {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

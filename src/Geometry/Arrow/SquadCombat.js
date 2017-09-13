@@ -4,7 +4,7 @@
  * @Inherits AttackArrow
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {SQUAD_COMBAT} from '../../Utils/PlotTypes'
 import AttackArrow from './AttackArrow'
 import * as PlotUtils from '../../Utils/utils'
 import * as Constants from '../../Constants'
@@ -12,7 +12,7 @@ class SquadCombat extends AttackArrow {
   constructor (points, params) {
     super()
     AttackArrow.call(this, points, params)
-    this.type = PlotTypes.SQUAD_COMBAT
+    this.type = SQUAD_COMBAT
     this.headHeightFactor = 0.18
     this.headWidthFactor = 0.3
     this.neckHeightFactor = 0.85

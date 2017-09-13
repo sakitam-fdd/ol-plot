@@ -4,14 +4,14 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {FINE_ARROW} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 import * as Constants from '../../Constants'
 class FineArrow extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.FINE_ARROW
+    this.type = FINE_ARROW
     this.tailWidthFactor = 0.1
     this.neckWidthFactor = 0.2
     this.headWidthFactor = 0.25
@@ -80,7 +80,7 @@ class FineArrow extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

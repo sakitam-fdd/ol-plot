@@ -4,11 +4,11 @@
  * @Inherits ol.geom.LineString
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {FREE_LINE} from '../../Utils/PlotTypes'
 class FreeHandLine extends (ol.geom.LineString) {
   constructor (points, params) {
     super()
-    this.type = PlotTypes.FREE_LINE
+    this.type = FREE_LINE
     this.freehand = true
     this.set('params', params)
     this.setPoints(points)
@@ -56,7 +56,7 @@ class FreeHandLine extends (ol.geom.LineString) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

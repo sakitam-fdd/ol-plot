@@ -3,13 +3,13 @@
  * @desc 扇形
  * @Inherits ol.geom.Polygon
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import {SECTOR} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 class Sector extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.SECTOR
+    this.type = SECTOR
     this.fixPointCount = 3
     this.set('params', params)
     this.setPoints(points)
@@ -70,7 +70,7 @@ class Sector extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

@@ -4,14 +4,14 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {GATHERING_PLACE} from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
 import * as Constants from '../../Constants'
 class GatheringPlace extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.GATHERING_PLACE
+    this.type = GATHERING_PLACE
     this.t = 0.4
     this.fixPointCount = 3
     this.set('params', params)
@@ -93,7 +93,7 @@ class GatheringPlace extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

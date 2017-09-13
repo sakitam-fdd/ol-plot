@@ -1,9 +1,10 @@
-import PlotTypes from '../../Utils/PlotTypes'
+import {POLYLINE} from '../../Utils/PlotTypes'
 class Polyline extends (ol.geom.LineString) {
   constructor (points, params) {
     super()
     ol.geom.LineString.call(this, [])
-    this.type = PlotTypes.POLYLINE
+    this.type = POLYLINE
+    this.freehand = false
     this.set('params', params)
     this.setPoints(points)
   }
@@ -49,7 +50,7 @@ class Polyline extends (ol.geom.LineString) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

@@ -1,8 +1,7 @@
-## 3.0.0 (2017.08.28)
+## 2.1.0 (2017.09.13)
 
-* Modify the webpack compilation configuration
-* Adjust the directory structure
-* Reconstruction of the project system
+* 添加文本标绘，添加矢量要素获取为GeoJSON
+* 优化标绘算法，处理相关bug
 
 ## 2.0.0 (2017.08.20)
 

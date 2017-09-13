@@ -4,12 +4,12 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {POLYGON} from '../../Utils/PlotTypes'
 class Polygon extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.POLYGON
+    this.type = POLYGON
     this.set('params', params)
     this.setPoints(points)
   }
@@ -18,7 +18,12 @@ class Polygon extends (ol.geom.Polygon) {
    * 执行动作
    */
   generate () {
-    this.setCoordinates([this.points])
+    let count = this.getPointCount()
+    if (count < 2) {
+      return false
+    } else {
+      this.setCoordinates([this.points])
+    }
   }
 
   /**
@@ -55,7 +60,7 @@ class Polygon extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

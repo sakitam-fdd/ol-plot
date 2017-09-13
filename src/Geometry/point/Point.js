@@ -3,12 +3,12 @@
  * @desc 点要素
  * @Inherits ol.geom.Point
  */
-import PlotTypes from '../../Utils/PlotTypes'
+import { POINT } from '../../Utils/PlotTypes'
 class Point extends (ol.geom.Point) {
   constructor (point, params) {
     super()
     ol.geom.Point.call(this, [])
-    this.type = PlotTypes.POINT
+    this.type = POINT
     this.options = params || {}
     this.set('params', this.options)
     this.fixPointCount = 1
@@ -16,7 +16,7 @@ class Point extends (ol.geom.Point) {
   }
 
   generate () {
-    let pnt = this.points[0]
+    var pnt = this.points[0]
     this.setCoordinates(pnt)
   }
 
@@ -54,8 +54,7 @@ class Point extends (ol.geom.Point) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    console.log(this.points)
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

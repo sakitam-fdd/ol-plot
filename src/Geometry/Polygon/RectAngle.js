@@ -4,12 +4,12 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {RECTANGLE} from '../../Utils/PlotTypes'
 class RectAngle extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.RECTANGLE
+    this.type = RECTANGLE
     this.fixPointCount = 2
     this.set('params', params)
     this.setPoints(points)
@@ -69,7 +69,7 @@ class RectAngle extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }

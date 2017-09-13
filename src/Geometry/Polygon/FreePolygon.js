@@ -4,12 +4,12 @@
  * @Inherits ol.geom.Polygon
  */
 
-import PlotTypes from '../../Utils/PlotTypes'
+import {FREE_POLYGON} from '../../Utils/PlotTypes'
 class FreePolygon extends (ol.geom.Polygon) {
   constructor (points, params) {
     super()
     ol.geom.Polygon.call(this, [])
-    this.type = PlotTypes.FREEHAND_POLYGON
+    this.type = FREE_POLYGON
     this.freehand = true
     this.set('params', params)
     this.setPoints(points)
@@ -56,7 +56,7 @@ class FreePolygon extends (ol.geom.Polygon) {
    */
   setPoints (value) {
     this.points = !value ? [] : value
-    if (this.points.length >= 2) {
+    if (this.points.length >= 1) {
       this.generate()
     }
   }
