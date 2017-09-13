@@ -279,27 +279,27 @@ class PlotUtils extends mixin(olLayerLayerUtils, olStyleFactory) {
         if (olStyle_ instanceof ol.style.Icon) {
           image['type'] = 'icon'
           image['image'] = {}
-          image['imageAnchor'] = olStyle_.getAnchor()
-          image['imageColor'] = olStyle_.getColor()
-          image['imageSrc'] = olStyle_.getSrc()
-          image['imgSize'] = olStyle_.getSize()
-          image['scale'] = olStyle_.getScale()
-          image['imageRotation'] = olStyle_.getRotation()
-          image['rotateWithView'] = olStyle_.getRotateWithView()
-          image['imageOpacity'] = olStyle_.getOpacity()
-          image['snapToPixel'] = olStyle_.getSnapToPixel()
-          image['offset'] = olStyle_.getOrigin()
+          image['image']['imageAnchor'] = olStyle_.getAnchor()
+          image['image']['imageColor'] = olStyle_.getColor()
+          image['image']['imageSrc'] = olStyle_.getSrc()
+          image['image']['imgSize'] = olStyle_.getSize()
+          image['image']['scale'] = olStyle_.getScale()
+          image['image']['imageRotation'] = olStyle_.getRotation()
+          image['image']['rotateWithView'] = olStyle_.getRotateWithView()
+          image['image']['imageOpacity'] = olStyle_.getOpacity()
+          image['image']['snapToPixel'] = olStyle_.getSnapToPixel()
+          image['image']['offset'] = olStyle_.getOrigin()
         } else if (olStyle_ instanceof ol.style.RegularShape) {
           image['type'] = ''
           image['image'] = {}
-          image['fill'] = this.getFill_(olStyle_)
-          image['points'] = olStyle_.getPoints()
-          image['radius'] = olStyle_.getRadius()
-          image['radius2'] = olStyle_.getRadius2()
-          image['angle'] = olStyle_.getAngle()
-          image['stroke'] = this.getStroke_(olStyle_)
-          image['rotateWithView'] = olStyle_.getRotateWithView()
-          image['snapToPixel'] = olStyle_.getSnapToPixel()
+          image['image']['fill'] = this.getFill_(olStyle_)
+          image['image']['points'] = olStyle_.getPoints()
+          image['image']['radius'] = olStyle_.getRadius()
+          image['image']['radius2'] = olStyle_.getRadius2()
+          image['image']['angle'] = olStyle_.getAngle()
+          image['image']['stroke'] = this.getStroke_(olStyle_)
+          image['image']['rotateWithView'] = olStyle_.getRotateWithView()
+          image['image']['snapToPixel'] = olStyle_.getSnapToPixel()
         }
       }
     }
@@ -318,12 +318,14 @@ class PlotUtils extends mixin(olLayerLayerUtils, olStyleFactory) {
         if (style && style instanceof ol.style.Style) {
           // 填充颜色
           let fill = this.getFill_(style)
-          let [opacity, rgbaArray] = [1, null]
-          if (fill['fillColor']) {
+          let [opacity, rgbaArray, backgroundColor] = [1, null]
+          if (fill && fill['fillColor']) {
             rgbaArray = ol.color.asArray(fill['fillColor'])
             opacity = parseFloat(rgbaArray[3])
+            if (rgbaArray && typeof opacity === 'number') {
+              backgroundColor = this.handleBackgroundColor(ol.color.asString(rgbaArray), opacity)
+            }
           }
-          let backgroundColor = this.handleBackgroundColor(ol.color.asString(rgbaArray), opacity)
           // 边框线条
           let stroke = this.getStroke_(style)
           // 文本信息
@@ -343,6 +345,17 @@ class PlotUtils extends mixin(olLayerLayerUtils, olStyleFactory) {
       }
     } catch (e) {
       console.warn(e)
+    }
+  }
+
+  /**
+   * 移除图层上所有的数据
+   */
+  removeAllFeatures () {
+    let layer = this.getLayerByLayerName(this.layerName)
+    if (layer) {
+      let source = layer.getSource()
+      source.clear()
     }
   }
 
@@ -381,6 +394,38 @@ class PlotUtils extends mixin(olLayerLayerUtils, olStyleFactory) {
       }
     }
     return rFeatures
+  }
+
+  /**
+   * 恢复相关标绘
+   * @param features
+   */
+  addFeatures (features) {
+    if (features && Array.isArray(features) && features.length > 0) {
+      let layer = this.getLayerByLayerName(this.layerName)
+      if (!layer) {
+        layer = this.createVectorLayer(this.layerName, {
+          create: true
+        })
+      }
+      if (layer) {
+        let source = layer.getSource()
+        if (source && source instanceof ol.source.Vector) {
+          features.forEach(feature => {
+            if (feature && feature['geometry']) {
+              let feat = (new ol.format.GeoJSON()).readFeature(feature)
+              if (feature['properties']['style']) {
+                let style_ = new ol.style.Factory(feature['properties']['style'])
+                if (style_) {
+                  feat.setStyle(style_)
+                }
+              }
+              source.addFeature(feat)
+            }
+          })
+        }
+      }
+    }
   }
 }
 

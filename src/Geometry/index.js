@@ -25,6 +25,9 @@ import TailedAttackArrow from './Arrow/TailedAttackArrow'
 import SquadCombat from './Arrow/SquadCombat'
 import TailedSquadCombat from './Arrow/TailedSquadCombat'
 import GatheringPlace from './Polygon/GatheringPlace'
+import RectFlag from './Flag/RectFlag'
+import TriangleFlag from './Flag/TriangleFlag'
+import CurveFlag from './Flag/CurveFlag'
 export {
   Point,
   Pennant,
@@ -48,5 +51,8 @@ export {
   TailedAttackArrow,
   SquadCombat,
   TailedSquadCombat,
-  GatheringPlace
+  GatheringPlace,
+  RectFlag,
+  TriangleFlag,
+  CurveFlag
 }

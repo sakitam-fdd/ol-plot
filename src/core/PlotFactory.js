@@ -72,6 +72,12 @@ class PlotFactory {
         return new Plots.TailedSquadCombat(points, params)
       case PlotTypes.GATHERING_PLACE:
         return new Plots.GatheringPlace(points, params)
+      case PlotTypes.RECTFLAG:
+        return new Plots.RectFlag(points, params)
+      case PlotTypes.TRIANGLEFLAG:
+        return new Plots.TriangleFlag(points, params)
+      case PlotTypes.CURVEFLAG:
+        return new Plots.CurveFlag(points, params)
     }
     return null
   }

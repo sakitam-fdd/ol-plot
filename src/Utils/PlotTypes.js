@@ -25,6 +25,9 @@ const ASSAULT_DIRECTION = 'AssaultDirection'
 const TAILED_ATTACK_ARROW = 'TailedAttackArrow'
 const SQUAD_COMBAT = 'SquadCombat'
 const TAILED_SQUAD_COMBAT = 'TailedSquadCombat'
+const RECTFLAG = 'RectFlag'
+const TRIANGLEFLAG = 'TriangleFlag'
+const CURVEFLAG = 'CurveFlag'
 export {
   TextArea,
   ARC,
@@ -49,5 +52,8 @@ export {
   ASSAULT_DIRECTION,
   TAILED_SQUAD_COMBAT,
   TAILED_ATTACK_ARROW,
-  SQUAD_COMBAT
+  SQUAD_COMBAT,
+  RECTFLAG,
+  TRIANGLEFLAG,
+  CURVEFLAG
 }

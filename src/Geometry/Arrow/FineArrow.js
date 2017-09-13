@@ -27,20 +27,25 @@ class FineArrow extends (ol.geom.Polygon) {
    */
   generate () {
     try {
-      let pnts = this.getPoints()
-      let [pnt1, pnt2] = [pnts[0], pnts[1]]
-      let len = PlotUtils.getBaseLength(pnts)
-      let tailWidth = len * this.tailWidthFactor
-      let neckWidth = len * this.neckWidthFactor
-      let headWidth = len * this.headWidthFactor
-      let tailLeft = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, true)
-      let tailRight = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, false)
-      let headLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, false)
-      let headRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, true)
-      let neckLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, false)
-      let neckRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, true)
-      let pList = [tailLeft, neckLeft, headLeft, pnt2, headRight, neckRight, tailRight]
-      this.setCoordinates([pList])
+      let cont = this.getPointCount()
+      if (cont < 2) {
+        return false
+      } else {
+        let pnts = this.getPoints()
+        let [pnt1, pnt2] = [pnts[0], pnts[1]]
+        let len = PlotUtils.getBaseLength(pnts)
+        let tailWidth = len * this.tailWidthFactor
+        let neckWidth = len * this.neckWidthFactor
+        let headWidth = len * this.headWidthFactor
+        let tailLeft = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, true)
+        let tailRight = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, false)
+        let headLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, false)
+        let headRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, true)
+        let neckLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, false)
+        let neckRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, true)
+        let pList = [tailLeft, neckLeft, headLeft, pnt2, headRight, neckRight, tailRight]
+        this.setCoordinates([pList])
+      }
     } catch (e) {
       console.log(e)
     }

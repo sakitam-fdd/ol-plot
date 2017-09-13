@@ -150,7 +150,9 @@ class TextArea extends mixin(Observable) {
     let content = document.createElement('div')
     content.className = 'ol-plot-text-area-content'
     let text = document.createElement('textarea')
-    let editer = document.createElement('span')
+    let editer = document.createElement('div')
+    let [width, height] = [20, 20]
+    editer.innerHTML = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1505268162878" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2387" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + width + '" height="' + height + '"><defs><style type="text/css"></style></defs><path d="M959.69595 511.965208 792.498974 344.836793 792.498974 459.036741 564.963771 459.036741 564.963771 231.501538 679.162696 231.501538 511.982092 64.303538 344.819908 231.501538 459.019857 231.501538 459.019857 459.036741 231.484653 459.036741 231.484653 344.836793 64.303027 512.034792 231.484653 679.153998 231.484653 564.963259 459.019857 564.963259 459.019857 792.498462 344.819908 792.498462 512.016885 959.695438 679.162696 792.498462 564.963771 792.498462 564.963771 564.963259 792.498974 564.963259 792.498974 679.153998Z" p-id="2388"></path></svg>'
     editer.className = 'ol-plot-text-area-editor'
     text.style.width = params['width'] + 'px'
     text.style.height = params['height'] + 'px'

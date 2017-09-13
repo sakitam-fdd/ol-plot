@@ -16,6 +16,9 @@
     right: 0px;
     width: 20px;
     height: 20px;
-    background-color: #4cae4c;
+    background-color: transparent;
+    &:hover {
+      cursor: move;
+    }
   }
 }

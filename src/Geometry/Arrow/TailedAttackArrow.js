@@ -30,7 +30,9 @@ class TailedAttackArrow extends AttackArrow {
   generate () {
     try {
       let points = this.getPointCount()
-      if (points === 2) {
+      if (points < 2) {
+        return false
+      } else if (points === 2) {
         this.setCoordinates([this.points])
         return false
       } else {

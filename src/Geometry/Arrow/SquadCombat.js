@@ -27,20 +27,25 @@ class SquadCombat extends AttackArrow {
    */
   generate () {
     try {
-      let pnts = this.getPoints()
-      let tailPnts = this.getTailPoints(pnts)
-      let headPnts = this.getArrowHeadPoints(pnts, tailPnts[0], tailPnts[1])
-      let neckLeft = headPnts[0]
-      let neckRight = headPnts[4]
-      let bodyPnts = this.getArrowBodyPoints(pnts, neckLeft, neckRight, this.tailWidthFactor)
-      let count = bodyPnts.length
-      let leftPnts = [tailPnts[0]].concat(bodyPnts.slice(0, count / 2))
-      leftPnts.push(neckLeft)
-      let rightPnts = [tailPnts[1]].concat(bodyPnts.slice(count / 2, count))
-      rightPnts.push(neckRight)
-      leftPnts = PlotUtils.getQBSplinePoints(leftPnts)
-      rightPnts = PlotUtils.getQBSplinePoints(rightPnts)
-      this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse())])
+      let count = this.getPointCount()
+      if (count < 2) {
+        return false
+      } else {
+        let pnts = this.getPoints()
+        let tailPnts = this.getTailPoints(pnts)
+        let headPnts = this.getArrowHeadPoints(pnts, tailPnts[0], tailPnts[1])
+        let neckLeft = headPnts[0]
+        let neckRight = headPnts[4]
+        let bodyPnts = this.getArrowBodyPoints(pnts, neckLeft, neckRight, this.tailWidthFactor)
+        let count = bodyPnts.length
+        let leftPnts = [tailPnts[0]].concat(bodyPnts.slice(0, count / 2))
+        leftPnts.push(neckLeft)
+        let rightPnts = [tailPnts[1]].concat(bodyPnts.slice(count / 2, count))
+        rightPnts.push(neckRight)
+        leftPnts = PlotUtils.getQBSplinePoints(leftPnts)
+        rightPnts = PlotUtils.getQBSplinePoints(rightPnts)
+        this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse())])
+      }
     } catch (e) {
       console.log(e)
     }

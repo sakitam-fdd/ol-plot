@@ -106,6 +106,12 @@
   <button class="btn btn-success" onclick="activate('TailedAttackArrow')">测试进攻方向（尾）</button>
   <button class="btn btn-success" onclick="activate('SquadCombat')">测试分队战斗行动</button>
   <button class="btn btn-success" onclick="activate('TailedSquadCombat')">测试分队战斗行动（尾）</button>
+
+  <button class="btn btn-success" onclick="activate('RectFlag')">测试矩形标志旗</button>
+  <button class="btn btn-success" onclick="activate('TriangleFlag')">测试三角标志旗</button>
+  <button class="btn btn-success" onclick="activate('CurveFlag')">测试曲线标志旗</button>
+
+  <button class="btn btn-success" onclick="getFeatures()">获取标绘图层上的所有要素</button>
 </div>
 <script src="../node_modules/openlayers/dist/ol-debug.js"></script>
 <script src="./lib/GaoDe.js"></script>
@@ -134,7 +140,7 @@
     var feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
       return feature
     })
-    if (feature && feature.get('isPlot')) {
+    if (feature && feature.get('isPlot') && !plot.plotDraw.isDrawing()) {
       plot.plotEdit.activate(feature);
     } else {
       plot.plotEdit.deactivate();
@@ -155,6 +161,12 @@
   function activate (type) {
     plot.plotEdit.deactivate();
     plot.plotDraw.active(type);
+  }
+
+  function getFeatures () {
+    var features = plot.plotUtils.getFeatures()
+    plot.plotUtils.removeAllFeatures()
+    plot.plotUtils.addFeatures(features)
   }
 </script>
 </body>

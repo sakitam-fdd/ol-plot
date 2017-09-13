@@ -29,41 +29,46 @@ class DoubleArrow extends (ol.geom.Polygon) {
   generate () {
     try {
       let count = this.getPointCount()
-      let [pnt1, pnt2, pnt3] = [this.points[0], this.points[1], this.points[2]]
-      if (count === 2) {
+      if (count < 2) {
+        return false
+      } else if (count === 2) {
         this.setCoordinates([this.points])
         return false
-      } else if (count === 3) {
-        this.tempPoint4 = this.getTempPoint4(pnt1, pnt2, pnt3)
-        this.connPoint = PlotUtils.Mid(pnt1, pnt2)
-      } else if (count === 4) {
-        this.tempPoint4 = this.points[3]
-        this.connPoint = PlotUtils.Mid(pnt1, pnt2)
-      } else {
-        this.tempPoint4 = this.points[3]
-        this.connPoint = this.points[4]
       }
-      let [leftArrowPnts, rightArrowPnts] = [undefined, undefined]
-      if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
-        leftArrowPnts = this.getArrowPoints(pnt1, this.connPoint, this.tempPoint4, false)
-        rightArrowPnts = this.getArrowPoints(this.connPoint, pnt2, pnt3, true)
-      } else {
-        leftArrowPnts = this.getArrowPoints(pnt2, this.connPoint, pnt3, false)
-        rightArrowPnts = this.getArrowPoints(this.connPoint, pnt1, this.tempPoint4, true)
+      if (count > 2) {
+        let [pnt1, pnt2, pnt3] = [this.points[0], this.points[1], this.points[2]]
+        if (count === 3) {
+          this.tempPoint4 = this.getTempPoint4(pnt1, pnt2, pnt3)
+          this.connPoint = PlotUtils.Mid(pnt1, pnt2)
+        } else if (count === 4) {
+          this.tempPoint4 = this.points[3]
+          this.connPoint = PlotUtils.Mid(pnt1, pnt2)
+        } else {
+          this.tempPoint4 = this.points[3]
+          this.connPoint = this.points[4]
+        }
+        let [leftArrowPnts, rightArrowPnts] = [undefined, undefined]
+        if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
+          leftArrowPnts = this.getArrowPoints(pnt1, this.connPoint, this.tempPoint4, false)
+          rightArrowPnts = this.getArrowPoints(this.connPoint, pnt2, pnt3, true)
+        } else {
+          leftArrowPnts = this.getArrowPoints(pnt2, this.connPoint, pnt3, false)
+          rightArrowPnts = this.getArrowPoints(this.connPoint, pnt1, this.tempPoint4, true)
+        }
+        let m = leftArrowPnts.length
+        let t = (m - 5) / 2
+        let llBodyPnts = leftArrowPnts.slice(0, t)
+        let lArrowPnts = leftArrowPnts.slice(t, t + 5)
+        let lrBodyPnts = leftArrowPnts.slice(t + 5, m)
+        let rlBodyPnts = rightArrowPnts.slice(0, t)
+        let rArrowPnts = rightArrowPnts.slice(t, t + 5)
+        let rrBodyPnts = rightArrowPnts.slice(t + 5, m)
+        rlBodyPnts = PlotUtils.getBezierPoints(rlBodyPnts)
+        let bodyPnts = PlotUtils.getBezierPoints(rrBodyPnts.concat(llBodyPnts.slice(1)))
+        lrBodyPnts = PlotUtils.getBezierPoints(lrBodyPnts)
+        let pnts = rlBodyPnts.concat(rArrowPnts, bodyPnts, lArrowPnts, lrBodyPnts)
+        this.setCoordinates([pnts])
       }
-      let m = leftArrowPnts.length
-      let t = (m - 5) / 2
-      let llBodyPnts = leftArrowPnts.slice(0, t)
-      let lArrowPnts = leftArrowPnts.slice(t, t + 5)
-      let lrBodyPnts = leftArrowPnts.slice(t + 5, m)
-      let rlBodyPnts = rightArrowPnts.slice(0, t)
-      let rArrowPnts = rightArrowPnts.slice(t, t + 5)
-      let rrBodyPnts = rightArrowPnts.slice(t + 5, m)
-      rlBodyPnts = PlotUtils.getBezierPoints(rlBodyPnts)
-      let bodyPnts = PlotUtils.getBezierPoints(rrBodyPnts.concat(llBodyPnts.slice(1)))
-      lrBodyPnts = PlotUtils.getBezierPoints(lrBodyPnts)
-      let pnts = rlBodyPnts.concat(rArrowPnts, bodyPnts, lArrowPnts, lrBodyPnts)
-      this.setCoordinates([pnts])
     } catch (e) {
       console.log(e)
     }
