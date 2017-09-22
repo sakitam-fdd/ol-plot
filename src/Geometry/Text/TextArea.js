@@ -98,6 +98,16 @@ class TextArea extends mixin(Observable) {
   }
 
   /**
+   * 取消激活
+   */
+  disActiveInteraction () {
+    if (this.draw) {
+      this.map.removeInteraction(this.draw)
+      this.draw = null
+    }
+  }
+
+  /**
    * 处理分辨率变化事件
    * @param event
    * @private

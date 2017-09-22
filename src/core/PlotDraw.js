@@ -64,6 +64,12 @@ class PlotDraw extends mixin(PlotFactory, Observable, olLayerLayerUtils) {
     this.drawOverlay = null
 
     /**
+     * 文本标绘功能
+     * @type {null}
+     */
+    this.textInter = null
+
+    /**
      * 创建图层名称
      * @type {string}
      */
@@ -91,8 +97,11 @@ class PlotDraw extends mixin(PlotFactory, Observable, olLayerLayerUtils) {
     this.plotType = type
     this.plotParams = params
     if (type === 'TextArea') {
-      let textInter = new TextArea(this.map, this.drawLayer, params)
-      textInter.on('TextAreaDrawEnd', event => {
+      if (this.textInter) {
+        this.textInter.disActiveInteraction()
+      }
+      this.textInter = new TextArea(this.map, this.drawLayer, params)
+      this.textInter.on('TextAreaDrawEnd', event => {
         this.disActive()
       })
     } else {
@@ -106,6 +115,9 @@ class PlotDraw extends mixin(PlotFactory, Observable, olLayerLayerUtils) {
   disActive () {
     this.removeEventHandlers()
     this.map.removeOverlay(this.drawOverlay)
+    if (this.textInter) {
+      this.textInter.disActiveInteraction()
+    }
     this.points = []
     this.plot = null
     this.feature = null

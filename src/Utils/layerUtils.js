@@ -139,10 +139,10 @@ ol.layer.LayerUtils.prototype.createVectorLayer = function (layerName, params) {
             }),
             style: new ol.style.Style({
               fill: new ol.style.Fill({
-                color: 'rgba(67, 110, 238, 0.4)'
+                color: '#8BA2E4'
               }),
               stroke: new ol.style.Stroke({
-                color: '#7DC826',
+                color: '#1B9DE8',
                 width: 2.5
               }),
               image: new ol.style.Icon({

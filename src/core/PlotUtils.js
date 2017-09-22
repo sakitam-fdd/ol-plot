@@ -97,7 +97,7 @@ class PlotUtils extends mixin(olLayerLayerUtils, olStyleFactory) {
           let color = fill.getColor()
           if (color) {
             let tempColor = ol.color.asArray(color)
-            tempColor[3] = opacity / 10
+            tempColor[3] = opacity
             let currentColor = 'rgba(' + tempColor.join(',') + ')'
             fill.setColor(currentColor)
             feature.setStyle(tempStyle)
