@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>OSMBuildings</title>
+  <link rel="stylesheet" href="./lib/ol/ol.css" type="text/css">
+  <link rel="stylesheet" href="../dist/ol-plot.css">
+  <style>
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .menu {
+      position: absolute;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      z-index: 2;
+    }
+    .base-button {
+      height: 30px;
+      line-height: 30px;
+      background: #1b9de8;
+      color: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #bfcbd9;
+      padding: 0 10px;
+      box-shadow: 0 4px 10px rgba(73, 127, 255, .42);
+      transition: .3s;
+    }
+    .base-button:hover {
+      cursor: pointer;
+      border-color: #1b9de8;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+<div id="map">
+  <div class="menu">
+    <button class="base-button" id="active">开启文本标绘</button>
+  </div>
+</div>
+<script src="./lib/ol/ol.js"></script>
+<script src="./lib/olSourceGoogle.js"></script>
+<script src="../dist/ol-plot.js"></script>
+<script type="text/javascript">
+  var baseLayer = new ol.layer.Tile({
+    layerName: 'Google',
+    source: new ol.source.GOOGLE()
+  })
+  var map = new ol.Map({
+    layers: [
+      baseLayer
+    ],
+    target: 'map',
+    view: new ol.View({
+      projection: 'EPSG:3857',
+      center: [-245406, 5986536],
+      zoom: 19
+    })
+  });
+  document.getElementById('active').addEventListener('click', function () {
+    var plot = new olPlot(map)
+    plot.plotDraw.active('TextArea', {})
+    plot.plotDraw.on('active_textArea', function (target) {
+      console.log(target)
+      target.source.setStyle({
+        borderColor: '#0000EE',
+        backgroundColor: '#FFFFFF',
+        color: '#3e3e3e'
+      })
+    })
+  })
+</script>
+</body>
+</html>

@@ -18,8 +18,6 @@ module.exports = {
   'rules': {
     // allow paren-less arrow functions
     'arrow-parens': 0,
-    // allow
-    'new-cap': 0,
     // allow async-await
     'generator-star-spacing': 0,
     // allow debugger during development

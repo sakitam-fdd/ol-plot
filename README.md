@@ -1,7 +1,11 @@
 # openlayers 扩展标绘V2.0
 
-[![Build Status](https://www.travis-ci.org/sakitam-fdd/ol-plot.svg?branch=master)](https://www.travis-ci.org/sakitam-fdd/ol-plot)
-[![NPM](https://nodei.co/npm/ol-plot.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ol-plot/)
+[![Build Status](https://travis-ci.org/sakitam-fdd/ol-plot.svg?branch=master)](https://www.travis-ci.org/sakitam-fdd/ol-plot)
+[![NPM downloads](https://img.shields.io/npm/dm/ol-plot.svg)](https://npmjs.org/package/ol-plot)
+![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
+[![Npm package](https://img.shields.io/npm/v/ol-plot.svg)](https://www.npmjs.org/package/ol-plot)
+[![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
 
 > 军事标绘功能，支持openlayers3，4。
 
