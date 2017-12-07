@@ -4,7 +4,7 @@ const utils = require('./utils')
 const config = require('../config')
 const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const externals = require('../config/ExternalModules')
 const resolve = (dir) => {
   return path.join(__dirname, '..', dir)
 }
@@ -17,9 +17,9 @@ module.exports = {
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
-  externals: {
-    ol: 'openlayers'
-  },
+  externals: [
+    externals
+  ],
   module: {
     rules: [
       {
@@ -34,7 +34,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test'), resolve('node_modules')]
+        include: [resolve('src')]
       }
     ]
   },
@@ -43,18 +43,5 @@ module.exports = {
     alias: {
       '@': resolve('src')
     }
-  },
-  plugins: [
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        postcss: function () {
-          return [
-            autoprefixer({
-              browsers: ['ie>=8', '>1% in CN']
-            })
-          ]
-        }
-      }
-    })
-  ]
+  }
 }
