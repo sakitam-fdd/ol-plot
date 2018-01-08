@@ -1,5 +1,7 @@
 # openlayers 扩展标绘V2.0
 
+> This item has been turned into internal maintenance and this warehouse is no longer updated.
+
 [![Build Status](https://travis-ci.org/sakitam-fdd/ol-plot.svg?branch=master)](https://www.travis-ci.org/sakitam-fdd/ol-plot)
 [![NPM downloads](https://img.shields.io/npm/dm/ol-plot.svg)](https://npmjs.org/package/ol-plot)
 ![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
