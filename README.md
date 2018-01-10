@@ -1,4 +1,4 @@
-# openlayers 扩展标绘V2.0
+# openlayers 扩展标绘V2.1.2
 
 > This item has been turned into internal maintenance and this warehouse is no longer updated.
 
@@ -30,10 +30,8 @@ npm run build
 ### CDN
 
 ```bash
-https://unpkg.com/ol-plot@2.0.0/dist/ol-plot.min.js
-https://unpkg.com/ol-plot@2.0.0/dist/ol-plot.js
-https://unpkg.com/ol-plot@2.0.0/dist/ol-plot.css
-https://unpkg.com/ol-plot@2.0.0/dist/ol-plot.min.css
+https://unpkg.com/ol-plot/dist/ol-plot.js
+https://unpkg.com/ol-plot/dist/ol-plot.css
 ```
 
 ### NPM
@@ -140,3 +138,20 @@ import olPlot 'ol-plot'
 | key | type | desc |
 | :--- | :--- | :---------- |
 | `map` | `ol.Map` | 地图实例 |
+
+#### PlotUtils Methods
+
+| 方法 | 说明 | 参数 |
+| :--- | :--- | :---------- |
+| `getFeatures` | 序列化地图上所有符号 | -- |
+| `addFeatures` | 反序列化保存的符号 | `features : Array` |
+| `removeAllFeatures` | 删除所有符号 | -- |
+
+#### Events
+
+##### plotDraw on
+
+| 事件监听名 | 说明 | 参数 |
+| :--- | :--- | :---------- |
+| `drawEnd` | draw结束事件 | -- |
+| `active_textArea` | 当前激活的文本框事件 | -- |

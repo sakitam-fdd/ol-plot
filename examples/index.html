@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>军事标绘(ol3-4)</title>
-  <link rel="stylesheet" href="./lib/ol/ol.css" type="text/css">
+  <link rel="stylesheet" href="../node_modules/openlayers/dist/ol.css" type="text/css">
   <link rel="stylesheet" href="../dist/ol-plot.css">
   <style>
     html, body, #map {
@@ -113,7 +113,7 @@
 
   <button class="btn btn-success" onclick="getFeatures()">获取标绘图层上的所有要素</button>
 </div>
-<script src="./lib/ol/ol-debug.js"></script>
+<script src="../node_modules/openlayers/dist/ol.js"></script>
 <script src="./lib/GaoDe.js"></script>
 <script src="./lib/BaiDu.js"></script>
 <script src="../dist/ol-plot.js"></script>
@@ -137,6 +137,7 @@
   });
 
   map.on('click', function (event) {
+    console.log(event)
     var feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
       return feature
     })
@@ -145,9 +146,11 @@
     } else {
       plot.plotEdit.deactivate();
     }
-  })
+  });
 
-  var plot = new olPlot(map)
+  var plot = new olPlot(map, {
+    zoomToExtent: true
+  })
 
   // 绘制结束后，添加到FeatureOverlay显示。
   function onDrawEnd (event) {
@@ -157,6 +160,10 @@
   }
 
   plot.plotDraw.on('drawEnd', onDrawEnd)
+  plot.plotDraw.on('active_textArea', function (event) {
+    var style = plot.plotUtils.getPlotTextStyleCode(event.overlay)
+    console.log(style)
+  })
   // 指定标绘类型，开始绘制。
   function activate (type) {
     plot.plotEdit.deactivate();
@@ -165,7 +172,9 @@
 
   function getFeatures () {
     var features = plot.plotUtils.getFeatures()
+    console.log(JSON.stringify(features))
     plot.plotUtils.removeAllFeatures()
+    plot.plotEdit.deactivate();
     plot.plotUtils.addFeatures(features)
   }
 </script>

@@ -1,8 +1,12 @@
 build/
-examples/
+example/
 config/
-src/
+docs/
 node_modules/
-package-lock.json
+test/
 .editorconfig
 .babelrc
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
