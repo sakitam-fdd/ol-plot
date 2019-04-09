@@ -16,7 +16,8 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })] : []),
     scss({
-      output: resolve(_package.style)
+      output: resolve(_package.style),
+      failOnError: false
     }),
     json({
       include: resolve('package.json'),
@@ -28,7 +29,7 @@ module.exports = {
       exclude: [resolve('node_modules')]
     }),
     babel({
-      externalHelpers: true,
+      // externalHelpers: true,
       // runtimeHelpers: true,
       exclude: [
         resolve('package.json'),
