@@ -1,7 +1,8 @@
-import ol from 'openlayers'
+import { Map } from 'ol'
+import { LineString } from 'ol/geom'
 
-import {POLYLINE} from '../../Utils/PlotTypes'
-class Polyline extends ol.geom.LineString {
+import { POLYLINE } from '../../Utils/PlotTypes'
+class Polyline extends LineString {
   constructor (coordinates, points, params) {
     super([])
     this.type = POLYLINE
@@ -34,7 +35,7 @@ class Polyline extends ol.geom.LineString {
    * @param map
    */
   setMap (map) {
-    if (map && map instanceof ol.Map) {
+    if (map && map instanceof Map) {
       this.map = map
     } else {
       throw new Error('传入的不是地图对象！')

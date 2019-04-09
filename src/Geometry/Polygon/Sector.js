@@ -3,10 +3,11 @@
  * @desc 扇形
  * @Inherits ol.geom.Polygon
  */
-import ol from 'openlayers'
-import {SECTOR} from '../../Utils/PlotTypes'
+import { Map } from 'ol'
+import { Polygon as $Polygon } from 'ol/geom'
+import { SECTOR } from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
-class Sector extends ol.geom.Polygon {
+class Sector extends $Polygon {
   constructor (coordinates, points, params) {
     super([])
     this.type = SECTOR
@@ -53,7 +54,7 @@ class Sector extends ol.geom.Polygon {
    * @param map
    */
   setMap (map) {
-    if (map && map instanceof ol.Map) {
+    if (map && map instanceof Map) {
       this.map = map
     } else {
       throw new Error('传入的不是地图对象！')

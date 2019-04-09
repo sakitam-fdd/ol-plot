@@ -9,11 +9,8 @@ module.exports = {
     }]
   ],
   plugins: [
-    [
-      '@babel/plugin-proposal-class-properties', // 兼容class内的箭头函数
-      { loose: true }
-    ],
-    '@babel/external-helpers'
+    '@babel/plugin-proposal-class-properties'
+    // '@babel/external-helpers'
   ],
   ignore: [
     'dist/*.js'

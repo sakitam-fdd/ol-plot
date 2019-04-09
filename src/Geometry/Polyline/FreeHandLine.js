@@ -3,9 +3,10 @@
  * @desc 自由线
  * @Inherits ol.geom.LineString
  */
-import ol from 'openlayers'
-import {FREEHANDLINE} from '../../Utils/PlotTypes'
-class FreeHandLine extends ol.geom.LineString {
+import { Map } from 'ol'
+import { LineString } from 'ol/geom'
+import { FREEHANDLINE } from '../../Utils/PlotTypes'
+class FreeHandLine extends LineString {
   constructor (coordinates, points, params) {
     super([])
     this.type = FREEHANDLINE
@@ -38,7 +39,7 @@ class FreeHandLine extends ol.geom.LineString {
    * @param map
    */
   setMap (map) {
-    if (map && map instanceof ol.Map) {
+    if (map && map instanceof Map) {
       this.map = map
     } else {
       throw new Error('传入的不是地图对象！')

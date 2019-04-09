@@ -6,7 +6,7 @@ baseConfig.plugins.push(// Default options
   serve({
     open: true,
     contentBase: [
-      'examples', 'dist',
+      'examples', 'dist', 'node_modules/ol'
     ],
     host: 'localhost',
     port: 3003,

@@ -1,4 +1,4 @@
-// import './scss/index.scss'
+import './scss/index.scss'
 import PlotDraw from './core/PlotDraw'
 import PlotEdit from './core/PlotEdit'
 import PlotUtils from './core/PlotUtils'

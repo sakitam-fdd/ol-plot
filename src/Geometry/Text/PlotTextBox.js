@@ -1,11 +1,11 @@
-import ol from 'openlayers'
+import { Map, Overlay } from 'ol'
+import { DragPan as $DragPan } from 'ol/interaction'
 import autosize from 'autosize'
-import {DEF_TEXT_STYEL} from '../../Constants'
-import { merge } from '../../Utils/utils'
+import { DEF_TEXT_STYEL } from '../../Constants'
+import { merge, bindAll } from '../../Utils/utils'
 import { on, off, hasClass, setStyle, getStyle } from '../../Utils/domUtils'
-const $DragPan = ol.interaction.DragPan
 
-class PlotTextBox extends ol.Overlay {
+class PlotTextBox extends Overlay {
   constructor (options = {}) {
     const [id, element, offset, stopEvent, positioning, insertFirst,
       autoPan, autoPanAnimation, autoPanMargin, className] = [
@@ -82,6 +82,20 @@ class PlotTextBox extends ol.Overlay {
      */
     this.currentPixel_ = []
 
+    bindAll([
+      'handleFocus_',
+      'handleBlur_',
+      'handleClick_',
+      'handleDragStart_',
+      'handleDragEnd_',
+      'handleDragDrag_',
+      'closeCurrentPlotText',
+      'handleResizeMouseDown_',
+      'handleResizeMouseMove_',
+      'handleResizeMouseUp_',
+      'resizeButtonMoveHandler_'
+    ], this)
+
     /**
      * 创建text content
      */
@@ -102,11 +116,11 @@ class PlotTextBox extends ol.Overlay {
     content.setAttribute('id', options['id'])
     content.setAttribute('autofocus', true)
     autosize(content)
-    on(content, 'focus', this.handleFocus_.bind(this))
-    on(content, 'blur', this.handleBlur_.bind(this))
-    on(content, 'click', this.handleClick_.bind(this))
-    on(content, 'mousedown', this.handleDragStart_.bind(this))
-    on(window, 'mouseup', this.handleDragEnd_.bind(this))
+    on(content, 'focus', this.handleFocus_)
+    on(content, 'blur', this.handleBlur_)
+    on(content, 'click', this.handleClick_)
+    on(content, 'mousedown', this.handleDragStart_)
+    on(window, 'mouseup', this.handleDragEnd_)
     this.set('isPlotText', true)
     this.setElement(content)
     this.createCloseButton(options)
@@ -148,8 +162,8 @@ class PlotTextBox extends ol.Overlay {
     const _closeSpan = document.createElement('span')
     _closeSpan.className = 'ol-plot-text-editor-close'
     _closeSpan.setAttribute('data-id', options['id'])
-    off(_closeSpan, 'click', this.closeCurrentPlotText.bind(this))
-    on(_closeSpan, 'click', this.closeCurrentPlotText.bind(this))
+    off(_closeSpan, 'click', this.closeCurrentPlotText)
+    on(_closeSpan, 'click', this.closeCurrentPlotText)
     this.element.appendChild(_closeSpan)
   }
 
@@ -161,10 +175,10 @@ class PlotTextBox extends ol.Overlay {
     const _resizeSpan = document.createElement('span')
     _resizeSpan.className = 'ol-plot-text-editor-resize'
     _resizeSpan.setAttribute('data-id', options['id'])
-    off(_resizeSpan, 'mousedown', this.handleResizeMouseDown_.bind(this))
-    off(_resizeSpan, 'mousemove', this.handleResizeMouseMove_.bind(this))
-    on(_resizeSpan, 'mousedown', this.handleResizeMouseDown_.bind(this))
-    on(_resizeSpan, 'mousemove', this.handleResizeMouseMove_.bind(this))
+    off(_resizeSpan, 'mousedown', this.handleResizeMouseDown_)
+    off(_resizeSpan, 'mousemove', this.handleResizeMouseMove_)
+    on(_resizeSpan, 'mousedown', this.handleResizeMouseDown_)
+    on(_resizeSpan, 'mousemove', this.handleResizeMouseMove_)
     this.element.appendChild(_resizeSpan)
   }
 
@@ -204,8 +218,8 @@ class PlotTextBox extends ol.Overlay {
   handleResizeMouseDown_ (event) {
     if (!this.getMap()) return
     this.currentPixel_ = [event.x, event.y]
-    this.getMap().on('pointermove', this.resizeButtonMoveHandler_, this)
-    on(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_.bind(this))
+    this.getMap().on('pointermove', this.resizeButtonMoveHandler_)
+    on(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_)
   }
 
   /**
@@ -215,8 +229,8 @@ class PlotTextBox extends ol.Overlay {
    */
   handleResizeMouseUp_ (event) {
     if (!this.getMap()) return
-    this.getMap().un('pointermove', this.resizeButtonMoveHandler_, this)
-    off(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_.bind(this))
+    this.getMap().un('pointermove', this.resizeButtonMoveHandler_)
+    off(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_)
     this.currentPixel_ = []
   }
 
@@ -276,8 +290,8 @@ class PlotTextBox extends ol.Overlay {
           this.dragging_ = true
           this.disableMapDragPan()
           this.preCursor_ = this.element.style.cursor
-          on(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_.bind(this))
-          on(this.element, 'mouseup', this.handleDragEnd_.bind(this))
+          on(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_)
+          on(this.element, 'mouseup', this.handleDragEnd_)
         }
       }, 300)
     }
@@ -308,8 +322,8 @@ class PlotTextBox extends ol.Overlay {
       this.dragging_ = false
       this.enableMapDragPan()
       this.element.style.cursor = this.preCursor_
-      off(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_.bind(this))
-      off(this.element, 'mouseup', this.handleDragEnd_.bind(this))
+      off(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_)
+      off(this.element, 'mouseup', this.handleDragEnd_)
     }
   }
 
@@ -454,8 +468,8 @@ class PlotTextBox extends ol.Overlay {
    * @param map
    */
   setMap (map) {
-    ol.Overlay.prototype.setMap.call(this, map)
-    if (map && map instanceof ol.Map) {
+    super.setMap(map)
+    if (map && map instanceof Map) {
       this.setStyle(merge(DEF_TEXT_STYEL, this.options_['style']))
       this.setValue(this.options_['value'])
     }

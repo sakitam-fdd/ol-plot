@@ -2,10 +2,11 @@
  * Created by FDD on 2017/5/22.
  * @desc 标绘曲线算法
  */
-import ol from 'openlayers'
-import {CURVE} from '../../Utils/PlotTypes'
+import { Map } from 'ol'
+import { LineString } from 'ol/geom'
+import { CURVE } from '../../Utils/PlotTypes'
 import * as PlotUtils from '../../Utils/utils'
-class Curve extends ol.geom.LineString {
+class Curve extends LineString {
   constructor (coordinates, points, params) {
     super([])
     this.type = CURVE
@@ -46,7 +47,7 @@ class Curve extends ol.geom.LineString {
    * @param map
    */
   setMap (map) {
-    if (map && map instanceof ol.Map) {
+    if (map && map instanceof Map) {
       this.map = map
     } else {
       throw new Error('传入的不是地图对象！')
