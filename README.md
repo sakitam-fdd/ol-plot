@@ -1,4 +1,4 @@
-# openlayers 扩展标绘V2.1.2
+# openlayers 扩展标绘V3.0.0
 
 > This item has been turned into internal maintenance and this warehouse is no longer updated.
 
@@ -9,7 +9,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
 
-> 军事标绘功能，支持openlayers3，4。
+> 军事标绘功能，支持openlayers5。
 
 ## build
 
@@ -21,6 +21,7 @@
 git clone https://github.com/sakitam-fdd/ol-plot.git
 npm run dev
 npm run build
+npm run demo
 ```
 
 ## Use
