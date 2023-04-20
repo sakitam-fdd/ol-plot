@@ -1,4 +1,16 @@
-build/*.js
-config/*.js
-test/**/*.js
-dist/
+*.html
+
+node_modules
+
+# build
+coverage
+dist
+
+# other
+.eslintrc.js
+.prettierrc.js
+vitest.config.ts
+
+# lib
+
+playground/lib

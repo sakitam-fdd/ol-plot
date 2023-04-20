@@ -29,18 +29,19 @@
 
 - 执行 `npm run dev && npm run build` 后可以正确打包文件。
 
-
 - 提交 PR 前请 rebase，确保 commit 记录的整洁。
+
+- 确保 PR 是提交到 `dev` 分支，而不是 `master` 分支。
 
 - 如果是修复 bug，请在 PR 中给出描述信息。
 
 
 ## 开发环境搭建
 
-首先你需要 Node.js 4+ 和 NPM 3+
+首先你需要 Node.js 16+ 和 PNPM 7+
 ```shell
 git clone https://github.com/sakitam-fdd/ol-plot.git
-npm install
-npm run dev
-npm run build
+pnpm i
+pnpm run dev
+pnpm run build
 ```

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "declarationMap": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "jsx": "preserve",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "types": ["node", "vitest"],
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "playground/src/**/*.ts",
+    "packages/*/src/**/*.ts",
+    "packages/*/vite.config.ts",
+    "packages/*/typings.d.ts",
+    "packages/*/__tests__/**/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**"
+  ]
+}

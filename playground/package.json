@@ -1,0 +1,15 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "vite --host",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "ol": "6.12.0",
+    "ol-plot": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^4.3.0"
+  }
+}

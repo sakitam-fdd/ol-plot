@@ -1,0 +1,86 @@
+{
+  "name": "ol-plot",
+  "version": "4.0.0",
+  "description": "ol plot",
+  "keywords": [
+    "javascript",
+    "webgis",
+    "canvas",
+    "ol",
+    "openlayers",
+    "map",
+    "plot",
+    "map",
+    "vis",
+    "gis"
+  ],
+  "author": "sakitam-fdd <smilefdd@gmail.com>",
+  "license": "MIT",
+  "main": "dist/ol-plot.js",
+  "module": "dist/ol-plot.es.js",
+  "unpkg": "dist/ol-plot.js",
+  "commonjs": "dist/ol-plot.cjs.js",
+  "style": "dist/ol-plot.css",
+  "namespace": "olPlot",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": {
+        "import": {
+          "production": "./dist/ol-plot.es.js",
+          "development": "./dist/ol-plot.es.js",
+          "default": "./dist/ol-plot.es.js"
+        },
+        "require": {
+          "production": "./dist/ol-plot.cjs.js",
+          "development": "./dist/ol-plot.cjs.js",
+          "default": "./dist/ol-plot.cjs.js"
+        }
+      },
+      "import": "./dist/ol-plot.es.js",
+      "require": "./dist/ol-plot.cjs.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "private": false,
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakitam-fdd/ol-plot.git",
+    "directory": "packages/ol-plot"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "vite build --mode watch",
+    "build": "vite build --mode production",
+    "build:minify": "vite build --mode minify",
+    "lint": "eslint src/**/* --ext .js,.ts,.tsx",
+    "prettier": "prettier --parser=typescript --write **/*.{js,ts,md}",
+    "test": "pnpm run build && pnpm run test-only",
+    "test-only": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "bugs": {
+    "url": "https://github.com/sakitam-fdd/ol-plot/issues"
+  },
+  "homepage": "https://github.com/sakitam-fdd/ol-plot#readme",
+  "peerDependencies": {
+    "ol": "^5.0.0 || ^6.0.0"
+  },
+  "dependencies": {
+    "autosize": "^6.0.1"
+  },
+  "devDependencies": {
+    "ol": "^6.15.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

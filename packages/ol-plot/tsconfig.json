@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "esnext",
+    "target": "esnext",
+    "lib": [
+      "esnext",
+      "dom"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json",
+    "package.json",
+    "vite.config.ts",
+    "typings.d.ts"
+  ]
+}
