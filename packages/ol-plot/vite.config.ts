@@ -19,6 +19,7 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'dist',
       assetsDir: 'images',
       assetsInlineLimit: 0, // @link https://cn.vitejs.dev/config/#build-assetsinlinelimit
+      watch: mode === 'watch' ? {} : null,
       minify: mode === 'minify' ? 'esbuild' : false,
       sourcemap: mode !== 'minify',
       brotliSize: true, // @link https://cn.vitejs.dev/config/#build-brotlisize

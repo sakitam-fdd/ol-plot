@@ -21,6 +21,7 @@
   "unpkg": "dist/ol-plot.js",
   "commonjs": "dist/ol-plot.cjs.js",
   "style": "dist/ol-plot.css",
+  "types": "dist/index.d.ts",
   "namespace": "olPlot",
   "files": [
     "dist",
@@ -72,7 +73,7 @@
   },
   "homepage": "https://github.com/sakitam-fdd/ol-plot#readme",
   "peerDependencies": {
-    "ol": "^5.0.0 || ^6.0.0"
+    "ol": ">=5.0.0 || >=6.0.0 || >=7.0.0"
   },
   "dependencies": {
     "autosize": "^6.0.1"

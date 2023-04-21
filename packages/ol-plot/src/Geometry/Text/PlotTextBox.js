@@ -1,5 +1,5 @@
 import { Map, Overlay } from 'ol';
-import { DragPan as $DragPan } from 'ol/interaction';
+import DragPan from 'ol/interaction/DragPan';
 import autosize from 'autosize';
 import { DEF_TEXT_STYEL } from '@/constants';
 import { merge, bindAll } from '@/utils/utils';
@@ -457,7 +457,7 @@ class PlotTextBox extends Overlay {
     if (!_map) return;
     let interactions = _map.getInteractions().getArray();
     interactions.every(item => {
-      if (item.constructor.name.indexOf('DragPan') > -1) {
+      if (item instanceof DragPan || item.constructor.name.indexOf('DragPan') > -1) {
         this.mapDragPan = item;
         _map.removeInteraction(item);
         return false;

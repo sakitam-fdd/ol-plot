@@ -23,7 +23,8 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "playground/src/**/*.ts",
+    "playground/*/src/**/*.ts",
+    "playground/*/vite.config.ts",
     "packages/*/src/**/*.ts",
     "packages/*/vite.config.ts",
     "packages/*/typings.d.ts",
