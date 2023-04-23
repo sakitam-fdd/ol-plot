@@ -1,6 +1,6 @@
 import 'ol/ol.css';
 import 'ol-plot/dist/ol-plot.css';
-import { Map, View, VERSION } from 'ol';
+import { Map, View } from 'ol';
 import { Tile } from 'ol/layer';
 import { OSM } from 'ol/source';
 
@@ -72,7 +72,7 @@ plot.on('deactivateTextArea', function (event) {
 // 指定标绘类型，开始绘制。
 function activate(type) {
   plot.plotEdit.deactivate();
-  plot.plotDraw.active(type);
+  plot.plotDraw.activate(type);
 }
 
 function getFeatures() {
@@ -86,4 +86,3 @@ function getFeatures() {
 window.plot = plot;
 window.activate = activate;
 window.getFeatures = getFeatures;
-console.log(VERSION);

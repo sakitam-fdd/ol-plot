@@ -2,13 +2,15 @@ import { resolve } from 'path';
 
 import { defineConfig } from 'vite';
 import type { UserConfigExport } from 'vite';
+import { isVue2 } from 'vue-demi';
 import vue from '@vitejs/plugin-vue';
+import vue2 from '@vitejs/plugin-vue2';
 
 const name = 'ol-plot-vue';
 
 export default defineConfig((env) => {
   const defaultConfig: UserConfigExport = {
-    plugins: [vue()],
+    plugins: [isVue2 ? vue2() : vue()],
     build: {
       cssCodeSplit: false,
       minify: env.mode === 'minify' ? 'esbuild' : false,
@@ -24,11 +26,11 @@ export default defineConfig((env) => {
         },
       },
       rollupOptions: {
-        // external: ['vue'],
-        external: (id) => /^ol/.test(id) || id === 'vue',
+        external: (id) => /^ol/.test(id) || id === 'vue' || id === 'vue-demi',
         output: {
           globals: {
             vue: 'Vue',
+            'vue-demi': 'VueDemi',
             ol: 'ol',
             'ol/style': 'ol.style',
             'ol/layer': 'ol.layer',

@@ -4,10 +4,10 @@ import Draw, {
 } from 'ol/interaction/Draw';
 import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
 import {
-  Style as $Style,
-  Icon as $Icon,
-  Stroke as $Stroke,
-  Fill as $Fill
+  Style,
+  Icon,
+  Stroke,
+  Fill
 } from 'ol/style';
 
 import { getuuid, MathDistance, bindAll } from '@/utils/utils';
@@ -165,13 +165,18 @@ class PlotDraw extends Observable {
     return null;
   }
 
+  active (type, params = {}) {
+    this.activate(type, params);
+    console.warn('[ol-plot]: active 方法即将废弃，请使用 activate');
+  }
+
   /**
    * 激活工具
    * @param type
    * @param params
    */
-  active (type, params = {}) {
-    this.disActive();
+  activate(type, params = {}) {
+    this.deactivate();
     this.deactiveMapTools();
     this.plotType = type;
     this.plotParams = params;
@@ -189,15 +194,15 @@ class PlotDraw extends Observable {
    */
   activeInteraction () {
     this.drawInteraction_ = new Draw({
-      style: new $Style({
-        fill: new $Fill({
+      style: new Style({
+        fill: new Fill({
           color: 'rgba(255, 255, 255, 0.7)'
         }),
-        stroke: new $Stroke({
+        stroke: new Stroke({
           color: 'rgba(0, 0, 0, 0.15)',
           width: 2
         }),
-        image: new $Icon({
+        image: new Icon({
           anchor: [1, 1],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
@@ -246,10 +251,15 @@ class PlotDraw extends Observable {
     }
   }
 
+  disActive () {
+    this.deactivate();
+    console.warn('[ol-plot]: disActive 方法即将废弃，请使用 deactivate');
+  }
+
   /**
    * 取消激活状态
    */
-  disActive () {
+  deactivate() {
     this.removeEventHandlers();
     if (this.drawInteraction_) {
       this.map.removeInteraction(this.drawInteraction_);
@@ -376,7 +386,7 @@ class PlotDraw extends Observable {
     if (this.feature && this.options['isClear']) {
       this.drawLayer.getSource().removeFeature(this.feature);
     }
-    this.disActive();
+    this.deactivate();
   }
 
   /**
@@ -395,7 +405,7 @@ class PlotDraw extends Observable {
   deactiveMapTools () {
     const interactions = this.map.getInteractions().getArray();
     interactions.every(item => {
-      if (item instanceof DoubleClickZoom || item.constructor.name.indexOf('DoubleClickZoom') > -1) {
+      if (item instanceof DoubleClickZoom) {
         this.dblClickZoomInteraction = item;
         this.map.removeInteraction(item);
         return false;

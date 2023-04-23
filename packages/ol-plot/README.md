@@ -1,27 +1,25 @@
-# openlayers 扩展标绘V3.0.0
+# openlayers 扩展标绘
 
-> This item has been turned into internal maintenance and this warehouse is no longer updated.
+[![CI](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml/badge.svg)](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml)
+[![npm version](https://badgen.net/npm/v/sakitam-fdd/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
+[![npm downloads](https://badgen.net/npm/dm/sakitam-fdd/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
 
-[![Build Status](https://travis-ci.org/sakitam-fdd/ol-plot.svg?branch=master)](https://www.travis-ci.org/sakitam-fdd/ol-plot)
-[![NPM downloads](https://img.shields.io/npm/dm/ol-plot.svg)](https://npmjs.org/package/ol-plot)
 ![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
-[![Npm package](https://img.shields.io/npm/v/ol-plot.svg)](https://www.npmjs.org/package/ol-plot)
 [![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
 
-> 军事标绘功能，支持openlayers5。
+> 军事标绘功能，支持openlayers5 / 6 / 7。
 
 ## build
 
-> 重要: Github 仓库的 /dist 文件夹只有在新版本发布时才会更新。如果想要使用 Github 上最新的源码，你需要自己构建。
+> 重要: 如果想要使用 Github 上最新的源码，你需要自己构建。
 
 ---
 
 ```bash
 git clone https://github.com/sakitam-fdd/ol-plot.git
-npm run dev
-npm run build
-npm run demo
+pnpm run dev
+pnpm run build
 ```
 
 ## Use
@@ -39,7 +37,8 @@ https://unpkg.com/ol-plot/dist/ol-plot.css
 
 ```bash
 npm install ol-plot --save
-import olPlot 'ol-plot'
+import 'ol-plot/dist/ol-plot.css'
+import Plot form 'ol-plot'
 ```
 
 ## Examples
@@ -48,17 +47,18 @@ import olPlot 'ol-plot'
 
 其他示例请参看examples文件夹
 
-#### plotDraw Methods
+## 实例方法
 
-##### `activate(type)`
+### plotDraw Methods
+
+#### `activate(type, params)`
 
 > 激活标绘工具
 
-###### Parameters:
-
-| key | type | desc |
-| :--- | :--- | :---------- |
-| `type` | `string` | 标绘符号类型 |
+| key      | type     | desc   |
+|:---------|:---------|:-------|
+| `type`   | `string` | 标绘符号类型 |
+| `params` | `Object` | 标绘符号参数 |
 
 ##### `type`
 
@@ -66,81 +66,51 @@ import olPlot 'ol-plot'
 
 ###### type:
 
-| key | type | desc |
-| :---------------------- | :--- | :---------- |
-| `olPlot.PlotTypes.ARC` | `string` | 弓形 |
-| `olPlot.PlotTypes.ELLIPSE` | `string` | 椭圆 |
-| `olPlot.PlotTypes.CURVE` | `string` | 曲线 |
-| `olPlot.PlotTypes.CLOSED_CURVE` | `string` | 闭合曲面 |
-| `olPlot.PlotTypes.LUNE` | `string` | 弓形 |
-| `olPlot.PlotTypes.SECTOR` | `string` | 扇形 |
-| `olPlot.PlotTypes.GATHERING_PLACE` | `string` | 集结地 |
-| `olPlot.PlotTypes.STRAIGHT_ARROW` | `string` | 细直箭头 |
-| `olPlot.PlotTypes.ASSAULT_DIRECTION` | `string` | 粗单直箭头 |
-| `olPlot.PlotTypes.ATTACK_ARROW` | `string` | 进攻方向 |
-| `olPlot.PlotTypes.TAILED_ATTACK_ARROW` | `string` | 进攻方向（尾） |
-| `olPlot.PlotTypes.SQUAD_COMBAT` | `string` | 战斗行动 |
+| key | type | desc      |
+| :---------------------- | :--- |:----------|
+| `olPlot.PlotTypes.ARC` | `string` | 弓形        |
+| `olPlot.PlotTypes.ELLIPSE` | `string` | 椭圆        |
+| `olPlot.PlotTypes.CURVE` | `string` | 曲线        |
+| `olPlot.PlotTypes.CLOSED_CURVE` | `string` | 闭合曲面      |
+| `olPlot.PlotTypes.LUNE` | `string` | 弓形        |
+| `olPlot.PlotTypes.SECTOR` | `string` | 扇形        |
+| `olPlot.PlotTypes.GATHERING_PLACE` | `string` | 集结地       |
+| `olPlot.PlotTypes.STRAIGHT_ARROW` | `string` | 细直箭头      |
+| `olPlot.PlotTypes.ASSAULT_DIRECTION` | `string` | 粗单直箭头     |
+| `olPlot.PlotTypes.ATTACK_ARROW` | `string` | 进攻方向      |
+| `olPlot.PlotTypes.TAILED_ATTACK_ARROW` | `string` | 进攻方向（尾）   |
+| `olPlot.PlotTypes.SQUAD_COMBAT` | `string` | 战斗行动      |
 | `olPlot.PlotTypes.TAILED_SQUAD_COMBAT` | `string` | 分队战斗行动（尾） |
-| `olPlot.PlotTypes.FINE_ARROW` | `string` | 粗单尖头箭头 |
-| `olPlot.PlotTypes.CIRCLE` | `string` | 圆 |
-| `olPlot.PlotTypes.DOUBLE_ARROW` | `string` | 双箭头 |
-| `olPlot.PlotTypes.POLYLINE` | `string` | 线 |
-| `olPlot.PlotTypes.FREEHAND_LINE` | `string` | 自由线 |
-| `olPlot.PlotTypes.POLYGON` | `string` | 面 |
-| `olPlot.PlotTypes.FREEHAND_POLYGON` | `string` | 自由面 |
-| `olPlot.PlotTypes.RECTANGLE` | `string` | 矩形 |
-| `olPlot.PlotTypes.MARKER` | `string` | 点 |
+| `olPlot.PlotTypes.FINE_ARROW` | `string` | 粗单尖头箭头    |
+| `olPlot.PlotTypes.CIRCLE` | `string` | 圆         |
+| `olPlot.PlotTypes.DOUBLE_ARROW` | `string` | 双箭头       |
+| `olPlot.PlotTypes.POLYLINE` | `string` | 线         |
+| `olPlot.PlotTypes.FREEHAND_LINE` | `string` | 自由线       |
+| `olPlot.PlotTypes.POLYGON` | `string` | 面         |
+| `olPlot.PlotTypes.FREEHAND_POLYGON` | `string` | 自由面       |
+| `olPlot.PlotTypes.RECTANGLE` | `string` | 矩形        |
+| `olPlot.PlotTypes.MARKER` | `string` | 点         |
+| `olPlot.PlotTypes.TEXTAREA` | `string` | 文本框       |
 
-##### plotDraw.on('drawEnd', onDrawEnd, this)
+#### `deactivate()`
 
-> 监听符号结束绘制
+取消绘制工具的激活状态
 
-###### Parameters:
+### plotEdit Methods
 
-| key | type | desc |
-| :--- | :--- | :---------- |
-| `type` | `String` | 事件类型，目前包括开始和结束事件 |
-| `onDrawEnd` | `Function` | 事件的回调函数 |
-| `this` | `Object` | 上下文，可不传 |
-
-##### `setMap(map)`
-
-> 设置当前地图实例
-
-###### Parameters:
-
-| key | type | desc |
-| :--- | :--- | :---------- |
-| `map` | `ol.Map` | 地图实例 |
-
-
-#### plotEdit Methods
-
-##### `activate(feature)`
-
-> 激活标绘编辑工具
-
-###### Parameters:
+#### `activate(feature)`
 
 | key | type | desc |
 | :--- | :--- | :---------- |
 | `feature` | `ol.Feature` | 要激活的标绘符号 |
 
-##### `deactivate()`
+激活符号要素编辑
 
-> 取消符号的编辑状态
+#### `deactivate()`
 
-##### `setMap(map)`
+取消符号要素编辑状态
 
-> 设置当前地图实例
-
-###### Parameters:
-
-| key | type | desc |
-| :--- | :--- | :---------- |
-| `map` | `ol.Map` | 地图实例 |
-
-#### PlotUtils Methods
+### PlotUtils Methods
 
 | 方法 | 说明 | 参数 |
 | :--- | :--- | :---------- |
@@ -148,11 +118,65 @@ import olPlot 'ol-plot'
 | `addFeatures` | 反序列化保存的符号 | `features : Array` |
 | `removeAllFeatures` | 删除所有符号 | -- |
 
-#### Events
 
-##### plotDraw on
+## 事件
 
-| 事件监听名              | 说明 | 参数 |
-|:-------------------| :--- | :---------- |
-| `drawEnd`          | draw结束事件 | -- |
-| `activateTextArea` | 当前激活的文本框事件 | -- |
+### plotDraw
+
+```js
+plot.plotDraw.on('drawStart', (e) => {
+  console.log(e);
+});
+
+plot.plotDraw.on('drawEnd', onDrawEnd);
+```
+
+#### drawStart
+
+监听符号开始绘制
+
+#### drawEnd
+
+监听符号结束绘制
+
+### plotEdit
+
+```js
+plot.plotEdit.on('activePlotChange', (e) => {
+  console.log(e);
+});
+
+plot.plotEdit.on('deactivatePlot', (e) => {
+  console.log(e);
+});
+```
+
+#### activePlotChange
+
+激活编辑状态的要素变化事件
+
+#### deactivatePlot
+
+监听要素结束编辑状态
+
+### plot 实例事件
+
+比较特殊，3.0 版本是绑定在 map 实例上的，从 4.0 版本起需要绑定在 plot 实例上。
+
+```js
+plot.on('activeTextArea', (e) => {
+  console.log(e);
+});
+
+plot.on('deactivateTextArea', (e) => {
+  console.log(e);
+});
+```
+
+#### activeTextArea
+
+激活文本框编辑事件
+
+#### deactivateTextArea
+
+取消激活文本框编辑事件

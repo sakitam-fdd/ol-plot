@@ -354,7 +354,7 @@ class PlotEdit extends Observable {
   disableMapDragPan () {
     let interactions = this.map.getInteractions().getArray();
     interactions.every(item => {
-      if (item instanceof DragPan || item.constructor.name.indexOf('DragPan') > -1) {
+      if (item instanceof DragPan) {
         this.mapDragPan = item;
         this.map.removeInteraction(item);
         return false;

@@ -1,146 +1,145 @@
 <script lang="ts">
-// 声明无法在 <script setup> 中声明的选项
-export default {
-  name: "colorPicker"
-}
-</script>
-
-<script setup lang="ts">
-import { computed, ref } from 'vue-demi';
+import { defineComponent, computed, ref } from 'vue-demi';
 import { onClickOutside } from '@vueuse/core'
 
-const props = withDefaults(defineProps<{
-  // 当前颜色
-  modelValue: string
-  // 默认颜色
-  defaultColor?: string
-  // 禁用状态
-  disabled?: boolean
-}>(), {
-  defaultColor: '#000000'
-})
-const emits = defineEmits<{
-  (e: 'update:modelValue', value: string): void
-  (e: 'change', value: string): void
-}>()
+export default defineComponent({
+  name: 'colorPicker',
+  setup() {
+    const props = withDefaults(defineProps<{
+      // 当前颜色
+      modelValue: string
+      // 默认颜色
+      defaultColor?: string
+      // 禁用状态
+      disabled?: boolean
+    }>(), {
+      defaultColor: '#000000'
+    })
+    const emits = defineEmits<{
+      (e: 'update:modelValue', value: string): void
+      (e: 'change', value: string): void
+    }>()
 
-// 面板状态
-const openStatus = ref(false)
-// 打开面板
-const openPanel = () => {
-  openStatus.value = !props.disabled
-}
-const colorPicker = ref<HTMLInputElement | null>(null)
-// 关闭面板
-const closePanel = () => {
-  openStatus.value = false
-}
-onClickOutside(colorPicker, closePanel)
+    // 面板状态
+    const openStatus = ref(false)
+    // 打开面板
+    const openPanel = () => {
+      openStatus.value = !props.disabled
+    }
+    const colorPicker = ref<HTMLInputElement | null>(null)
+    // 关闭面板
+    const closePanel = () => {
+      openStatus.value = false
+    }
 
-// 鼠标经过的颜色块
-const hoveColor = ref('')
-const handleOver = (color: string) => {
-  hoveColor.value = color
-}
-// 主题颜色
-const tColor = ['#000000', '#ffffff', '#eeece1', '#1e497b', '#4e81bb', '#e2534d', '#9aba60', '#8165a0', '#47acc5', '#f9974c']
-// 颜色面板
-const colorConfig = [
-  ['#7f7f7f', '#f2f2f2'],
-  ['#0d0d0d', '#808080'],
-  ['#1c1a10', '#ddd8c3'],
-  ['#0e243d', '#c6d9f0'],
-  ['#233f5e', '#dae5f0'],
-  ['#632623', '#f2dbdb'],
-  ['#4d602c', '#eaf1de'],
-  ['#3f3150', '#e6e0ec'],
-  ['#1e5867', '#d9eef3'],
-  ['#99490f', '#fee9da']
-]
-// 标准颜色
-const bColor = ['#c21401', '#ff1e02', '#ffc12a', '#ffff3a', '#90cf5b', '#00af57', '#00afee', '#0071be', '#00215f', '#72349d']
-const html5Color = props.modelValue
-// 计算属性：显示面板颜色
-const showPanelColor = computed(() => {
-  if (hoveColor.value) {
-    return hoveColor
-  } else {
-    return showColor
-  }
-})
-// 计算属性：显示颜色
-const showColor = computed(() => {
-  if (props.modelValue) {
-    return props.modelValue
-  } else {
-    return props.defaultColor
-  }
-})
-// 计算属性：颜色面板
-const colorPanel = computed(() => {
-  let colorArr = []
-  for (let color of colorConfig) {
-    colorArr.push(gradient(color[1], color[0], 5))
-  }
-  return colorArr
-})
+    onClickOutside(colorPicker, closePanel)
 
-const html5ColorEl = ref<HTMLInputElement | null>(null)
-const triggerHtml5Color = () => {
-  html5ColorEl.value?.click()
-}
-// 更新组件的值
-const updataValue = (value: string) => {
-  emits('update:modelValue', value)
-  emits('change', value)
-  openStatus.value = false
-}
-// 设置默认颜色
-const handleDefaultColor = () => {
-  updataValue(props.defaultColor)
-}
+    // 鼠标经过的颜色块
+    const hoveColor = ref('')
+    const handleOver = (color: string) => {
+      hoveColor.value = color
+    }
+    // 主题颜色
+    const tColor = ['#000000', '#ffffff', '#eeece1', '#1e497b', '#4e81bb', '#e2534d', '#9aba60', '#8165a0', '#47acc5', '#f9974c']
+    // 颜色面板
+    const colorConfig = [
+      ['#7f7f7f', '#f2f2f2'],
+      ['#0d0d0d', '#808080'],
+      ['#1c1a10', '#ddd8c3'],
+      ['#0e243d', '#c6d9f0'],
+      ['#233f5e', '#dae5f0'],
+      ['#632623', '#f2dbdb'],
+      ['#4d602c', '#eaf1de'],
+      ['#3f3150', '#e6e0ec'],
+      ['#1e5867', '#d9eef3'],
+      ['#99490f', '#fee9da']
+    ]
+    // 标准颜色
+    const bColor = ['#c21401', '#ff1e02', '#ffc12a', '#ffff3a', '#90cf5b', '#00af57', '#00afee', '#0071be', '#00215f', '#72349d']
+    const html5Color = props.modelValue
+    // 计算属性：显示面板颜色
+    const showPanelColor = computed(() => {
+      if (hoveColor.value) {
+        return hoveColor
+      } else {
+        return showColor
+      }
+    })
+    // 计算属性：显示颜色
+    const showColor = computed(() => {
+      if (props.modelValue) {
+        return props.modelValue
+      } else {
+        return props.defaultColor
+      }
+    })
+    // 计算属性：颜色面板
+    const colorPanel = computed(() => {
+      let colorArr = []
+      for (let color of colorConfig) {
+        colorArr.push(gradient(color[1], color[0], 5))
+      }
+      return colorArr
+    })
 
-/**
- * 颜色计算
- */
-// 格式化 hex 颜色值
-const parseColor = (hexStr: string) => {
-  if (hexStr.length === 4) {
-    return hexStr = '#' + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2] + hexStr[3] + hexStr[3]
-  } else {
-    return hexStr
+    const html5ColorEl = ref<HTMLInputElement | null>(null)
+    const triggerHtml5Color = () => {
+      html5ColorEl.value?.click()
+    }
+    // 更新组件的值
+    const updataValue = (value: string) => {
+      emits('update:modelValue', value)
+      emits('change', value)
+      openStatus.value = false
+    }
+    // 设置默认颜色
+    const handleDefaultColor = () => {
+      updataValue(props.defaultColor)
+    }
+
+    /**
+     * 颜色计算
+     */
+    // 格式化 hex 颜色值
+    const parseColor = (hexStr: string) => {
+      if (hexStr.length === 4) {
+        return hexStr = '#' + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2] + hexStr[3] + hexStr[3]
+      } else {
+        return hexStr
+      }
+    }
+    // RGB 颜色 转 HEX 颜色
+    const rgbToHex = (r: number, g: number, b: number) => {
+      const hex = ((r << 16) | (g << 8) | b).toString(16)
+      return '#' + new Array(Math.abs(hex.length - 7)).join('0') + hex
+    }
+    // HEX 转 RGB 颜色
+    const hexToRgb = (hex: string) => {
+      hex = parseColor(hex)
+      let rgb = []
+      for (let i = 1; i < 7; i += 2) {
+        rgb.push(parseInt('0x' + hex.slice(i, i + 2)))
+      }
+      return rgb
+    }
+    // 计算渐变过渡颜色
+    const gradient = (startColor: string, endColor: string, step: number) => {
+      // 讲 hex 转换为 rgb
+      let sColor = hexToRgb(startColor)
+      let eColor = hexToRgb(endColor)
+      // 计算R\G\B每一步的差值
+      let rStep = (eColor[0] - sColor[0]) / step
+      let gStep = (eColor[1] - sColor[1]) / step
+      let bStep = (eColor[2] - sColor[2]) / step
+      let gradientColorArr = []
+      // 计算每一步的hex值
+      for (let i = 0; i < step; i++) {
+        gradientColorArr.push(rgbToHex(rStep * i + sColor[0], gStep * i + sColor[1], bStep * i + sColor[2]))
+      }
+      return gradientColorArr
+    }
   }
-}
-// RGB 颜色 转 HEX 颜色
-const rgbToHex = (r: number, g: number, b: number) => {
-  const hex = ((r << 16) | (g << 8) | b).toString(16)
-  return '#' + new Array(Math.abs(hex.length - 7)).join('0') + hex
-}
-// HEX 转 RGB 颜色
-const hexToRgb = (hex: string) => {
-  hex = parseColor(hex)
-  let rgb = []
-  for (let i = 1; i < 7; i += 2) {
-    rgb.push(parseInt('0x' + hex.slice(i, i + 2)))
-  }
-  return rgb
-}
-// 计算渐变过渡颜色
-const gradient = (startColor: string, endColor: string, step: number) => {
-  // 讲 hex 转换为 rgb
-  let sColor = hexToRgb(startColor)
-  let eColor = hexToRgb(endColor)
-  // 计算R\G\B每一步的差值
-  let rStep = (eColor[0] - sColor[0]) / step
-  let gStep = (eColor[1] - sColor[1]) / step
-  let bStep = (eColor[2] - sColor[2]) / step
-  let gradientColorArr = []
-  // 计算每一步的hex值
-  for (let i = 0; i < step; i++) {
-    gradientColorArr.push(rgbToHex(rStep * i + sColor[0], gStep * i + sColor[1], bStep * i + sColor[2]))
-  }
-  return gradientColorArr
-}
+});
 </script>
 
 <template>

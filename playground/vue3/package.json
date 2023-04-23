@@ -5,7 +5,13 @@
     "start": "vite --host",
     "build": "vite build"
   },
+  "dependenciesMeta": {
+    "ol-plot-vue": {
+      "injected": true
+    }
+  },
   "dependencies": {
+    "vue": "^3.2.25",
     "ol": "6.12.0",
     "ol-plot-vue": "workspace:*"
   },

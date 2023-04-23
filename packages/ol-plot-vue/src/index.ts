@@ -1,4 +1,4 @@
-import type { Plugin } from 'vue';
+import type { Plugin } from 'vue-demi';
 import plot from './plot.vue';
 
 // 存储组件列表

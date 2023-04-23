@@ -114,12 +114,12 @@ jobs:
       - run: npm i -g pnpm
       - run: pnpm i
       - run: pnpm build
-      - run: pnpm docs:api
-      - run: pnpm docs:build
+#      - run: pnpm docs:api
+#      - run: pnpm docs:build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.PKG_DEPLOY_TOKEN }}
-          publish_dir: docs/.vitepress/dist
+          publish_dir: playground/vue3/dist
           cname: blog.sakitam.com

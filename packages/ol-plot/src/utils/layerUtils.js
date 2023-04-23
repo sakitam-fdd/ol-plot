@@ -1,16 +1,16 @@
 import {
-  Style as $Style,
-  Stroke as $Stroke,
-  Fill as $Fill,
-  Circle as $Circle
+  Style,
+  Circle,
+  Stroke,
+  Fill
 } from 'ol/style';
 
 import {
-  Group as $Group,
-  Vector as $VectorLayer
+  Group,
+  Vector
 } from 'ol/layer';
 
-import { Vector as $VectorSource } from 'ol/source';
+import { Vector as VectorSource } from 'ol/source';
 
 /**
  * 通过layerName获取图层
@@ -42,7 +42,7 @@ const getLayerInternal = function (layers, key, value) {
   let _target = null;
   if (layers.length > 0) {
     layers.every(layer => {
-      if (layer instanceof $Group) {
+      if (layer instanceof Group) {
         let layers = layer.getLayers().getArray();
         _target = getLayerInternal(layers, key, value);
         if (_target) {
@@ -72,33 +72,33 @@ const createVectorLayer = function (map, layerName, params) {
   try {
     if (map) {
       let vectorLayer = getLayerByLayerName(map, layerName);
-      if (!(vectorLayer instanceof $VectorLayer)) {
+      if (!(vectorLayer instanceof Vector)) {
         vectorLayer = null;
       }
       if (!vectorLayer) {
         if (params && params.create) {
-          vectorLayer = new $VectorLayer({
+          vectorLayer = new Vector({
             layerName: layerName,
             params: params,
             layerType: 'vector',
-            source: new $VectorSource({
+            source: new VectorSource({
               wrapX: false
             }),
-            style: new $Style({
-              fill: new $Fill({
+            style: new Style({
+              fill: new Fill({
                 color: 'rgba(67, 110, 238, 0.4)'
               }),
-              stroke: new $Stroke({
+              stroke: new Stroke({
                 color: '#4781d9',
                 width: 2
               }),
-              image: new $Circle({
+              image: new Circle({
                 radius: 7,
-                fill: new $Fill({
+                fill: new Fill({
                   color: '#ffcc33'
                 })
-              })
-            })
+              }),
+            }),
           });
         }
       }
@@ -108,14 +108,14 @@ const createVectorLayer = function (map, layerName, params) {
         }
         // 图层只添加一次
         let _vectorLayer = getLayerByLayerName(map, layerName);
-        if (!_vectorLayer || !(_vectorLayer instanceof $VectorLayer)) {
+        if (!_vectorLayer || !(_vectorLayer instanceof Vector)) {
           map.addLayer(vectorLayer);
         }
       }
       return vectorLayer;
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 

@@ -5,9 +5,14 @@
     "start": "vite --host",
     "build": "vite build"
   },
+  "dependenciesMeta": {
+    "ol-plot-vue": {
+      "injected": true
+    }
+  },
   "dependencies": {
     "@vue/composition-api": "^1.7.1",
-    "vue": "2.6.14",
+    "vue": "2.6.0",
     "ol": "^7.3.0",
     "ol-plot-vue": "workspace:*"
   },
