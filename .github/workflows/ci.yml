@@ -84,7 +84,7 @@ jobs:
         uses: changesets/action@master
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm --filter "./packages/**" build && pnpm --filter "./packages/**" build:minify && pnpm changeset publish
+          publish: pnpm release
           commit: 'chore(release): publish'
           title: Publish next versions
         env:

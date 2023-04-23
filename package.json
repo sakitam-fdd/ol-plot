@@ -15,7 +15,7 @@
     "docs:serve": "vitepress serve docs",
     "version": "changeset version",
     "changeset": "changeset",
-    "release": "pnpm build && pnpm build:minify && pnpm test-only && pnpm changeset publish",
+    "release": "pnpm --filter \"./packages/**\" build && pnpm --filter \"./packages/**\" build:minify && pnpm changeset publish",
     "lint": "eslint packages/*/src/**/* --ext .js,.ts,.tsx",
     "prettier": "prettier --parser=typescript --write **/*.{js,ts,md}",
     "test": "pnpm run -r test",
