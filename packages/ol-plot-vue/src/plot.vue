@@ -87,21 +87,12 @@ export default defineComponent({
   components: {
     ColorPicker,
   },
-  setup() {
-    const plot = shallowRef();
-    const currentTextArea = shallowRef();
 
-    const getImage = (name: string): string => {
-      const modules: any = import.meta.globEager('./assets/img/*');
-      const path = (`./assets/img/${name}.png`);
-      return modules[path].default
-    }
-
-    const props = withDefaults(defineProps<{
-      plots: any;
-      map: any;
-    }>(), {
-      plots: [
+  props: {
+    map: Object,
+    plots: {
+      type: Object,
+      default: () => [
         {
           "id": "Point",
           "name": "目标",
@@ -241,13 +232,20 @@ export default defineComponent({
           "src": "TextArea"
         }
       ],
-      map: null,
-    });
+    },
+  },
 
-    const emits = defineEmits<{
-      (e: 'close'): void;
-      (e: 'showMin'): void;
-    }>();
+  emits: ['close', 'showMin'],
+
+  setup(props, { emit }) {
+    const plot = shallowRef();
+    const currentTextArea = shallowRef();
+
+    const getImage = (name: string): string => {
+      const modules: any = import.meta.globEager('./assets/img/*');
+      const path = (`./assets/img/${name}.png`);
+      return modules[path].default
+    }
 
     const selected = ref();
 
@@ -345,7 +343,7 @@ export default defineComponent({
       selected.value = item['alias']
       if (item['alias']) {
         plot.value.plotEdit.deactivate()
-        plot.value.plotDraw.active(item['alias'])
+        plot.value.plotDraw.activate(item['alias'])
       } else {
         console.warn('不存在的标绘类型！')
       }
@@ -426,6 +424,7 @@ export default defineComponent({
      * @param event
      */
     const handleClick = (event: any) => {
+      if (!props.map) return;
       const feature = props.map.forEachFeatureAtPixel(event.pixel, (f: any) => f);
       if (feature && feature.get('isPlot')) {
         plot.value.plotEdit.activate(feature)
@@ -441,7 +440,7 @@ export default defineComponent({
      */
     function init() {
       const { map } = props;
-      if (!plot.value) {
+      if (!plot.value && map) {
         /* eslint new-cap: 0 */
         plot.value = new Plot(props.map, {
           zIndex: 999,
@@ -485,11 +484,11 @@ export default defineComponent({
     });
 
     const closeFunc = () => {
-      emits('close')
+      emit('close')
     }
 
     const minFunc = () => {
-      emits('showMin')
+      emit('showMin')
     }
 
     const mouseOverHandle = (item: any) => {
@@ -499,6 +498,17 @@ export default defineComponent({
     const mouseOutHandle = (item: any) => {
       item.mouseover = false;
     }
+
+    return {
+      getImage,
+      selected,
+      state,
+      changeSelectedItem,
+      mouseOverHandle,
+      mouseOutHandle,
+      closeFunc,
+      minFunc,
+    };
   },
 });
 </script>

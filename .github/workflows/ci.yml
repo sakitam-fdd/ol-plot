@@ -84,7 +84,7 @@ jobs:
         uses: changesets/action@master
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
+          publish: pnpm --filter "./packages/**" build && pnpm --filter "./packages/**" build:minify
           commit: 'chore(release): publish'
           title: Publish next versions
         env:
@@ -113,8 +113,8 @@ jobs:
             ${{ runner.os }}-
       - run: npm i -g pnpm@7.14.0
       - run: pnpm i
-      - run: pnpm run -r build --filter ol-plot ol-plot-vue
-      - run: pnpm run -r build --filter vue3
+      - run: pnpm --filter "./packages/**" build
+      - run: pnpm --filter "./playground/vue3" build
 #      - run: pnpm docs:build
 
       - name: Deploy

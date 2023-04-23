@@ -1,25 +1,23 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue-demi';
+import type { PropType } from 'vue-demi';
 import { onClickOutside } from '@vueuse/core'
 
 export default defineComponent({
   name: 'colorPicker',
-  setup() {
-    const props = withDefaults(defineProps<{
-      // 当前颜色
-      modelValue: string
-      // 默认颜色
-      defaultColor?: string
-      // 禁用状态
-      disabled?: boolean
-    }>(), {
-      defaultColor: '#000000'
-    })
-    const emits = defineEmits<{
-      (e: 'update:modelValue', value: string): void
-      (e: 'change', value: string): void
-    }>()
-
+  props: {
+    // 当前颜色
+    modelValue: String as PropType<string>,
+    // 默认颜色
+    defaultColor: {
+      type: String as PropType<string>,
+      default: '#000000',
+    },
+    // 禁用状态
+    disabled: Boolean as PropType<boolean>,
+  },
+  emits: ['update:modelValue', 'change'],
+  setup(props, { emit }) {
     // 面板状态
     const openStatus = ref(false)
     // 打开面板
@@ -88,8 +86,8 @@ export default defineComponent({
     }
     // 更新组件的值
     const updataValue = (value: string) => {
-      emits('update:modelValue', value)
-      emits('change', value)
+      emit('update:modelValue', value)
+      emit('change', value)
       openStatus.value = false
     }
     // 设置默认颜色
@@ -137,7 +135,23 @@ export default defineComponent({
         gradientColorArr.push(rgbToHex(rStep * i + sColor[0], gStep * i + sColor[1], bStep * i + sColor[2]))
       }
       return gradientColorArr
-    }
+    };
+
+    return {
+      showColor,
+      openPanel,
+      disabled: props.disabled,
+      openStatus,
+      handleDefaultColor,
+      handleOver,
+      tColor,
+      updataValue,
+      colorPanel,
+      bColor,
+      triggerHtml5Color,
+      html5Color,
+      showPanelColor,
+    };
   }
 });
 </script>
@@ -153,7 +167,7 @@ export default defineComponent({
     <!-- 颜色色盘 -->
     <div class="box" :class="{ open: openStatus }" >
       <div class="hd">
-        <div class="colorView" :style="{ 'background-color': showPanelColor.value }"></div>
+        <div class="colorView" :style="{ 'background-color': showPanelColor }"></div>
         <div class="defaultColor"
              @click="handleDefaultColor"
              @mouseover="handleOver(defaultColor)"
