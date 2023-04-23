@@ -27,7 +27,9 @@ const initMap = () => {
     layers: [
       new Tile({
         visible: true,
-        source: new OSM()
+        source: new OSM({
+          url: 'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}'
+        })
       }),
     ],
     view: view.value,

@@ -1,13 +1,13 @@
 # openlayers 扩展标绘
 
 [![CI](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml/badge.svg)](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml)
-[![npm version](https://badgen.net/npm/v/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
-[![npm downloads](https://badgen.net/npm/dm/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
+[![npm version](https://badgen.net/npm/v/ol-plot)](https://npm.im/ol-plot)
+[![npm downloads](https://badgen.net/npm/dm/ol-plot)](https://npm.im/ol-plot)
 ![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
 [![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
 
-> 军事标绘功能，支持openlayers5 / 6 / 7。
+标绘功能，支持openlayers5 / 6 / 7；同时也实现了一个简单的 Vue 组件，请查看 `playground/vue3` 使用，npm 发布的包为 [![npm version](https://badgen.net/npm/v/ol-plot-vue)](https://npm.im/ol-plot-vue)
 
 ## build
 
@@ -42,9 +42,11 @@ import Plot form 'ol-plot'
 
 ## Examples
 
+[![site](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/playground/vue3/public/images/plot.png)](https://sakitam-fdd.github.io/ol-plot)
+
 [![demo](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/V1.0.0/examples/images/demo.png)](https://codepen.io/sakitam-fdd/pen/QMQydz)
 
-其他示例请参看examples文件夹
+其他示例请参看 playground 文件夹
 
 ## 实例方法
 
