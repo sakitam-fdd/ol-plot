@@ -167,12 +167,12 @@ importers:
     specifiers:
       '@vitejs/plugin-vue': ^4.1.0
       ol: 6.12.0
-      ol-plot-vue: workspace:*
+      ol-plot-vue: ^1.0.0
       vite: ^4.3.0
       vue: ^3.2.25
     dependencies:
       ol: 6.12.0
-      ol-plot-vue: file:packages/ol-plot-vue_ol@6.12.0+vue@3.2.47
+      ol-plot-vue: 1.0.0_ol@6.12.0+vue@3.2.47
       vue: 3.2.47
     devDependencies:
       '@vitejs/plugin-vue': 4.1.0_vite@4.3.1+vue@3.2.47
@@ -5727,6 +5727,32 @@ packages:
       mapbox-to-css-font: 2.4.2
     dev: false
 
+  /ol-plot-vue/1.0.0_ol@6.12.0+vue@3.2.47:
+    resolution: {integrity: sha512-tKJ5OuQ4TJF3vMrXmcDPxv15SQQ2vEuA1ebHU98rYMoKr9YAhE1jMXLOUkgYwZKxk2JimanyG9UAaHRECQBhLQ==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@vueuse/core': 10.0.2_vue@3.2.47
+      ol-plot: 4.0.0_ol@6.12.0
+      vue: 3.2.47
+      vue-demi: 0.14.0_vue@3.2.47
+    transitivePeerDependencies:
+      - ol
+    dev: false
+
+  /ol-plot/4.0.0_ol@6.12.0:
+    resolution: {integrity: sha512-rKxjc10py9OW8XafQIQ0IHM7ZWifcjDIWC36iCPUe4jmaKyGgtBUh9XxTJUVYDmqTdIm3Q7A2y4Bg8Gij6K+hQ==}
+    peerDependencies:
+      ol: ^5.0.0 || ^6.0.0 || ^7.0.0
+    dependencies:
+      autosize: 6.0.1
+      ol: 6.12.0
+    dev: false
+
   /ol/6.12.0:
     resolution: {integrity: sha512-HR87aV//64aiGWbgzfsyRF5zFG+1nM1keRE4SugY0vmYyG/jjoij8qh3uaFHkFNQThdAy99sgLiQwTFk6AvGgw==}
     dependencies:
@@ -7684,7 +7710,7 @@ packages:
   file:packages/ol-plot:
     resolution: {directory: packages/ol-plot, type: directory}
     name: ol-plot
-    version: 4.0.0
+    version: 3.0.0
     peerDependencies:
       ol: ^5.0.0 || ^6.0.0 || ^7.0.0
     dependencies:
@@ -7695,7 +7721,7 @@ packages:
     resolution: {directory: packages/ol-plot-vue, type: directory}
     id: file:packages/ol-plot-vue
     name: ol-plot-vue
-    version: 1.0.0
+    version: 0.0.0
     requiresBuild: true
     peerDependencies:
       '@vue/composition-api': ^1.4.0
@@ -7713,44 +7739,11 @@ packages:
       - ol
     dev: false
 
-  file:packages/ol-plot-vue_ol@6.12.0+vue@3.2.47:
-    resolution: {directory: packages/ol-plot-vue, type: directory}
-    id: file:packages/ol-plot-vue
-    name: ol-plot-vue
-    version: 1.0.0
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.4.0
-      vue: ^2.0.0 || >=3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@vueuse/core': 10.0.2_vue@3.2.47
-      ol-plot: file:packages/ol-plot_ol@6.12.0
-      vue: 3.2.47
-      vue-demi: 0.14.0_vue@3.2.47
-    transitivePeerDependencies:
-      - ol
-    dev: false
-
-  file:packages/ol-plot_ol@6.12.0:
-    resolution: {directory: packages/ol-plot, type: directory}
-    id: file:packages/ol-plot
-    name: ol-plot
-    version: 4.0.0
-    peerDependencies:
-      ol: ^5.0.0 || ^6.0.0 || ^7.0.0
-    dependencies:
-      autosize: 6.0.1
-      ol: 6.12.0
-    dev: false
-
   file:packages/ol-plot_ol@7.3.0:
     resolution: {directory: packages/ol-plot, type: directory}
     id: file:packages/ol-plot
     name: ol-plot
-    version: 4.0.0
+    version: 3.0.0
     peerDependencies:
       ol: ^5.0.0 || ^6.0.0 || ^7.0.0
     dependencies:
