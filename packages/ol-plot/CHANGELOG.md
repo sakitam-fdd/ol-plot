@@ -1,0 +1,7 @@
+# ol-plot
+
+## 4.0.0
+
+### Major Changes
+
+- 9095a5b: update version
