@@ -113,8 +113,8 @@ jobs:
             ${{ runner.os }}-
       - run: npm i -g pnpm@7.14.0
       - run: pnpm i
-      - run: pnpm build
-#      - run: pnpm docs:api
+      - run: pnpm run -r build --filter ol-plot ol-plot-vue
+      - run: pnpm run -r build --filter vue3
 #      - run: pnpm docs:build
 
       - name: Deploy

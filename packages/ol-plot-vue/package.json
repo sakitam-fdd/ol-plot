@@ -38,9 +38,8 @@
     "build": "pnpm run build-only",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
-    "postinstall": "pnpm run build",
-    "switch2": "vue-demi-switch 2",
-    "switch3": "vue-demi-switch 3"
+    "build:vue2": "vue-demi-switch 2 && pnpm run build",
+    "build:vue3": "vue-demi-switch 3 && pnpm run build"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.0",
