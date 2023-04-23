@@ -42,7 +42,7 @@ import Plot form 'ol-plot'
 
 ## Examples
 
-[![site](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/playground/vue3/public/images/plot.png)](https://sakitam-fdd.github.io/ol-plot)
+[![site](https://github.com/sakitam-fdd/ol-plot/blob/master/playground/vue3/public/image/plot.png?raw=true)](https://sakitam-fdd.github.io/ol-plot)
 
 [![demo](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/V1.0.0/examples/images/demo.png)](https://codepen.io/sakitam-fdd/pen/QMQydz)
 
