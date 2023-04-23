@@ -1,9 +1,8 @@
 # openlayers 扩展标绘
 
 [![CI](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml/badge.svg)](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml)
-[![npm version](https://badgen.net/npm/v/sakitam-fdd/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
-[![npm downloads](https://badgen.net/npm/dm/sakitam-fdd/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
-
+[![npm version](https://badgen.net/npm/v/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
+[![npm downloads](https://badgen.net/npm/dm/ol-plot)](https://npm.im/sakitam-fdd/ol-plot)
 ![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
 [![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
