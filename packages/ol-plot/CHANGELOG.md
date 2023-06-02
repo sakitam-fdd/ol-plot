@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.0
+
+### Minor Changes
+
+- 21ef6f7: add new shape
+
 ## 4.0.0
 
 ### Major Changes
