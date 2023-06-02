@@ -67,31 +67,33 @@ import Plot form 'ol-plot'
 
 ###### type:
 
-| key | type | desc      |
-| :---------------------- | :--- |:----------|
-| `olPlot.PlotTypes.ARC` | `string` | 弓形        |
-| `olPlot.PlotTypes.ELLIPSE` | `string` | 椭圆        |
-| `olPlot.PlotTypes.CURVE` | `string` | 曲线        |
-| `olPlot.PlotTypes.CLOSED_CURVE` | `string` | 闭合曲面      |
-| `olPlot.PlotTypes.LUNE` | `string` | 弓形        |
-| `olPlot.PlotTypes.SECTOR` | `string` | 扇形        |
-| `olPlot.PlotTypes.GATHERING_PLACE` | `string` | 集结地       |
-| `olPlot.PlotTypes.STRAIGHT_ARROW` | `string` | 细直箭头      |
-| `olPlot.PlotTypes.ASSAULT_DIRECTION` | `string` | 粗单直箭头     |
-| `olPlot.PlotTypes.ATTACK_ARROW` | `string` | 进攻方向      |
+| key                                    | type | desc      |
+|:---------------------------------------| :--- |:----------|
+| `olPlot.PlotTypes.ARC`                 | `string` | 弓形        |
+| `olPlot.PlotTypes.ELLIPSE`             | `string` | 椭圆        |
+| `olPlot.PlotTypes.CURVE`               | `string` | 曲线        |
+| `olPlot.PlotTypes.CLOSED_CURVE`        | `string` | 闭合曲面      |
+| `olPlot.PlotTypes.LUNE`                | `string` | 弓形        |
+| `olPlot.PlotTypes.SECTOR`              | `string` | 扇形        |
+| `olPlot.PlotTypes.GATHERING_PLACE`     | `string` | 集结地       |
+| `olPlot.PlotTypes.STRAIGHT_ARROW`      | `string` | 细直箭头      |
+| `olPlot.PlotTypes.ASSAULT_DIRECTION`   | `string` | 粗单直箭头     |
+| `olPlot.PlotTypes.ATTACK_ARROW`        | `string` | 进攻方向      |
 | `olPlot.PlotTypes.TAILED_ATTACK_ARROW` | `string` | 进攻方向（尾）   |
-| `olPlot.PlotTypes.SQUAD_COMBAT` | `string` | 战斗行动      |
+| `olPlot.PlotTypes.SQUAD_COMBAT`        | `string` | 战斗行动      |
 | `olPlot.PlotTypes.TAILED_SQUAD_COMBAT` | `string` | 分队战斗行动（尾） |
-| `olPlot.PlotTypes.FINE_ARROW` | `string` | 粗单尖头箭头    |
-| `olPlot.PlotTypes.CIRCLE` | `string` | 圆         |
-| `olPlot.PlotTypes.DOUBLE_ARROW` | `string` | 双箭头       |
-| `olPlot.PlotTypes.POLYLINE` | `string` | 线         |
-| `olPlot.PlotTypes.FREEHAND_LINE` | `string` | 自由线       |
-| `olPlot.PlotTypes.POLYGON` | `string` | 面         |
-| `olPlot.PlotTypes.FREEHAND_POLYGON` | `string` | 自由面       |
-| `olPlot.PlotTypes.RECTANGLE` | `string` | 矩形        |
-| `olPlot.PlotTypes.MARKER` | `string` | 点         |
-| `olPlot.PlotTypes.TEXTAREA` | `string` | 文本框       |
+| `olPlot.PlotTypes.FINE_ARROW`          | `string` | 粗单尖头箭头    |
+| `olPlot.PlotTypes.CIRCLE`              | `string` | 圆         |
+| `olPlot.PlotTypes.DOUBLE_ARROW`        | `string` | 双箭头       |
+| `olPlot.PlotTypes.POLYLINE`            | `string` | 线         |
+| `olPlot.PlotTypes.FREEHAND_LINE`       | `string` | 自由线       |
+| `olPlot.PlotTypes.POLYGON`             | `string` | 面         |
+| `olPlot.PlotTypes.FREEHAND_POLYGON`    | `string` | 自由面       |
+| `olPlot.PlotTypes.RECTANGLE`           | `string` | 矩形        |
+| `olPlot.PlotTypes.RectInclined1`       | `string` | 斜矩形1      |
+| `olPlot.PlotTypes.RectInclined2`       | `string` | 斜矩形2      |
+| `olPlot.PlotTypes.MARKER`              | `string` | 点         |
+| `olPlot.PlotTypes.TEXTAREA`            | `string` | 文本框       |
 
 #### `deactivate()`
 

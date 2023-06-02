@@ -90,6 +90,8 @@ import Plot form 'ol-plot'
 | `olPlot.PlotTypes.POLYGON` | `string` | 面         |
 | `olPlot.PlotTypes.FREEHAND_POLYGON` | `string` | 自由面       |
 | `olPlot.PlotTypes.RECTANGLE` | `string` | 矩形        |
+| `olPlot.PlotTypes.RectInclined1`       | `string` | 斜矩形1      |
+| `olPlot.PlotTypes.RectInclined2`       | `string` | 斜矩形2      |
 | `olPlot.PlotTypes.MARKER` | `string` | 点         |
 | `olPlot.PlotTypes.TEXTAREA` | `string` | 文本框       |
 
