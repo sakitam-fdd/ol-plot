@@ -8,6 +8,7 @@ import { Polygon as $Polygon } from 'ol/geom';
 import { fromExtent } from 'ol/geom/Polygon';
 import { boundingExtent } from 'ol/extent';
 import { RECTANGLE } from '@/utils/PlotTypes';
+
 class RectAngle extends $Polygon {
   constructor (coordinates, points, params) {
     super([]);

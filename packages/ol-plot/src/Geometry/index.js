@@ -29,6 +29,8 @@ import RectFlag from './Flag/RectFlag';
 import TriangleFlag from './Flag/TriangleFlag';
 import CurveFlag from './Flag/CurveFlag';
 import PlotTextBox from './Text/PlotTextBox';
+import RectInclined1 from './Polygon/Rectinclined1';
+import RectInclined2 from './Polygon/Rectinclined2';
 export {
   Point,
   Pennant,
@@ -56,5 +58,7 @@ export {
   RectFlag,
   TriangleFlag,
   CurveFlag,
-  PlotTextBox
+  PlotTextBox,
+  RectInclined1,
+  RectInclined2
 };

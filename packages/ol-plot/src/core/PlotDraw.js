@@ -161,6 +161,10 @@ class PlotDraw extends Observable {
         return new Plots.TriangleFlag([], points, params);
       case PlotTypes.CURVEFLAG:
         return new Plots.CurveFlag([], points, params);
+      case PlotTypes.RECTINCLINED1:
+        return new Plots.RectInclined1([], points, params);
+      case PlotTypes.RECTINCLINED2:
+        return new Plots.RectInclined2([], points, params);
     }
     return null;
   }

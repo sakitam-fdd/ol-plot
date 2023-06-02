@@ -148,6 +148,18 @@ export default defineComponent({
           "src": "RectAngle"
         },
         {
+          "id": "RectInclined1",
+          "name": "斜矩形1",
+          "alias": "RectInclined1",
+          "src": "RectInclined1"
+        },
+        {
+          "id": "RectInclined2",
+          "name": "斜矩形2",
+          "alias": "RectInclined2",
+          "src": "RectInclined2"
+        },
+        {
           "id": "Circle",
           "name": "圆形",
           "alias": "Circle",
