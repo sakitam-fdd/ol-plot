@@ -48,6 +48,24 @@ function onDrawEnd(event) {
   plot.plotEdit.activate(feature);
 }
 
+let isActive = true;
+
+// 你的外部图层事件
+map.on('click', (e) => {
+  if (isActive) return;
+  console.log('click');
+  // 你的逻辑
+});
+
+plot.plotDraw.on('drawStart', (e) => {
+  isActive = true;
+});
+
+plot.plotDraw.on('drawEnd', (e) => {
+  console.log('drawEnd');
+  isActive = false;
+});
+
 plot.plotDraw.on('drawStart', (e) => {
   console.log(e);
 });
