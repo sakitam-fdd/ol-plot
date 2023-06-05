@@ -113,7 +113,7 @@ jobs:
             ${{ runner.os }}-
       - run: npm i -g pnpm@7.14.0
       - run: pnpm i
-      - run: vue-demi-switch 3 && pnpm --filter "./packages/**" build
+      - run: pnpm --filter "./packages/ol-plot-vue" build:vue3 && pnpm --filter "./packages/**" build
       - run: pnpm --filter "./playground/vue3" build
 #      - run: pnpm docs:build
 
