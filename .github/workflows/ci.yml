@@ -114,10 +114,9 @@ jobs:
       - run: npm i -g pnpm@7.14.0
       - run: pnpm i
       - run: pnpm --filter "./packages/ol-plot-vue" build:vue3 && pnpm --filter "./packages/**" build
-      - run: cd packages/ol-plot-vue/dist && ls && cd ../../../
+      # ???
       - run: pnpm i
       - run: pnpm --filter "./playground/vue3" build
-#      - run: pnpm docs:build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
