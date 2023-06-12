@@ -5,8 +5,9 @@
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
 import { RECTFLAG } from '../../utils/PlotTypes';
+
 class RectFlag extends Polygon {
-  constructor (coordinates, points, params) {
+  constructor(coordinates, points, params) {
     super([]);
     this.type = RECTFLAG;
     this.fixPointCount = 2;
@@ -22,20 +23,19 @@ class RectFlag extends Polygon {
    * 获取标绘类型
    * @returns {*}
    */
-  getPlotType () {
+  getPlotType() {
     return this.type;
   }
 
   /**
    * 执行动作
    */
-  generate () {
-    let count = this.getPointCount();
+  generate() {
+    const count = this.getPointCount();
     if (count < 2) {
       return false;
-    } else {
-      this.setCoordinates([this.calculatePonits(this.points)]);
     }
+    this.setCoordinates([this.calculatePonits(this.points)]);
   }
 
   /**
@@ -43,18 +43,18 @@ class RectFlag extends Polygon {
    * @param points
    * @returns {Array}
    */
-  calculatePonits (points) {
+  calculatePonits(points) {
     let components = [];
     // 至少需要两个控制点
     if (points.length > 1) {
       // 取第一个
-      let startPoint = points[0];
+      const startPoint = points[0];
       // 取最后一个
-      let endPoint = points[points.length - 1];
-      var point1 = [endPoint[0], startPoint[1]];
-      var point2 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      var point3 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      var point4 = [startPoint[0], endPoint[1]];
+      const endPoint = points[points.length - 1];
+      const point1 = [endPoint[0], startPoint[1]];
+      const point2 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point3 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point4 = [startPoint[0], endPoint[1]];
       components = [startPoint, point1, point2, point3, point4];
     }
     return components;
@@ -64,7 +64,7 @@ class RectFlag extends Polygon {
    * 设置地图对象
    * @param map
    */
-  setMap (map) {
+  setMap(map) {
     if (map && map instanceof Map) {
       this.map = map;
     } else {
@@ -76,7 +76,7 @@ class RectFlag extends Polygon {
    * 获取当前地图对象
    * @returns {Map|*}
    */
-  getMap () {
+  getMap() {
     return this.map;
   }
 
@@ -84,7 +84,7 @@ class RectFlag extends Polygon {
    * 判断是否是Plot
    * @returns {boolean}
    */
-  isPlot () {
+  isPlot() {
     return true;
   }
 
@@ -92,7 +92,7 @@ class RectFlag extends Polygon {
    * 设置坐标点
    * @param value
    */
-  setPoints (value) {
+  setPoints(value) {
     this.points = !value ? [] : value;
     if (this.points.length >= 1) {
       this.generate();
@@ -103,7 +103,7 @@ class RectFlag extends Polygon {
    * 获取坐标点
    * @returns {Array.<T>}
    */
-  getPoints () {
+  getPoints() {
     return this.points.slice(0);
   }
 
@@ -111,7 +111,7 @@ class RectFlag extends Polygon {
    * 获取点数量
    * @returns {Number}
    */
-  getPointCount () {
+  getPointCount() {
     return this.points.length;
   }
 
@@ -120,7 +120,7 @@ class RectFlag extends Polygon {
    * @param point
    * @param index
    */
-  updatePoint (point, index) {
+  updatePoint(point, index) {
     if (index >= 0 && index < this.points.length) {
       this.points[index] = point;
       this.generate();
@@ -131,15 +131,14 @@ class RectFlag extends Polygon {
    * 更新最后一个坐标
    * @param point
    */
-  updateLastPoint (point) {
+  updateLastPoint(point) {
     this.updatePoint(point, this.points.length - 1);
   }
 
   /**
    * 结束绘制
    */
-  finishDrawing () {
-  }
+  finishDrawing() {}
 }
 
 export default RectFlag;

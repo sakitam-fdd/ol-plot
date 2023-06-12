@@ -7,6 +7,11 @@ export default defineConfig(({ mode }) => ({
   // server: {
   //   port: 8081,
   // },
+  resolve: {
+    alias: {
+      vue: 'vue/dist/vue.esm.js',
+    },
+  },
   define: {
     'process.env': {
       NODE_ENV: mode,

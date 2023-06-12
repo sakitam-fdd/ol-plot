@@ -1,14 +1,6 @@
-import {
-  Style,
-  Circle,
-  Stroke,
-  Fill
-} from 'ol/style';
+import { Style, Circle, Stroke, Fill } from 'ol/style';
 
-import {
-  Group,
-  Vector
-} from 'ol/layer';
+import { Group, Vector } from 'ol/layer';
 
 import { Vector as VectorSource } from 'ol/source';
 
@@ -22,7 +14,8 @@ const getLayerByLayerName = function (map, layerName) {
   try {
     let targetLayer = null;
     if (map) {
-      let layers = map.getLayers().getArray();
+      const layers = map.getLayers().getArray();
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       targetLayer = getLayerInternal(layers, 'layerName', layerName);
     }
     return targetLayer;
@@ -41,21 +34,17 @@ const getLayerByLayerName = function (map, layerName) {
 const getLayerInternal = function (layers, key, value) {
   let _target = null;
   if (layers.length > 0) {
-    layers.every(layer => {
+    layers.every((layer) => {
       if (layer instanceof Group) {
-        let layers = layer.getLayers().getArray();
-        _target = getLayerInternal(layers, key, value);
-        if (_target) {
-          return false;
-        } else {
-          return true;
-        }
-      } else if (layer.get(key) === value) {
+        const ly = layer.getLayers().getArray();
+        _target = getLayerInternal(ly, key, value);
+        return !_target;
+      }
+      if (layer.get(key) === value) {
         _target = layer;
         return false;
-      } else {
-        return true;
       }
+      return true;
     });
   }
   return _target;
@@ -78,25 +67,25 @@ const createVectorLayer = function (map, layerName, params) {
       if (!vectorLayer) {
         if (params && params.create) {
           vectorLayer = new Vector({
-            layerName: layerName,
-            params: params,
+            layerName,
+            params,
             layerType: 'vector',
             source: new VectorSource({
-              wrapX: false
+              wrapX: false,
             }),
             style: new Style({
               fill: new Fill({
-                color: 'rgba(67, 110, 238, 0.4)'
+                color: 'rgba(67, 110, 238, 0.4)',
               }),
               stroke: new Stroke({
                 color: '#4781d9',
-                width: 2
+                width: 2,
               }),
               image: new Circle({
                 radius: 7,
                 fill: new Fill({
-                  color: '#ffcc33'
-                })
+                  color: '#ffcc33',
+                }),
               }),
             }),
           });
@@ -107,7 +96,7 @@ const createVectorLayer = function (map, layerName, params) {
           vectorLayer.set('selectable', params.selectable);
         }
         // 图层只添加一次
-        let _vectorLayer = getLayerByLayerName(map, layerName);
+        const _vectorLayer = getLayerByLayerName(map, layerName);
         if (!_vectorLayer || !(_vectorLayer instanceof Vector)) {
           map.addLayer(vectorLayer);
         }
@@ -119,7 +108,4 @@ const createVectorLayer = function (map, layerName, params) {
   }
 };
 
-export {
-  createVectorLayer,
-  getLayerByLayerName
-};
+export { createVectorLayer, getLayerByLayerName };

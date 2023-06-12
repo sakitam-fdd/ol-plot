@@ -6,8 +6,7 @@ import * as Constants from '../constants';
  * @returns {number}
  * @constructor
  */
-export const MathDistance = (pnt1, pnt2) =>
-  Math.sqrt(Math.pow(pnt1[0] - pnt2[0], 2) + Math.pow(pnt1[1] - pnt2[1], 2));
+export const MathDistance = (pnt1, pnt2) => Math.sqrt((pnt1[0] - pnt2[0]) ** 2 + (pnt1[1] - pnt2[1]) ** 2);
 
 /**
  * 计算点集合的总距离
@@ -30,7 +29,7 @@ export const wholeDistance = (points) => {
  * @param points
  * @returns {number}
  */
-export const getBaseLength = (points) => Math.pow(wholeDistance(points), 0.99);
+export const getBaseLength = (points) => wholeDistance(points) ** 0.99;
 
 /**
  * 求取两个坐标的中间值
@@ -92,9 +91,7 @@ export const getIntersectPoint = (pntA, pntB, pntC, pntD) => {
  */
 export const getAzimuth = (startPoint, endPoint) => {
   let azimuth;
-  const angle = Math.asin(
-    Math.abs(endPoint[1] - startPoint[1]) / MathDistance(startPoint, endPoint),
-  );
+  const angle = Math.asin(Math.abs(endPoint[1] - startPoint[1]) / MathDistance(startPoint, endPoint));
   if (endPoint[1] >= startPoint[1] && endPoint[0] >= startPoint[0]) {
     azimuth = angle + Math.PI;
   } else if (endPoint[1] >= startPoint[1] && endPoint[0] < startPoint[0]) {
@@ -189,6 +186,7 @@ export const getThirdPoint = (startPnt, endPnt, angle, distance, clockWise) => {
  * @returns {null}
  */
 export const getArcPoints = (center, radius, startAngle, endAngle) => {
+  // eslint-disable-next-line
   let [x, y, pnts, angleDiff] = [null, null, [], endAngle - startAngle];
   angleDiff = angleDiff < 0 ? angleDiff + Math.PI * 2 : angleDiff;
   for (let i = 0; i <= 100; i++) {
@@ -209,6 +207,7 @@ export const getArcPoints = (center, radius, startAngle, endAngle) => {
  * @returns {[*,*]}
  */
 export const getBisectorNormals = (t, pnt1, pnt2, pnt3) => {
+  // eslint-disable-next-line
   const normal = getNormal(pnt1, pnt2, pnt3);
   let [bisectorNormalRight, bisectorNormalLeft, dt, x, y] = [null, null, null, null, null];
   const dist = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
@@ -273,16 +272,12 @@ export const getNormal = (pnt1, pnt2, pnt3) => {
 /**
  * 获取左边控制点
  * @param controlPoints
+ * @param t
  * @returns {[*,*]}
  */
 export const getLeftMostControlPoint = (controlPoints, t) => {
-  let [pnt1, pnt2, pnt3, controlX, controlY] = [
-    controlPoints[0],
-    controlPoints[1],
-    controlPoints[2],
-    null,
-    null,
-  ];
+  // eslint-disable-next-line
+  let [pnt1, pnt2, pnt3, controlX, controlY] = [controlPoints[0], controlPoints[1], controlPoints[2], null, null];
   const pnts = getBisectorNormals(0, pnt1, pnt2, pnt3);
   const normalRight = pnts[0];
   const normal = getNormal(pnt1, pnt2, pnt3);
@@ -355,6 +350,7 @@ export const getRightMostControlPoint = (controlPoints, t) => {
  */
 export const getCurvePoints = (t, controlPoints) => {
   const leftControl = getLeftMostControlPoint(controlPoints, t);
+  // eslint-disable-next-line
   let [pnt1, pnt2, pnt3, normals, points] = [null, null, null, [leftControl], []];
   for (let i = 0; i < controlPoints.length - 2; i++) {
     [pnt1, pnt2, pnt3] = [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]];
@@ -369,14 +365,8 @@ export const getCurvePoints = (t, controlPoints) => {
     pnt1 = controlPoints[i];
     pnt2 = controlPoints[i + 1];
     points.push(pnt1);
-    for (let t = 0; t < Constants.FITTING_COUNT; t++) {
-      const pnt = getCubicValue(
-        t / Constants.FITTING_COUNT,
-        pnt1,
-        normals[i * 2],
-        normals[i * 2 + 1],
-        pnt2,
-      );
+    for (let j = 0; j < Constants.FITTING_COUNT; j++) {
+      const pnt = getCubicValue(j / Constants.FITTING_COUNT, pnt1, normals[i * 2], normals[i * 2 + 1], pnt2);
       points.push(pnt);
     }
     points.push(pnt2);
@@ -392,23 +382,23 @@ export const getCurvePoints = (t, controlPoints) => {
 export const getBezierPoints = function (points) {
   if (points.length <= 2) {
     return points;
-  } else {
-    const bezierPoints = [];
-    const n = points.length - 1;
-    for (let t = 0; t <= 1; t += 0.01) {
-      let [x, y] = [0, 0];
-      for (let index = 0; index <= n; index++) {
-        const factor = getBinomialFactor(n, index);
-        const a = Math.pow(t, index);
-        const b = Math.pow(1 - t, n - index);
-        x += factor * a * b * points[index][0];
-        y += factor * a * b * points[index][1];
-      }
-      bezierPoints.push([x, y]);
-    }
-    bezierPoints.push(points[n]);
-    return bezierPoints;
   }
+  const bezierPoints = [];
+  const n = points.length - 1;
+  for (let t = 0; t <= 1; t += 0.01) {
+    let [x, y] = [0, 0];
+    for (let index = 0; index <= n; index++) {
+      // eslint-disable-next-line
+      const factor = getBinomialFactor(n, index);
+      const a = t ** index;
+      const b = (1 - t) ** (n - index);
+      x += factor * a * b * points[index][0];
+      y += factor * a * b * points[index][1];
+    }
+    bezierPoints.push([x, y]);
+  }
+  bezierPoints.push(points[n]);
+  return bezierPoints;
 };
 
 /**
@@ -449,8 +439,7 @@ export const getFactorial = (n) => {
  * @param index
  * @returns {number}
  */
-export const getBinomialFactor = (n, index) =>
-  getFactorial(n) / (getFactorial(index) * getFactorial(n - index));
+export const getBinomialFactor = (n, index) => getFactorial(n) / (getFactorial(index) * getFactorial(n - index));
 
 /**
  * 插值线性点
@@ -460,24 +449,24 @@ export const getBinomialFactor = (n, index) =>
 export const getQBSplinePoints = (points) => {
   if (points.length <= 2) {
     return points;
-  } else {
-    const [n, bSplinePoints] = [2, []];
-    const m = points.length - n - 1;
-    bSplinePoints.push(points[0]);
-    for (let i = 0; i <= m; i++) {
-      for (let t = 0; t <= 1; t += 0.05) {
-        let [x, y] = [0, 0];
-        for (let k = 0; k <= n; k++) {
-          const factor = getQuadricBSplineFactor(k, t);
-          x += factor * points[i + k][0];
-          y += factor * points[i + k][1];
-        }
-        bSplinePoints.push([x, y]);
-      }
-    }
-    bSplinePoints.push(points[points.length - 1]);
-    return bSplinePoints;
   }
+  const [n, bSplinePoints] = [2, []];
+  const m = points.length - n - 1;
+  bSplinePoints.push(points[0]);
+  for (let i = 0; i <= m; i++) {
+    for (let t = 0; t <= 1; t += 0.05) {
+      let [x, y] = [0, 0];
+      for (let k = 0; k <= n; k++) {
+        // eslint-disable-next-line
+        const factor = getQuadricBSplineFactor(k, t);
+        x += factor * points[i + k][0];
+        y += factor * points[i + k][1];
+      }
+      bSplinePoints.push([x, y]);
+    }
+  }
+  bSplinePoints.push(points[points.length - 1]);
+  return bSplinePoints;
 };
 
 /**
@@ -489,11 +478,11 @@ export const getQBSplinePoints = (points) => {
 export const getQuadricBSplineFactor = (k, t) => {
   let res = 0;
   if (k === 0) {
-    res = Math.pow(t - 1, 2) / 2;
+    res = (t - 1) ** 2 / 2;
   } else if (k === 1) {
-    res = (-2 * Math.pow(t, 2) + 2 * t + 1) / 2;
+    res = (-2 * t ** 2 + 2 * t + 1) / 2;
   } else if (k === 2) {
-    res = Math.pow(t, 2) / 2;
+    res = t ** 2 / 2;
   }
   return res;
 };
@@ -508,7 +497,9 @@ export const getuuid = () => {
     s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
   }
   s[14] = '4';
+  // eslint-disable-next-line no-bitwise
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+  // eslint-disable-next-line no-multi-assign
   s[8] = s[13] = s[18] = s[23] = '-';
   return s.join('');
 };
@@ -555,6 +546,7 @@ export const isObject = (value) => {
  * @returns {*}
  */
 export const merge = (a, b) => {
+  // eslint-disable-next-line no-restricted-syntax
   for (const key in b) {
     if (isObject(b[key]) && isObject(a[key])) {
       merge(a[key], b[key]);

@@ -8,8 +8,9 @@ import { Polygon } from 'ol/geom';
 import { LUNE } from '../../utils/PlotTypes';
 import * as Constants from '../../constants';
 import * as PlotUtils from '../../utils/utils';
+
 class Lune extends Polygon {
-  constructor (coordinates, points, params) {
+  constructor(coordinates, points, params) {
     super([]);
     this.type = LUNE;
     this.fixPointCount = 3;
@@ -25,47 +26,47 @@ class Lune extends Polygon {
    * 获取标绘类型
    * @returns {*}
    */
-  getPlotType () {
+  getPlotType() {
     return this.type;
   }
 
   /**
    * 执行动作
    */
-  generate () {
+  generate() {
     if (this.getPointCount() < 2) {
       return false;
-    } else {
-      let pnts = this.getPoints();
-      if (this.getPointCount() === 2) {
-        let mid = PlotUtils.Mid(pnts[0], pnts[1]);
-        let d = PlotUtils.MathDistance(pnts[0], mid);
-        let pnt = PlotUtils.getThirdPoint(pnts[0], mid, Constants.HALF_PI, d);
-        pnts.push(pnt);
-      }
-      let [pnt1, pnt2, pnt3, startAngle, endAngle] = [pnts[0], pnts[1], pnts[2], undefined, undefined];
-      let center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
-      let radius = PlotUtils.MathDistance(pnt1, center);
-      let angle1 = PlotUtils.getAzimuth(pnt1, center);
-      let angle2 = PlotUtils.getAzimuth(pnt2, center);
-      if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
-        startAngle = angle2;
-        endAngle = angle1;
-      } else {
-        startAngle = angle1;
-        endAngle = angle2;
-      }
-      pnts = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
-      pnts.push(pnts[0]);
-      this.setCoordinates([pnts]);
     }
+    let pnts = this.getPoints();
+    if (this.getPointCount() === 2) {
+      const mid = PlotUtils.Mid(pnts[0], pnts[1]);
+      const d = PlotUtils.MathDistance(pnts[0], mid);
+      const pnt = PlotUtils.getThirdPoint(pnts[0], mid, Constants.HALF_PI, d);
+      pnts.push(pnt);
+    }
+    // eslint-disable-next-line
+    let [pnt1, pnt2, pnt3, startAngle, endAngle] = [pnts[0], pnts[1], pnts[2], undefined, undefined];
+    const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
+    const radius = PlotUtils.MathDistance(pnt1, center);
+    const angle1 = PlotUtils.getAzimuth(pnt1, center);
+    const angle2 = PlotUtils.getAzimuth(pnt2, center);
+    if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
+      startAngle = angle2;
+      endAngle = angle1;
+    } else {
+      startAngle = angle1;
+      endAngle = angle2;
+    }
+    pnts = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
+    pnts.push(pnts[0]);
+    this.setCoordinates([pnts]);
   }
 
   /**
    * 设置地图对象
    * @param map
    */
-  setMap (map) {
+  setMap(map) {
     if (map && map instanceof Map) {
       this.map = map;
     } else {
@@ -77,7 +78,7 @@ class Lune extends Polygon {
    * 获取当前地图对象
    * @returns {Map|*}
    */
-  getMap () {
+  getMap() {
     return this.map;
   }
 
@@ -85,7 +86,7 @@ class Lune extends Polygon {
    * 判断是否是Plot
    * @returns {boolean}
    */
-  isPlot () {
+  isPlot() {
     return true;
   }
 
@@ -93,7 +94,7 @@ class Lune extends Polygon {
    * 设置坐标点
    * @param value
    */
-  setPoints (value) {
+  setPoints(value) {
     this.points = !value ? [] : value;
     if (this.points.length >= 1) {
       this.generate();
@@ -104,7 +105,7 @@ class Lune extends Polygon {
    * 获取坐标点
    * @returns {Array.<T>}
    */
-  getPoints () {
+  getPoints() {
     return this.points.slice(0);
   }
 
@@ -112,7 +113,7 @@ class Lune extends Polygon {
    * 获取点数量
    * @returns {Number}
    */
-  getPointCount () {
+  getPointCount() {
     return this.points.length;
   }
 
@@ -121,7 +122,7 @@ class Lune extends Polygon {
    * @param point
    * @param index
    */
-  updatePoint (point, index) {
+  updatePoint(point, index) {
     if (index >= 0 && index < this.points.length) {
       this.points[index] = point;
       this.generate();
@@ -132,15 +133,14 @@ class Lune extends Polygon {
    * 更新最后一个坐标
    * @param point
    */
-  updateLastPoint (point) {
+  updateLastPoint(point) {
     this.updatePoint(point, this.points.length - 1);
   }
 
   /**
    * 结束绘制
    */
-  finishDrawing () {
-  }
+  finishDrawing() {}
 }
 
 export default Lune;

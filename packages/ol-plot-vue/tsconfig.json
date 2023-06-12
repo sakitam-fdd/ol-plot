@@ -1,12 +1,41 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*.vue"],
   "compilerOptions": {
     "baseUrl": ".",
-  },
-  "references": [
-    {
-      "path": "./tsconfig.ref.json"
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "alwaysStrict": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictBindCallApply": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "strictPropertyInitialization": false,
+    "useDefineForClassFields": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "composite": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom", "dom.iterable", "webworker"],
+    "skipLibCheck": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["src/*"]
     }
-  ]
+  },
+  "exclude": ["node_modules", "dist", "jest"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.*", "vitest.config.*", "./env.d.ts","package.json"]
 }

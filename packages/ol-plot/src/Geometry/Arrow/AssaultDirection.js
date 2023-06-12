@@ -5,8 +5,9 @@
  */
 import FineArrow from './FineArrow';
 import { ASSAULT_DIRECTION } from '../../utils/PlotTypes';
+
 class AssaultDirection extends FineArrow {
-  constructor (coordinates, points, params) {
+  constructor(coordinates, points, params) {
     super(coordinates, points, params);
     this.tailWidthFactor = 0.05;
     this.neckWidthFactor = 0.1;

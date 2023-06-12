@@ -62,7 +62,7 @@
     "dev": "vite build --mode watch",
     "build": "vite build --mode production",
     "build:minify": "vite build --mode minify",
-    "lint": "eslint src/**/* --ext .js,.ts,.tsx",
+    "lint": "eslint --ext .js,.ts,.tsx src",
     "prettier": "prettier --parser=typescript --write **/*.{js,ts,md}",
     "test": "pnpm run build && pnpm run test-only",
     "test-only": "vitest run",

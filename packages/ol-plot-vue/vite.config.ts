@@ -5,12 +5,22 @@ import type { UserConfigExport } from 'vite';
 import { isVue2 } from 'vue-demi';
 import vue from '@vitejs/plugin-vue';
 import vue2 from '@vitejs/plugin-vue2';
+import dts from 'vite-plugin-dts';
 
 const name = 'ol-plot-vue';
 
 export default defineConfig((env) => {
   const defaultConfig: UserConfigExport = {
-    plugins: [isVue2 ? vue2() : vue()],
+    plugins: [
+      isVue2 ? vue2() : vue(),
+      dts({
+        // outputDir: 'types',
+        rollupTypes: true,
+        staticImport: true,
+        insertTypesEntry: true,
+        cleanVueFileName: true,
+      }),
+    ],
     build: {
       cssCodeSplit: false,
       minify: env.mode === 'minify' ? 'esbuild' : false,
@@ -27,6 +37,7 @@ export default defineConfig((env) => {
       },
       rollupOptions: {
         external: (id) => /^ol/.test(id) || id === 'vue' || id === 'vue-demi',
+        // plugins: [dts()],
         output: {
           globals: {
             vue: 'Vue',

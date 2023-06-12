@@ -6,8 +6,9 @@
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
 import { FREE_POLYGON } from '../../utils/PlotTypes';
+
 class FreePolygon extends Polygon {
-  constructor (coordinates, points, params) {
+  constructor(coordinates, points, params) {
     super([]);
     this.type = FREE_POLYGON;
     this.freehand = true;
@@ -23,14 +24,14 @@ class FreePolygon extends Polygon {
    * 获取标绘类型
    * @returns {*}
    */
-  getPlotType () {
+  getPlotType() {
     return this.type;
   }
 
   /**
    * 执行动作
    */
-  generate () {
+  generate() {
     this.setCoordinates([this.points]);
   }
 
@@ -38,7 +39,7 @@ class FreePolygon extends Polygon {
    * 设置地图对象
    * @param map
    */
-  setMap (map) {
+  setMap(map) {
     if (map && map instanceof Map) {
       this.map = map;
     } else {
@@ -50,7 +51,7 @@ class FreePolygon extends Polygon {
    * 获取当前地图对象
    * @returns {Map|*}
    */
-  getMap () {
+  getMap() {
     return this.map;
   }
 
@@ -58,7 +59,7 @@ class FreePolygon extends Polygon {
    * 判断是否是Plot
    * @returns {boolean}
    */
-  isPlot () {
+  isPlot() {
     return true;
   }
 
@@ -66,7 +67,7 @@ class FreePolygon extends Polygon {
    * 设置坐标点
    * @param value
    */
-  setPoints (value) {
+  setPoints(value) {
     this.points = !value ? [] : value;
     if (this.points.length >= 1) {
       this.generate();
@@ -77,7 +78,7 @@ class FreePolygon extends Polygon {
    * 获取坐标点
    * @returns {Array.<T>}
    */
-  getPoints () {
+  getPoints() {
     return this.points.slice(0);
   }
 
@@ -85,7 +86,7 @@ class FreePolygon extends Polygon {
    * 获取点数量
    * @returns {Number}
    */
-  getPointCount () {
+  getPointCount() {
     return this.points.length;
   }
 
@@ -94,7 +95,7 @@ class FreePolygon extends Polygon {
    * @param point
    * @param index
    */
-  updatePoint (point, index) {
+  updatePoint(point, index) {
     if (index >= 0 && index < this.points.length) {
       this.points[index] = point;
       this.generate();
@@ -105,15 +106,14 @@ class FreePolygon extends Polygon {
    * 更新最后一个坐标
    * @param point
    */
-  updateLastPoint (point) {
+  updateLastPoint(point) {
     this.updatePoint(point, this.points.length - 1);
   }
 
   /**
    * 结束绘制
    */
-  finishDrawing () {
-  }
+  finishDrawing() {}
 }
 
 export default FreePolygon;

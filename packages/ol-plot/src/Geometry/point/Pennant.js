@@ -5,8 +5,9 @@
 import { Map } from 'ol';
 import { Point } from 'ol/geom';
 import { PENNANT } from '../../utils/PlotTypes';
+
 class Pennant extends Point {
-  constructor (coordinates, point, params) {
+  constructor(coordinates, point, params) {
     super([]);
     this.type = PENNANT;
     this.options = params || {};
@@ -22,11 +23,11 @@ class Pennant extends Point {
    * 获取标绘类型
    * @returns {*}
    */
-  getPlotType () {
+  getPlotType() {
     return this.type;
   }
 
-  generate () {
+  generate() {
     this.setCoordinates(this.points);
   }
 
@@ -34,7 +35,7 @@ class Pennant extends Point {
    * 设置地图对象
    * @param map
    */
-  setMap (map) {
+  setMap(map) {
     if (map && map instanceof Map) {
       this.map = map;
     } else {
@@ -46,7 +47,7 @@ class Pennant extends Point {
    * 获取当前地图对象
    * @returns {{}|*}
    */
-  getMap () {
+  getMap() {
     return this.map;
   }
 
@@ -54,7 +55,7 @@ class Pennant extends Point {
    * 判断是否是Plot
    * @returns {boolean}
    */
-  isPlot () {
+  isPlot() {
     return true;
   }
 
@@ -62,7 +63,7 @@ class Pennant extends Point {
    * 设置坐标点
    * @param value
    */
-  setPoints (value) {
+  setPoints(value) {
     this.points = !value ? [] : value;
     if (this.points.length >= 1) {
       this.generate();
@@ -73,7 +74,7 @@ class Pennant extends Point {
    * 获取坐标点
    * @returns {Array.<T>}
    */
-  getPoints () {
+  getPoints() {
     return this.points.slice(0);
   }
 
@@ -81,7 +82,7 @@ class Pennant extends Point {
    * 获取点数量
    * @returns {Number}
    */
-  getPointCount () {
+  getPointCount() {
     return this.points.length;
   }
 
@@ -90,7 +91,7 @@ class Pennant extends Point {
    * @param point
    * @param index
    */
-  updatePoint (point, index) {
+  updatePoint(point, index) {
     if (index >= 0 && index < this.points.length) {
       this.points[index] = point;
       this.generate();
@@ -101,15 +102,14 @@ class Pennant extends Point {
    * 更新最后一个坐标
    * @param point
    */
-  updateLastPoint (point) {
+  updateLastPoint(point) {
     this.updatePoint(point, this.points.length - 1);
   }
 
   /**
    * 结束绘制
    */
-  finishDrawing () {
-  }
+  finishDrawing() {}
 }
 
 export default Pennant;

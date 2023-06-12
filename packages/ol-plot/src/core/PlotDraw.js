@@ -1,14 +1,7 @@
 import { Map, Observable, Feature } from 'ol';
-import Draw, {
-  createBox,
-} from 'ol/interaction/Draw';
+import Draw, { createBox } from 'ol/interaction/Draw';
 import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
-import {
-  Style,
-  Icon,
-  Stroke,
-  Fill
-} from 'ol/style';
+import { Style, Icon, Stroke, Fill } from 'ol/style';
 
 import { getuuid, MathDistance, bindAll } from '@/utils/utils';
 import { BASE_LAYERNAME } from '@/constants';
@@ -19,7 +12,7 @@ import * as Plots from '../Geometry';
 import * as PlotTypes from '../utils/PlotTypes';
 
 class PlotDraw extends Observable {
-  constructor (map, params, ctx) {
+  constructor(map, params, ctx) {
     super();
     if (map && map instanceof Map) {
       this.map = map;
@@ -77,24 +70,27 @@ class PlotDraw extends Observable {
      * 创建图层名称
      * @type {string}
      */
-    this.layerName = ((this.options && this.options['layerName']) ? this.options['layerName'] : BASE_LAYERNAME);
+    this.layerName = this.options && this.options.layerName ? this.options.layerName : BASE_LAYERNAME;
 
-    bindAll([
-      'textAreaDrawEnd',
-      'mapFirstClickHandler',
-      'mapNextClickHandler',
-      'mapDoubleClickHandler',
-      'mapMouseMoveHandler'
-    ], this);
+    bindAll(
+      [
+        'textAreaDrawEnd',
+        'mapFirstClickHandler',
+        'mapNextClickHandler',
+        'mapDoubleClickHandler',
+        'mapMouseMoveHandler',
+      ],
+      this,
+    );
 
     /**
      * 当前矢量图层
      * @type {*}
      */
     this.drawLayer = createVectorLayer(this.map, this.layerName, {
-      create: true
+      create: true,
     });
-    this.drawLayer.setZIndex(this.options['zIndex'] || 99);
+    this.drawLayer.setZIndex(this.options.zIndex || 99);
   }
 
   /**
@@ -104,8 +100,8 @@ class PlotDraw extends Observable {
    * @param _params
    * @returns {*}
    */
-  createPlot (type, points, _params) {
-    let params = _params || {};
+  createPlot(type, points, _params) {
+    const params = _params || {};
     switch (type) {
       case PlotTypes.TEXTAREA:
         return 'TextArea';
@@ -165,11 +161,13 @@ class PlotDraw extends Observable {
         return new Plots.RectInclined1([], points, params);
       case PlotTypes.RECTINCLINED2:
         return new Plots.RectInclined2([], points, params);
+      default:
+        console.warn('暂不支持此类型', type);
     }
     return null;
   }
 
-  active (type, params = {}) {
+  active(type, params = {}) {
     this.activate(type, params);
     console.warn('[ol-plot]: active 方法即将废弃，请使用 activate');
   }
@@ -186,7 +184,7 @@ class PlotDraw extends Observable {
     this.plotParams = params;
     if (type === PlotTypes.TEXTAREA) {
       this.activeInteraction();
-    } else if (Object.keys(PlotTypes).some(key => (PlotTypes[key] === type))) {
+    } else if (Object.keys(PlotTypes).some((key) => PlotTypes[key] === type)) {
       this.map.on('click', this.mapFirstClickHandler);
     } else {
       console.warn('不存在的标绘类型！');
@@ -196,15 +194,15 @@ class PlotDraw extends Observable {
   /**
    * 激活交互工具
    */
-  activeInteraction () {
+  activeInteraction() {
     this.drawInteraction_ = new Draw({
       style: new Style({
         fill: new Fill({
-          color: 'rgba(255, 255, 255, 0.7)'
+          color: 'rgba(255, 255, 255, 0.7)',
         }),
         stroke: new Stroke({
           color: 'rgba(0, 0, 0, 0.15)',
-          width: 2
+          width: 2,
         }),
         image: new Icon({
           anchor: [1, 1],
@@ -212,11 +210,11 @@ class PlotDraw extends Observable {
           anchorYUnits: 'fraction',
           opacity: 0.75,
           // eslint-disable-next-line max-len
-          src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgklEQVQ4T41T0W3CQAy1lfwRqR0h/CE5UhkBJmiZADpB0wlKJwA2aDegE5QR+Igl/noj9OPuLydXPuXQEYUKS5FyPvvd87ONRDRFxEdr7c4Y8ws3WFmW90VRvIjIF1ZVtQaANxH59N6v8zwvRaQEgCMATDu88I+Ipm1bk2XZHhEfAOAdFW00Gh2YOQafOeidHoaYEdGHc65GDZhMJuXpdDJ99hqkPmZe9e9iTgCoqmrWNM0hDerq/FGftXbcZxFzAgARrZg5vBaNiGpE3OhZRF6Zedu7DzkRYMrMKlQKYBBRQVVgw8zj3n3IGWSg9ESkds6tiqJQbe4AYJ6WGVkPAqh4+romdP9LbXMqZh/gXIKqm+d5EK9vbduOY7d0AAdL6AYLmqbRAQtGRMc4ONF/wSC2RF/PsuwbABapqLEjKqb3fq4sLtoYh6Lbiydr7TbtuwYDgH5qB9XmPEjdKG+Y+Xmo7ms+Lcs5N0uX6ei9X9y4TGtEXIZlukb7PzbdmNcisv8DtQILak2vZsYAAAAASUVORK5CYII='
-        })
+          src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgklEQVQ4T41T0W3CQAy1lfwRqR0h/CE5UhkBJmiZADpB0wlKJwA2aDegE5QR+Igl/noj9OPuLydXPuXQEYUKS5FyPvvd87ONRDRFxEdr7c4Y8ws3WFmW90VRvIjIF1ZVtQaANxH59N6v8zwvRaQEgCMATDu88I+Ipm1bk2XZHhEfAOAdFW00Gh2YOQafOeidHoaYEdGHc65GDZhMJuXpdDJ99hqkPmZe9e9iTgCoqmrWNM0hDerq/FGftXbcZxFzAgARrZg5vBaNiGpE3OhZRF6Zedu7DzkRYMrMKlQKYBBRQVVgw8zj3n3IGWSg9ESkds6tiqJQbe4AYJ6WGVkPAqh4+romdP9LbXMqZh/gXIKqm+d5EK9vbduOY7d0AAdL6AYLmqbRAQtGRMc4ONF/wSC2RF/PsuwbABapqLEjKqb3fq4sLtoYh6Lbiydr7TbtuwYDgH5qB9XmPEjdKG+Y+Xmo7ms+Lcs5N0uX6ei9X9y4TGtEXIZlukb7PzbdmNcisv8DtQILak2vZsYAAAAASUVORK5CYII=',
+        }),
       }),
       type: 'Circle',
-      geometryFunction: createBox()
+      geometryFunction: createBox(),
     });
     this.map.addInteraction(this.drawInteraction_);
     this.drawInteraction_.on('drawend', this.textAreaDrawEnd);
@@ -226,7 +224,7 @@ class PlotDraw extends Observable {
    * 绘制结束
    * @param event
    */
-  textAreaDrawEnd (event) {
+  textAreaDrawEnd(event) {
     if (event && event.feature) {
       this.map.removeInteraction(this.drawInteraction_);
       const extent = event.feature.getGeometry().getExtent();
@@ -234,17 +232,20 @@ class PlotDraw extends Observable {
       const topLeft = this.map.getPixelFromCoordinate([extent[0], extent[1]]);
       const bottomRight = this.map.getPixelFromCoordinate([extent[2], extent[3]]);
       const [_width, _height] = [Math.abs(topLeft[0] - bottomRight[0]), Math.abs(topLeft[1] - bottomRight[1])];
-      const _plotText = new PlotTextBox({
-        id: getuuid(),
-        position: _center,
-        value: '',
-        width: _width,
-        height: _height,
-        style: {
-          width: _width + 'px',
-          height: _height + 'px'
-        }
-      }, this.ctx);
+      const _plotText = new PlotTextBox(
+        {
+          id: getuuid(),
+          position: _center,
+          value: '',
+          width: _width,
+          height: _height,
+          style: {
+            width: `${_width}px`,
+            height: `${_height}px`,
+          },
+        },
+        this.ctx,
+      );
       if (this.map && this.map instanceof Map && _plotText) {
         this.map.addOverlay(_plotText);
       } else {
@@ -255,7 +256,7 @@ class PlotDraw extends Observable {
     }
   }
 
-  disActive () {
+  disActive() {
     this.deactivate();
     console.warn('[ol-plot]: disActive 方法即将废弃，请使用 deactivate');
   }
@@ -281,7 +282,7 @@ class PlotDraw extends Observable {
    * PLOT是否处于激活状态
    * @returns {boolean}
    */
-  isDrawing () {
+  isDrawing() {
     return !!this.plotType;
   }
 
@@ -290,15 +291,17 @@ class PlotDraw extends Observable {
    * 激活工具后第一次点击事件
    * @param event
    */
-  mapFirstClickHandler (event) {
+  mapFirstClickHandler(event) {
     this.map.un('click', this.mapFirstClickHandler);
     this.points.push(event.coordinate);
     this.plot = this.createPlot(this.plotType, this.points, this.plotParams);
     this.feature = new Feature(this.plot);
-    this.dispatchEvent(new PlotEvent('drawStart', {
-      originalEvent: event,
-      feature: this.feature
-    }));
+    this.dispatchEvent(
+      new PlotEvent('drawStart', {
+        originalEvent: event,
+        feature: this.feature,
+      }),
+    );
     this.feature.set('isPlot', true);
     this.drawLayer.getSource().addFeature(this.feature);
     if (this.plotType === PlotTypes.POINT || this.plotType === PlotTypes.PENNANT) {
@@ -313,7 +316,7 @@ class PlotDraw extends Observable {
       this.map.on('pointermove', this.mapMouseMoveHandler);
     }
     if (this.plotType && this.feature) {
-      this.plotParams['plotType'] = this.plotType;
+      this.plotParams.plotType = this.plotType;
       this.feature.setProperties(this.plotParams);
     }
   }
@@ -323,7 +326,7 @@ class PlotDraw extends Observable {
    * @param event
    * @returns {boolean}
    */
-  mapNextClickHandler (event) {
+  mapNextClickHandler(event) {
     if (!this.plot.freehand) {
       if (MathDistance(event.coordinate, this.points[this.points.length - 1]) < 0.0001) {
         return false;
@@ -343,7 +346,7 @@ class PlotDraw extends Observable {
    * 地图双击事件处理
    * @param event
    */
-  mapDoubleClickHandler (event) {
+  mapDoubleClickHandler(event) {
     event.preventDefault();
     this.plot.finishDrawing();
     this.drawEnd(event);
@@ -355,13 +358,13 @@ class PlotDraw extends Observable {
    * @param event
    * @returns {boolean}
    */
-  mapMouseMoveHandler (event) {
-    let coordinate = event.coordinate;
+  mapMouseMoveHandler(event) {
+    const coordinate = event.coordinate;
     if (MathDistance(coordinate, this.points[this.points.length - 1]) < 0.0001) {
       return false;
     }
     if (!this.plot.freehand) {
-      let pnts = this.points.concat([coordinate]);
+      const pnts = this.points.concat([coordinate]);
       this.plot.setPoints(pnts);
     } else {
       this.points.push(coordinate);
@@ -372,7 +375,7 @@ class PlotDraw extends Observable {
   /**
    * 移除事件监听
    */
-  removeEventHandlers () {
+  removeEventHandlers() {
     this.map.un('click', this.mapFirstClickHandler);
     this.map.un('click', this.mapNextClickHandler);
     this.map.un('pointermove', this.mapMouseMoveHandler);
@@ -382,12 +385,14 @@ class PlotDraw extends Observable {
   /**
    * 绘制结束
    */
-  drawEnd (event) {
-    this.dispatchEvent(new PlotEvent('drawEnd', {
-      originalEvent: event,
-      feature: this.feature
-    }));
-    if (this.feature && this.options['isClear']) {
+  drawEnd(event) {
+    this.dispatchEvent(
+      new PlotEvent('drawEnd', {
+        originalEvent: event,
+        feature: this.feature,
+      }),
+    );
+    if (this.feature && this.options.isClear) {
       this.drawLayer.getSource().removeFeature(this.feature);
     }
     this.deactivate();
@@ -396,7 +401,7 @@ class PlotDraw extends Observable {
   /**
    * 添加要素
    */
-  addFeature () {
+  addFeature() {
     this.feature = new Feature(this.plot);
     if (this.feature && this.drawLayer) {
       this.drawLayer.getSource().addFeature(this.feature);
@@ -406,16 +411,15 @@ class PlotDraw extends Observable {
   /**
    * 取消激活地图交互工具
    */
-  deactiveMapTools () {
+  deactiveMapTools() {
     const interactions = this.map.getInteractions().getArray();
-    interactions.every(item => {
+    interactions.every((item) => {
       if (item instanceof DoubleClickZoom) {
         this.dblClickZoomInteraction = item;
         this.map.removeInteraction(item);
         return false;
-      } else {
-        return true;
       }
+      return true;
     });
   }
 
@@ -423,7 +427,7 @@ class PlotDraw extends Observable {
    * 激活已取消的地图工具
    * 还原之前状态
    */
-  activateMapTools () {
+  activateMapTools() {
     if (this.dblClickZoomInteraction) {
       this.map.addInteraction(this.dblClickZoomInteraction);
       this.dblClickZoomInteraction = null;

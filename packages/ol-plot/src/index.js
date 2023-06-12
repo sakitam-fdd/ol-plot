@@ -10,7 +10,9 @@ import StyleFactory from './utils/factory';
 
 class olPlot extends Observable {
   static PlotTypes = PlotTypes;
+
   static Geometry = Geometry;
+
   static StyleFactory = StyleFactory;
 
   constructor(map, options) {

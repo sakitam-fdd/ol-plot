@@ -6,8 +6,9 @@ import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
 import { CIRCLE } from '../../utils/PlotTypes';
 import * as PlotUtils from '../../utils/utils';
+
 class Circle extends Polygon {
-  constructor (coordinates, points, params) {
+  constructor(coordinates, points, params) {
     super([]);
     this.type = CIRCLE;
     this.fixPointCount = 2;
@@ -23,19 +24,18 @@ class Circle extends Polygon {
    * 获取标绘类型
    * @returns {*}
    */
-  getPlotType () {
+  getPlotType() {
     return this.type;
   }
 
-  generate () {
-    let count = this.getPointCount();
+  generate() {
+    const count = this.getPointCount();
     if (count < 2) {
       return false;
-    } else {
-      let center = this.points[0];
-      let radius = PlotUtils.MathDistance(center, this.points[1]);
-      this.setCoordinates([this.generatePoints(center, radius)]);
     }
+    const center = this.points[0];
+    const radius = PlotUtils.MathDistance(center, this.points[1]);
+    this.setCoordinates([this.generatePoints(center, radius)]);
   }
 
   /**
@@ -44,10 +44,11 @@ class Circle extends Polygon {
    * @param radius
    * @returns {null}
    */
-  generatePoints (center, radius) {
-    let [x, y, angle, points] = [null, null, null, []];
+  generatePoints(center, radius) {
+    let [x, y, angle] = [null, null, null];
+    const points = [];
     for (let i = 0; i <= 100; i++) {
-      angle = Math.PI * 2 * i / 100;
+      angle = (Math.PI * 2 * i) / 100;
       x = center[0] + radius * Math.cos(angle);
       y = center[1] + radius * Math.sin(angle);
       points.push([x, y]);
@@ -59,7 +60,7 @@ class Circle extends Polygon {
    * 设置地图对象
    * @param map
    */
-  setMap (map) {
+  setMap(map) {
     if (map && map instanceof Map) {
       this.map = map;
     } else {
@@ -71,7 +72,7 @@ class Circle extends Polygon {
    * 获取当前地图对象
    * @returns {{}|*}
    */
-  getMap () {
+  getMap() {
     return this.map;
   }
 
@@ -79,7 +80,7 @@ class Circle extends Polygon {
    * 判断是否是Plot
    * @returns {boolean}
    */
-  isPlot () {
+  isPlot() {
     return true;
   }
 
@@ -87,7 +88,7 @@ class Circle extends Polygon {
    * 设置坐标点
    * @param value
    */
-  setPoints (value) {
+  setPoints(value) {
     this.points = !value ? [] : value;
     if (this.points.length >= 1) {
       this.generate();
@@ -98,7 +99,7 @@ class Circle extends Polygon {
    * 获取坐标点
    * @returns {Array.<T>}
    */
-  getPoints () {
+  getPoints() {
     return this.points.slice(0);
   }
 
@@ -106,7 +107,7 @@ class Circle extends Polygon {
    * 获取点数量
    * @returns {Number}
    */
-  getPointCount () {
+  getPointCount() {
     return this.points.length;
   }
 
@@ -115,7 +116,7 @@ class Circle extends Polygon {
    * @param point
    * @param index
    */
-  updatePoint (point, index) {
+  updatePoint(point, index) {
     if (index >= 0 && index < this.points.length) {
       this.points[index] = point;
       this.generate();
@@ -126,15 +127,14 @@ class Circle extends Polygon {
    * 更新最后一个坐标
    * @param point
    */
-  updateLastPoint (point) {
+  updateLastPoint(point) {
     this.updatePoint(point, this.points.length - 1);
   }
 
   /**
    * 结束绘制
    */
-  finishDrawing () {
-  }
+  finishDrawing() {}
 }
 
 export default Circle;
