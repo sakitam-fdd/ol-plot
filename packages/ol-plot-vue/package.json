@@ -2,7 +2,7 @@
   "name": "ol-plot-vue",
   "version": "1.1.1",
   "description": "openlayers 标绘 Vue 组件",
-  "main": "dist/ol-plot-vue.js",
+  "main": "dist/ol-plot-vue.es.js",
   "module": "dist/ol-plot-vue.es.js",
   "unpkg": "dist/ol-plot-vue.js",
   "commonjs": "dist/ol-plot-vue.cjs.js",
@@ -11,16 +11,20 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": {
-        "production": "./dist/ol-plot-vue.es.min.js",
-        "development": "./dist/ol-plot-vue.es.js",
-        "default": "./dist/ol-plot-vue.es.js"
+      "node": {
+        "import": {
+          "production": "./dist/ol-plot-vue.es.js",
+          "development": "./dist/ol-plot-vue.es.js",
+          "default": "./dist/ol-plot-vue.es.js"
+        },
+        "require": {
+          "production": "./dist/ol-plot-vue.cjs.js",
+          "development": "./dist/ol-plot-vue.cjs.js",
+          "default": "./dist/ol-plot-vue.cjs.js"
+        }
       },
-      "require": {
-        "production": "./dist/ol-plot-vue.cjs.min.js",
-        "development": "./dist/ol-plot-vue.cjs.js",
-        "default": "./dist/ol-plot-vue.cjs.js"
-      }
+      "import": "./dist/ol-plot-vue.es.js",
+      "require": "./dist/ol-plot-vue.cjs.js"
     },
     "./dist/*.css": {
       "import": "./dist/*.css",
@@ -51,8 +55,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "build:vue2": "vue-demi-switch 2 && pnpm run build",
-    "build:vue3": "vue-demi-switch 3 && pnpm run build",
-    "postinstall": "node ./scripts/postinstall.js"
+    "build:vue3": "vue-demi-switch 3 && pnpm run build"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.0",

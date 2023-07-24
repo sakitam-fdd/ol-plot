@@ -16,7 +16,7 @@
   ],
   "author": "sakitam-fdd <smilefdd@gmail.com>",
   "license": "MIT",
-  "main": "dist/ol-plot.js",
+  "main": "dist/ol-plot.es.js",
   "module": "dist/ol-plot.es.js",
   "unpkg": "dist/ol-plot.js",
   "commonjs": "dist/ol-plot.cjs.js",
@@ -32,16 +32,20 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": {
-        "production": "./dist/ol-plot.es.min.js",
-        "development": "./dist/ol-plot.es.js",
-        "default": "./dist/ol-plot.es.js"
+      "node": {
+        "import": {
+          "production": "./dist/ol-plot.es.js",
+          "development": "./dist/ol-plot.es.js",
+          "default": "./dist/ol-plot.es.js"
+        },
+        "require": {
+          "production": "./dist/ol-plot.cjs.js",
+          "development": "./dist/ol-plot.cjs.js",
+          "default": "./dist/ol-plot.cjs.js"
+        }
       },
-      "require": {
-        "production": "./dist/ol-plot.cjs.min.js",
-        "development": "./dist/ol-plot.cjs.js",
-        "default": "./dist/ol-plot.cjs.js"
-      }
+      "import": "./dist/ol-plot.es.js",
+      "require": "./dist/ol-plot.cjs.js"
     },
     "./dist/*.css": {
       "import": "./dist/*.css",
@@ -50,7 +54,9 @@
     "./package.json": "./package.json"
   },
   "private": false,
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sakitam-fdd/ol-plot.git",

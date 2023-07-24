@@ -7013,7 +7013,6 @@ packages:
     resolution: {directory: packages/ol-plot-vue, type: directory}
     id: file:packages/ol-plot-vue
     name: ol-plot-vue
-    requiresBuild: true
     peerDependencies:
       '@vue/composition-api': ^1.4.0
       vue: ^2.0.0 || >=3.0.0
