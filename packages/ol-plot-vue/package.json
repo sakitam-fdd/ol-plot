@@ -50,7 +50,7 @@
     "build": "pnpm run build-only",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
-    "build:vue2": "vue-demi-switch 2 vue2 && pnpm run build",
+    "build:vue2": "vue-demi-switch 2 && pnpm run build",
     "build:vue3": "vue-demi-switch 3 && pnpm run build",
     "postinstall": "node ./scripts/postinstall.js"
   },

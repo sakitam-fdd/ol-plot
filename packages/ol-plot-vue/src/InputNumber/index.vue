@@ -52,7 +52,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, onMounted, onUpdated, reactive, ref, watch } from 'vue-demi';
+  import { computed, defineComponent, onMounted, onUpdated, ref, watch, reactive } from 'vue-demi';
   import Input from '../Input/index.vue';
 
   export default defineComponent({

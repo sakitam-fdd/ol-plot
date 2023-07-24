@@ -7,6 +7,7 @@
     name: 'ColorPicker',
     props: {
       // 当前颜色
+      // eslint-disable-next-line vue/require-default-prop
       modelValue: String as PropType<string>,
       // 默认颜色
       defaultColor: {
