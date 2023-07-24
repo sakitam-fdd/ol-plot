@@ -10,10 +10,22 @@
   "style": "dist/style.css",
   "exports": {
     ".": {
-      "import": "./dist/ol-plot-vue.es.js",
-      "require": "./dist/ol-plot-vue.cjs.js"
+      "types": "./dist/index.d.ts",
+      "import": {
+        "production": "./dist/ol-plot-vue.es.min.js",
+        "development": "./dist/ol-plot-vue.es.js",
+        "default": "./dist/ol-plot-vue.es.js"
+      },
+      "require": {
+        "production": "./dist/ol-plot-vue.cjs.min.js",
+        "development": "./dist/ol-plot-vue.cjs.js",
+        "default": "./dist/ol-plot-vue.cjs.js"
+      }
     },
-    "./dist/*": "./dist/*",
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
+    },
     "./package.json": "./package.json"
   },
   "keywords": [

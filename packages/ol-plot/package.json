@@ -32,22 +32,21 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "node": {
-        "import": {
-          "production": "./dist/ol-plot.es.js",
-          "development": "./dist/ol-plot.es.js",
-          "default": "./dist/ol-plot.es.js"
-        },
-        "require": {
-          "production": "./dist/ol-plot.cjs.js",
-          "development": "./dist/ol-plot.cjs.js",
-          "default": "./dist/ol-plot.cjs.js"
-        }
+      "import": {
+        "production": "./dist/ol-plot.es.min.js",
+        "development": "./dist/ol-plot.es.js",
+        "default": "./dist/ol-plot.es.js"
       },
-      "import": "./dist/ol-plot.es.js",
-      "require": "./dist/ol-plot.cjs.js"
+      "require": {
+        "production": "./dist/ol-plot.cjs.min.js",
+        "development": "./dist/ol-plot.cjs.js",
+        "default": "./dist/ol-plot.cjs.js"
+      }
     },
-    "./dist/*": "./dist/*",
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
+    },
     "./package.json": "./package.json"
   },
   "private": false,
