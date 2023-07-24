@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.2
+
+### Patch Changes
+
+- 7ff6a0f: fix pkg main field
+
 ## 4.1.1
 
 ### Patch Changes
