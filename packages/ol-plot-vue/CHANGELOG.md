@@ -1,5 +1,13 @@
 # ol-plot-vue
 
+## 1.1.1
+
+### Patch Changes
+
+- dce5cdc: fix bugs
+- Updated dependencies [dce5cdc]
+  - ol-plot@4.1.1
+
 ## 1.1.0
 
 ### Minor Changes

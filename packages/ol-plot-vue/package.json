@@ -1,6 +1,6 @@
 {
   "name": "ol-plot-vue",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "openlayers 标绘 Vue 组件",
   "main": "dist/ol-plot-vue.js",
   "module": "dist/ol-plot-vue.es.js",
