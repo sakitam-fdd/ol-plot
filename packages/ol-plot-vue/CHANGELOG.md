@@ -1,5 +1,13 @@
 # ol-plot-vue
 
+## 1.1.2
+
+### Patch Changes
+
+- 7ff6a0f: fix pkg main field
+- Updated dependencies [7ff6a0f]
+  - ol-plot@4.1.2
+
 ## 1.1.1
 
 ### Patch Changes
