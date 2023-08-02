@@ -16,7 +16,7 @@
     "ol-plot-vue": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^4.3.0",
+    "vite": "^4.4.7",
     "@vitejs/plugin-vue": "^4.1.0"
   }
 }

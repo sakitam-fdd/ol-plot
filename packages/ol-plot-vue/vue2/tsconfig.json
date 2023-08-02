@@ -34,8 +34,8 @@
     "suppressImplicitAnyIndexErrors": false,
     "paths": {
       "~/*": ["./*"],
-      "@/*": ["src/*"]
+      "@/*": ["../src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.*", "vitest.config.*", "./env.d.ts", "package.json"]
+  "include": ["../src/**/*.ts", "../src/**/*.tsx", "../src/**/*.vue", "vite.config.*", "vitest.config.*", "../env.d.ts", "../package.json"]
 }

@@ -84,7 +84,8 @@
     "autosize": "^6.0.1"
   },
   "devDependencies": {
-    "ol": "^6.15.0"
+    "ol": "^6.15.0",
+    "vite": "^4.4.7"
   },
   "publishConfig": {
     "access": "public"

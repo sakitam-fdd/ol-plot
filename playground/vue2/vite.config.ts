@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue2';
+import { createVuePlugin } from 'vite-plugin-vue2';
 
 export default defineConfig(({ mode }) => ({
-  plugins: [vue()],
+  plugins: [createVuePlugin()],
   publicDir: 'public',
   // server: {
   //   port: 8081,

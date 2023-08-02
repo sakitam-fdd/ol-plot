@@ -2,16 +2,18 @@ import { resolve } from 'path';
 
 import { defineConfig } from 'vite';
 import type { UserConfigExport } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { createVuePlugin } from 'vite-plugin-vue2';
 import dts from 'vite-plugin-dts';
 
 const name = 'ol-plot-vue';
+
 export default defineConfig((env) => {
   const defaultConfig: UserConfigExport = {
     plugins: [
-      vue(),
+      createVuePlugin(),
       dts({
         // outputDir: 'types',
+        entryRoot: resolve(__dirname, '..'),
         rollupTypes: true,
         staticImport: true,
         insertTypesEntry: true,
@@ -22,7 +24,7 @@ export default defineConfig((env) => {
       cssCodeSplit: false,
       minify: env.mode === 'minify' ? 'esbuild' : false,
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
+        entry: resolve(__dirname, '../src/index.ts'),
         name: 'VOlPlot',
         formats: ['es', 'cjs', 'umd'],
         fileName: (format) => {
@@ -51,14 +53,12 @@ export default defineConfig((env) => {
             'ol/interaction/DragPan': 'ol.interaction.DragPan',
             'ol/interaction/DoubleClickZoom': 'ol.interaction.DoubleClickZoom',
           },
+          dir: 'dist',
         },
       },
     },
     optimizeDeps: {
       exclude: ['vue-demi'],
-    },
-    test: {
-      environment: 'happy-dom',
     },
   };
   return defaultConfig;

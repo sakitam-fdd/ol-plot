@@ -473,7 +473,7 @@
       const handleClick = (event: any) => {
         if (!props.map) return;
         const feature = props.map.forEachFeatureAtPixel(event.pixel, (f: any) => f);
-        if (feature && feature.get('isPlot')) {
+        if (feature && feature.get('isPlot') && !plot.value.plotDraw.isDrawing()) {
           plot.value.plotEdit.activate(feature);
           activeToolPanel(feature);
         } else {
