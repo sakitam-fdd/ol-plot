@@ -39,16 +39,28 @@ async function switchVersion(version) {
   copy('style.css', 'style.css', version);
 }
 
+async function checkVersionExists(version) {
+  const d = path.join(dir, `v${version}`);
+  const state = fs.existsSync(d);
+
+  if (state) {
+    // await spawn.sync('pnpm', [`build:vue${version}`], { stdio: 'inherit' });
+    await switchVersion(version);
+  }
+}
+
 async function run() {
   console.log(`[ol-plot-vue] Vue version ${Vue.version}`);
   if (!Vue || typeof Vue.version !== 'string') {
     console.warn('[ol-plot-vue] Vue is not found. Please run "pnpm install vue" to install.');
   } else if (Vue.version.startsWith('2.')) {
     console.log('[ol-plot-vue] Switch main field for Vue 2');
-    await switchVersion(2);
+    await checkVersionExists(2)
+    // await switchVersion(2);
   } else {
     console.log('[ol-plot-vue] Switch main field for Vue 3');
-    await switchVersion(3);
+    await checkVersionExists(3)
+    // await switchVersion(3);
   }
 
   fs.writeFileSync(path.resolve(__dirname, '../package.json'), JSON.stringify(pkg, null, 2), {
