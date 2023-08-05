@@ -55,11 +55,11 @@ async function run() {
     console.warn('[ol-plot-vue] Vue is not found. Please run "pnpm install vue" to install.');
   } else if (Vue.version.startsWith('2.')) {
     console.log('[ol-plot-vue] Switch main field for Vue 2');
-    await checkVersionExists(2)
+    await checkVersionExists(2);
     // await switchVersion(2);
   } else {
     console.log('[ol-plot-vue] Switch main field for Vue 3');
-    await checkVersionExists(3)
+    await checkVersionExists(3);
     // await switchVersion(3);
   }
 

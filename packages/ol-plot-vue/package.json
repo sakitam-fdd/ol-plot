@@ -32,6 +32,9 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "*.css"
+  ],
   "keywords": [
     "javascript",
     "webgis",
