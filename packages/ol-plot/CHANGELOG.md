@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.3
+
+### Patch Changes
+
+- 4169a63: fix vue2
+
 ## 4.1.2
 
 ### Patch Changes

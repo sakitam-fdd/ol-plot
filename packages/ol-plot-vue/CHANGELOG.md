@@ -1,5 +1,13 @@
 # ol-plot-vue
 
+## 1.1.3
+
+### Patch Changes
+
+- 4169a63: fix vue2
+- Updated dependencies [4169a63]
+  - ol-plot@4.1.3
+
 ## 1.1.2
 
 ### Patch Changes
