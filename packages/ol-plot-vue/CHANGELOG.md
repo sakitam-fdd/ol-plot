@@ -1,5 +1,11 @@
 # ol-plot-vue
 
+## 1.1.4
+
+### Patch Changes
+
+- 0f1accd: fix version
+
 ## 1.1.3
 
 ### Patch Changes
