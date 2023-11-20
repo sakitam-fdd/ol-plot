@@ -1,19 +1,31 @@
 /**
- * Created by FDD on 2017/5/15.
- * @desc 点要素
+ * Created by FDD on 2017/5/24.
+ * @desc 自由线
+ * @Inherits ol.geom.LineString
  */
 import { Map } from 'ol';
-import { Point } from 'ol/geom';
-import { PENNANT } from '../../utils/PlotTypes';
+import { LineString } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
 
-class Pennant extends Point {
-  constructor(coordinates, point, params) {
+class FreeHandLine extends LineString {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  constructor(coordinates, points, params) {
     super([]);
-    this.type = PENNANT;
-    this.options = params || {};
-    this.set('params', this.options);
-    if (point && point.length > 0) {
-      this.setPoints(point);
+    this.type = PlotTypes.FREEHANDLINE;
+    this.freehand = true;
+    this.set('params', params);
+    if (points && points.length > 0) {
+      this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -27,6 +39,9 @@ class Pennant extends Point {
     return this.type;
   }
 
+  /**
+   * 执行动作
+   */
   generate() {
     this.setCoordinates(this.points);
   }
@@ -45,7 +60,7 @@ class Pennant extends Point {
 
   /**
    * 获取当前地图对象
-   * @returns {{}|*}
+   * @returns {ol.Map|*}
    */
   getMap() {
     return this.map;
@@ -112,4 +127,4 @@ class Pennant extends Point {
   finishDrawing() {}
 }
 
-export default Pennant;
+export default FreeHandLine;

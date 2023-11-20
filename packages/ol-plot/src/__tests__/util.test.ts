@@ -11,7 +11,7 @@ afterAll(async () => {
 });
 
 describe('utils', async () => {
-  test('isNumber', async () => {
-    expect(isObject(1)).toBe(false);
+  test('isObject', async () => {
+    expect(isObject({})).toBe(true);
   });
 });

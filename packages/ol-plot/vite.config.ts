@@ -27,7 +27,7 @@ export default defineConfig(({ command, mode }) => ({
     cssCodeSplit: false, // @link https://cn.vitejs.dev/config/#build-csscodesplit
     emptyOutDir: false,
     lib: {
-      entry: r('src/index.js'),
+      entry: r('src/index.ts'),
       name: 'olPlot',
       formats: ['es', 'cjs', 'umd'],
       fileName: (format) => {

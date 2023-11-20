@@ -1,17 +1,30 @@
 /**
  * Created by FDD on 2017/5/22.
- * @desc 标绘曲线算法
+ * @desc 标绘画圆算法，继承面要素相关方法和属性
  */
 import { Map } from 'ol';
-import { LineString } from 'ol/geom';
-import { CURVE } from '../../utils/PlotTypes';
+import type { Point } from '@/utils/utils';
+import { Polygon } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
 import * as PlotUtils from '../../utils/utils';
 
-class Curve extends LineString {
+class Circle extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  options: any;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = CURVE;
-    this.t = 0.3;
+    this.type = PlotTypes.CIRCLE;
+    this.fixPointCount = 2;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -28,20 +41,32 @@ class Curve extends LineString {
     return this.type;
   }
 
-  /**
-   * 执行动作
-   */
   generate() {
     const count = this.getPointCount();
     if (count < 2) {
       return false;
     }
-    if (count === 2) {
-      this.setCoordinates(this.points);
-    } else {
-      const points = PlotUtils.getCurvePoints(this.t, this.points);
-      this.setCoordinates(points);
+    const center = this.points[0];
+    const radius = PlotUtils.MathDistance(center as Point, this.points[1]);
+    this.setCoordinates([this.generatePoints(center, radius)]);
+  }
+
+  /**
+   * 对圆边线进行插值
+   * @param center
+   * @param radius
+   * @returns {null}
+   */
+  generatePoints(center, radius) {
+    let [x, y, angle] = [0, 0, 0];
+    const points: Point[] = [];
+    for (let i = 0; i <= 100; i++) {
+      angle = (Math.PI * 2 * i) / 100;
+      x = center[0] + radius * Math.cos(angle);
+      y = center[1] + radius * Math.sin(angle);
+      points.push([x, y]);
     }
+    return points;
   }
 
   /**
@@ -58,7 +83,7 @@ class Curve extends LineString {
 
   /**
    * 获取当前地图对象
-   * @returns {ol.Map|*}
+   * @returns {{}|*}
    */
   getMap() {
     return this.map;
@@ -125,4 +150,4 @@ class Curve extends LineString {
   finishDrawing() {}
 }
 
-export default Curve;
+export default Circle;

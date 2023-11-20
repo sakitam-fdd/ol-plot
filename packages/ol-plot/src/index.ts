@@ -15,6 +15,12 @@ class olPlot extends Observable {
 
   static StyleFactory = StyleFactory;
 
+  public plotDraw: PlotDraw;
+
+  public plotEdit: PlotEdit;
+
+  public plotUtils: PlotUtils;
+
   constructor(map, options) {
     super();
     this.plotDraw = new PlotDraw(map, options, this);

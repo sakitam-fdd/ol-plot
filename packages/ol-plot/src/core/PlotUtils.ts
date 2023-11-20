@@ -9,11 +9,20 @@ import { getSize, getBottomLeft, getTopRight, buffer } from 'ol/extent';
 import { createVectorLayer, getLayerByLayerName } from '@/utils/layerUtils';
 import { BASE_LAYERNAME } from '@/constants';
 
-import olStyleFactory from '../utils/factory';
+import StyleFactory from '../utils/factory';
 import PlotTextBox from '../Geometry/Text/PlotTextBox';
 import * as Geometry from '../Geometry';
+import type olPlot from '@/index';
 
 class PlotUtils {
+  public map: any;
+
+  public ctx: olPlot;
+
+  public options: any;
+
+  public layerName: string;
+
   constructor(map, options, ctx) {
     if (map && map instanceof Map) {
       this.map = map;
@@ -55,7 +64,7 @@ class PlotUtils {
       if (feature && feature instanceof Feature) {
         const style = this.getBaseStyle(feature);
         const tempStyle = style.clone();
-        const _image = this._getImage(image);
+        const _image = this.getImage_(image);
         if (_image) {
           tempStyle.setImage(_image);
           feature.setStyle(tempStyle);
@@ -212,7 +221,7 @@ class PlotUtils {
    * @returns {*}
    */
   getStroke_(style) {
-    let stroke = null;
+    let stroke;
     if (style) {
       const olStyle_ = style.getStroke();
       if (olStyle_) {
@@ -236,7 +245,7 @@ class PlotUtils {
    * @private
    */
   getFill_(style) {
-    let fill = null;
+    let fill;
     if (style) {
       const olStyle_ = style.getFill();
       if (olStyle_) {
@@ -255,7 +264,7 @@ class PlotUtils {
    * @private
    */
   getText_(style) {
-    let text = null;
+    let text;
     if (style) {
       const olStyle_ = style.getText();
       if (olStyle_) {
@@ -283,7 +292,7 @@ class PlotUtils {
    * @private
    */
   getImage_(style) {
-    let image = null;
+    let image;
     if (style) {
       const olStyle_ = style.getImage();
       if (olStyle_) {
@@ -328,10 +337,11 @@ class PlotUtils {
         if (style && style instanceof Style) {
           // 填充颜色
           const fill = this.getFill_(style);
-          let [opacity, rgbaArray, backgroundColor] = [1, null];
+          let opacity = 1;
+          let backgroundColor;
           if (fill && fill.fillColor) {
-            rgbaArray = asArray(fill.fillColor);
-            opacity = parseFloat(rgbaArray[3]);
+            const rgbaArray = asArray(fill.fillColor);
+            opacity = parseFloat(String(rgbaArray[3]));
             if (rgbaArray && typeof opacity === 'number') {
               backgroundColor = this.handleBackgroundColor(asString(rgbaArray), opacity);
             }
@@ -365,7 +375,7 @@ class PlotUtils {
     const layer = getLayerByLayerName(this.map, this.layerName);
     const overlays_ = this.map.getOverlays().getArray();
     if (layer) {
-      const source = layer.getSource();
+      const source = layer.getSource() as VectorSource;
       source.clear();
     }
     if (overlays_ && overlays_.length > 0) {
@@ -384,7 +394,7 @@ class PlotUtils {
    * @returns {Array}
    */
   getFeatures() {
-    const rFeatures = [];
+    const rFeatures: any[] = [];
     const layer = getLayerByLayerName(this.map, this.layerName);
     if (layer) {
       const source = layer.getSource();
@@ -446,7 +456,7 @@ class PlotUtils {
    */
   addFeatures(features) {
     if (features && Array.isArray(features) && features.length > 0) {
-      let layer = getLayerByLayerName(this.map, this.layerName);
+      let layer = getLayerByLayerName(this.map, this.layerName) as any;
       if (!layer) {
         layer = createVectorLayer(this.map, this.layerName, {
           create: true,
@@ -456,7 +466,7 @@ class PlotUtils {
       if (layer) {
         const source = layer.getSource();
         if (source && source instanceof VectorSource) {
-          const _extents = [];
+          const _extents: number[][] = [];
           features.forEach((feature) => {
             if (feature && feature.geometry && feature.geometry.type !== 'PlotText') {
               if (feature.properties.type && Geometry[feature.properties.type]) {
@@ -467,7 +477,7 @@ class PlotUtils {
                 _extents.push(feat.getGeometry().getExtent());
                 if (feature.properties.style) {
                   /* eslint new-cap: 0 */
-                  const style_ = new olStyleFactory(feature.properties.style);
+                  const style_ = new StyleFactory(feature.properties.style).style;
                   if (style_) {
                     feat.setStyle(style_);
                   }
@@ -515,7 +525,7 @@ class PlotUtils {
    * get extent
    * @private
    */
-  _getExtent(extents, params = {}) {
+  _getExtent(extents, params: any = {}) {
     const bbox = [
       Number.POSITIVE_INFINITY,
       Number.POSITIVE_INFINITY,

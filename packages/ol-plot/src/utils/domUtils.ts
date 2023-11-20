@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint no-useless-escape: "off" */
+
 const SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
 const MOZ_HACK_REGEXP = /^moz([A-Z])/;
 
-/* istanbul ignore next */
-export const create = function (tagName, className, container, id) {
+export const create = function (tagName: string, className?: string, container?: HTMLElement, id?: string) {
   const el = document.createElement(tagName);
   el.className = className || '';
   if (id) {
@@ -16,28 +16,24 @@ export const create = function (tagName, className, container, id) {
   return el;
 };
 
-/* istanbul ignore next */
-export const getElement = function (id) {
+export const getElement = function (id: string) {
   return typeof id === 'string' ? document.getElementById(id) : id;
 };
 
-/* istanbul ignore next */
-export const remove = function (el) {
+export const remove = function (el: HTMLElement, p?: HTMLElement) {
   const parent = el.parentNode;
   if (parent) {
     parent.removeChild(el);
   }
 };
 
-/* istanbul ignore next */
-export const empty = function (el) {
+export const empty = function (el: HTMLElement) {
   while (el.firstChild) {
     el.removeChild(el.firstChild);
   }
 };
 
-/* istanbul ignore next */
-export const createHidden = function (tagName, parent, id) {
+export const createHidden = function (tagName: string, parent: HTMLElement, id: string) {
   const element = document.createElement(tagName);
   element.style.display = 'none';
   if (id) {
@@ -49,53 +45,49 @@ export const createHidden = function (tagName, parent, id) {
   return element;
 };
 
-/* istanbul ignore next */
-const trim = function (string) {
+const trim = function (string: string) {
   return (string || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
 };
 
-/* istanbul ignore next */
-const camelCase = function (name) {
+const camelCase = function (name: string) {
   return name
     .replace(SPECIAL_CHARS_REGEXP, (_, separator, letter, offset) => (offset ? letter.toUpperCase() : letter))
     .replace(MOZ_HACK_REGEXP, 'Moz$1');
 };
 
-/* istanbul ignore next */
+type eventFn = (element: HTMLElement, event: string, handler: any) => void;
+
 export const on = (function () {
-  if (document.addEventListener) {
-    return function (element, event, handler) {
+  if (document) {
+    return function (element: HTMLElement, event: string, handler: any) {
       if (element && event && handler) {
         element.addEventListener(event, handler, false);
       }
     };
   }
-})();
+})() as eventFn;
 
-/* istanbul ignore next */
 export const off = (function () {
-  if (document.removeEventListener) {
-    return function (element, event, handler) {
+  if (document) {
+    return function (element: HTMLElement, event: string, handler: any) {
       if (element && event) {
         element.removeEventListener(event, handler, false);
       }
     };
   }
-})();
+})() as eventFn;
 
-/* istanbul ignore next */
-export const once = function (el, event, fn) {
-  const listener = function () {
+export const once = function (el: HTMLElement, event: string, fn: any) {
+  const listener = function (...args) {
     if (fn) {
-      fn.apply(this, arguments);
+      fn.apply(this, args);
     }
     off(el, event, listener);
   };
   on(el, event, listener);
 };
 
-/* istanbul ignore next */
-export function hasClass(el, cls) {
+export function hasClass(el: HTMLElement, cls: string) {
   if (!el || !cls) return false;
   if (cls.indexOf(' ') !== -1) throw new Error('className should not contain space.');
   if (el.classList) {
@@ -104,8 +96,7 @@ export function hasClass(el, cls) {
   return ` ${el.className} `.indexOf(` ${cls} `) > -1;
 }
 
-/* istanbul ignore next */
-export function addClass(el, cls) {
+export function addClass(el: HTMLElement, cls: string) {
   if (!el) return;
   let curClass = el.className;
   const classes = (cls || '').split(' ');
@@ -123,8 +114,7 @@ export function addClass(el, cls) {
   }
 }
 
-/* istanbul ignore next */
-export function removeClass(el, cls) {
+export function removeClass(el: HTMLElement, cls: string) {
   if (!el || !cls) return;
   const classes = cls.split(' ');
   let curClass = ` ${el.className} `;
@@ -142,23 +132,21 @@ export function removeClass(el, cls) {
   }
 }
 
-/* istanbul ignore next */
-export function getStyle(element, styleName) {
+export function getStyle(element: HTMLElement, styleName: string) {
   if (!element || !styleName) return null;
   styleName = camelCase(styleName);
   if (styleName === 'float') {
     styleName = 'cssFloat';
   }
   try {
-    const computed = document.defaultView.getComputedStyle(element, '');
-    return element.style[styleName] || computed ? computed[styleName] : null;
+    const computed = document.defaultView?.getComputedStyle(element, '');
+    return element.style[styleName] || computed ? computed?.[styleName] : null;
   } catch (e) {
     return element.style[styleName];
   }
 }
 
-/* istanbul ignore next */
-export function setStyle(element, styleName, value) {
+export function setStyle(element: HTMLElement, styleName: string | Object, value: any) {
   if (!element || !styleName) return;
   if (typeof styleName === 'object') {
     // eslint-disable-next-line no-restricted-syntax
@@ -168,12 +156,12 @@ export function setStyle(element, styleName, value) {
       }
     }
   } else {
-    styleName = camelCase(styleName);
+    styleName = camelCase(styleName) as string;
     if (styleName === 'opacity') {
       // eslint-disable-next-line no-restricted-globals
       element.style.filter = isNaN(value) ? '' : `alpha(opacity=${value * 100})`;
     } else {
-      element.style[styleName] = value;
+      element.style[styleName as string] = value;
     }
   }
 }

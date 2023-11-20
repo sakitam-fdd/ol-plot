@@ -103,6 +103,8 @@ class PlotTextBox extends Overlay {
      */
     this.currentPixel_ = [];
 
+    this.freehand = false;
+
     bindAll(
       [
         'handleFocus_',
@@ -374,8 +376,18 @@ class PlotTextBox extends Overlay {
    * @returns {boolean}
    */
   isMoveModel() {
-    const range = window.getSelection().getRangeAt(0);
-    return range.collapsed;
+    if (!window) return false;
+    try {
+      const selection = window.getSelection();
+      if (selection) {
+        const range = window.getSelection().getRangeAt(0);
+        return range.collapsed;
+      }
+
+      return false;
+    } catch (e) {
+      console.error('[ol-plot]: PlotTextBox check move error', e);
+    }
   }
 
   /**
@@ -501,6 +513,8 @@ class PlotTextBox extends Overlay {
       this.setValue(this.options_.value);
     }
   }
+
+  finishDrawing() {}
 }
 
 export default PlotTextBox;

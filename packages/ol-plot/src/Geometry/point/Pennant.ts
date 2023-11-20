@@ -1,16 +1,34 @@
+/**
+ * Created by FDD on 2017/5/15.
+ * @desc 点要素
+ */
 import { Map } from 'ol';
-import { LineString } from 'ol/geom';
+import { Point } from 'ol/geom';
+import type { Point as TPoint } from '../../utils/utils';
+import { PlotTypes } from '@/utils/PlotTypes';
 
-import { POLYLINE } from '../../utils/PlotTypes';
+class Pennant extends Point {
+  type: PlotTypes;
 
-class Polyline extends LineString {
-  constructor(coordinates, points, params) {
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: TPoint[];
+
+  freehand: boolean;
+
+  options: any;
+
+  constructor(coordinates, point, params) {
     super([]);
-    this.type = POLYLINE;
+    this.type = PlotTypes.PENNANT;
+    this.options = params || {};
     this.freehand = false;
-    this.set('params', params);
-    if (points && points.length > 0) {
-      this.setPoints(points);
+    this.fixPointCount = undefined;
+    this.set('params', this.options);
+    if (point && point.length > 0) {
+      this.setPoints(point);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -24,9 +42,6 @@ class Polyline extends LineString {
     return this.type;
   }
 
-  /**
-   * 执行动作
-   */
   generate() {
     this.setCoordinates(this.points);
   }
@@ -45,7 +60,7 @@ class Polyline extends LineString {
 
   /**
    * 获取当前地图对象
-   * @returns {ol.Map|*}
+   * @returns {{}|*}
    */
   getMap() {
     return this.map;
@@ -112,4 +127,4 @@ class Polyline extends LineString {
   finishDrawing() {}
 }
 
-export default Polyline;
+export default Pennant;

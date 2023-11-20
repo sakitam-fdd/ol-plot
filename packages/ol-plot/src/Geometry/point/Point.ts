@@ -1,20 +1,34 @@
 /**
- * Created by FDD on 2017/5/22.
- * @desc 标绘画圆算法，继承面要素相关方法和属性
+ * Created by FDD on 2017/5/15.
+ * @desc 点要素
  */
 import { Map } from 'ol';
-import { Polygon } from 'ol/geom';
-import { CIRCLE } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
+import { Point as $Point } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import { Point as TPoint } from '@/utils/utils';
 
-class Circle extends Polygon {
-  constructor(coordinates, points, params) {
+class Point extends $Point {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: TPoint[];
+
+  freehand: boolean;
+
+  options: any;
+
+  constructor(coordinates, point, params) {
     super([]);
-    this.type = CIRCLE;
-    this.fixPointCount = 2;
-    this.set('params', params);
-    if (points && points.length > 0) {
-      this.setPoints(points);
+    this.type = PlotTypes.POINT;
+    this.options = params || {};
+    this.freehand = false;
+    this.set('params', this.options);
+    this.fixPointCount = 1;
+    if (point && point.length > 0) {
+      this.setPoints(point);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -29,31 +43,8 @@ class Circle extends Polygon {
   }
 
   generate() {
-    const count = this.getPointCount();
-    if (count < 2) {
-      return false;
-    }
-    const center = this.points[0];
-    const radius = PlotUtils.MathDistance(center, this.points[1]);
-    this.setCoordinates([this.generatePoints(center, radius)]);
-  }
-
-  /**
-   * 对圆边线进行插值
-   * @param center
-   * @param radius
-   * @returns {null}
-   */
-  generatePoints(center, radius) {
-    let [x, y, angle] = [null, null, null];
-    const points = [];
-    for (let i = 0; i <= 100; i++) {
-      angle = (Math.PI * 2 * i) / 100;
-      x = center[0] + radius * Math.cos(angle);
-      y = center[1] + radius * Math.sin(angle);
-      points.push([x, y]);
-    }
-    return points;
+    const pnt = this.points[0];
+    this.setCoordinates(pnt as unknown as any[]);
   }
 
   /**
@@ -137,4 +128,4 @@ class Circle extends Polygon {
   finishDrawing() {}
 }
 
-export default Circle;
+export default Point;

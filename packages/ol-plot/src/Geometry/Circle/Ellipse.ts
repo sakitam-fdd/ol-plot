@@ -4,15 +4,27 @@
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-
-import { ELLIPSE } from '../../utils/PlotTypes';
+import type { Point as TPoint } from '@/utils/utils';
+import { PlotTypes } from '@/utils/PlotTypes';
 import * as Constants from '../../constants';
 import * as PlotUtils from '../../utils/utils';
 
 class Ellipse extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: TPoint[];
+
+  freehand: boolean;
+
+  options: any;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = ELLIPSE;
+    this.type = PlotTypes.ELLIPSE;
     this.fixPointCount = 2;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -51,7 +63,8 @@ class Ellipse extends Polygon {
    */
   generatePoints(center, majorRadius, minorRadius) {
     // eslint-disable-next-line
-    let [x, y, angle, points] = [null, null, null, []];
+    let [x, y, angle] = [0, 0, 0];
+    const points: TPoint[] = [];
     for (let i = 0; i <= Constants.FITTING_COUNT; i++) {
       angle = (Math.PI * 2 * i) / Constants.FITTING_COUNT;
       x = center[0] + majorRadius * Math.cos(angle);

@@ -1,6 +1,7 @@
 import { Map, Overlay, Feature, Observable } from 'ol';
 import DragPan from 'ol/interaction/DragPan';
 
+import type { Point } from '@/utils/utils';
 import { bindAll } from '@/utils/utils';
 
 import { BASE_HELP_CONTROL_POINT_ID, BASE_HELP_HIDDEN } from '@/constants';
@@ -8,6 +9,28 @@ import PlotEvent from '@/core/PlotEvent';
 import * as htmlUtils from '../utils/domUtils';
 
 class PlotEdit extends Observable {
+  public map: any;
+
+  public mapViewport: HTMLElement;
+
+  public activePlot: WithNull<any>;
+
+  private startPoint: WithNull<Point>;
+
+  private controlPoints: Overlay[];
+
+  private mouseOver: boolean;
+
+  private mapDragPan: WithNull<DragPan>;
+
+  private activeControlPointId: WithNull<string>;
+
+  private elementTable: { [key: string]: number };
+
+  private ghostControlPoints: Point[];
+
+  private previousCursor_: WithNull<string>;
+
   constructor(map) {
     super();
     if (map && map instanceof Map) {
@@ -34,12 +57,12 @@ class PlotEdit extends Observable {
      * clone的控制点
      * @type {null}
      */
-    this.ghostControlPoints = null;
+    this.ghostControlPoints = [];
     /**
      * 控制点
      * @type {null}
      */
-    this.controlPoints = null;
+    this.controlPoints = [];
     /**
      * 鼠标移入
      * @type {boolean}
@@ -86,7 +109,7 @@ class PlotEdit extends Observable {
    * 初始化提示DOM
    * @returns {boolean}
    */
-  initHelperDom() {
+  private initHelperDom() {
     if (!this.map || !this.activePlot) {
       return false;
     }
@@ -109,7 +132,7 @@ class PlotEdit extends Observable {
    * 获取地图元素的父元素
    * @returns {*}
    */
-  getMapParentElement() {
+  private getMapParentElement() {
     const mapElement = this.map.getTargetElement();
     if (!mapElement) {
       return false;
@@ -120,7 +143,7 @@ class PlotEdit extends Observable {
   /**
    * 销毁帮助提示DOM
    */
-  destroyHelperDom() {
+  private destroyHelperDom() {
     if (this.controlPoints && Array.isArray(this.controlPoints) && this.controlPoints.length > 0) {
       this.controlPoints.forEach((item, index) => {
         if (item && item instanceof Overlay) {
@@ -134,17 +157,16 @@ class PlotEdit extends Observable {
       });
       this.controlPoints = [];
     }
-    const parent = this.getMapParentElement();
     const hiddenDiv = htmlUtils.getElement(BASE_HELP_HIDDEN);
-    if (hiddenDiv && parent) {
-      htmlUtils.remove(hiddenDiv, parent);
+    if (hiddenDiv) {
+      htmlUtils.remove(hiddenDiv);
     }
   }
 
   /**
    * 初始化要素控制点
    */
-  initControlPoints() {
+  private initControlPoints() {
     this.controlPoints = [];
     const cPnts = this.getControlPoints();
     if (cPnts && Array.isArray(cPnts) && cPnts.length > 0) {
@@ -152,17 +174,19 @@ class PlotEdit extends Observable {
         const id = `${BASE_HELP_CONTROL_POINT_ID}-${index}`;
         this.elementTable[id] = index;
         const element = htmlUtils.getElement(id);
-        const pnt = new Overlay({
-          id,
-          position: cPnts[index],
-          positioning: 'center-center',
-          element,
-        });
-        this.controlPoints.push(pnt);
-        this.map.addOverlay(pnt);
-        this.map.render();
-        htmlUtils.on(element, 'mousedown', this.controlPointMouseDownHandler);
-        htmlUtils.on(element, 'mousemove', this.controlPointMouseMoveHandler2);
+        if (element) {
+          const pnt = new Overlay({
+            id,
+            position: cPnts[index],
+            positioning: 'center-center',
+            element,
+          });
+          this.controlPoints.push(pnt);
+          this.map.addOverlay(pnt);
+          this.map.render();
+          htmlUtils.on(element, 'mousedown', this.controlPointMouseDownHandler);
+          htmlUtils.on(element, 'mousemove', this.controlPointMouseMoveHandler2);
+        }
       });
     }
   }
@@ -171,7 +195,7 @@ class PlotEdit extends Observable {
    * 对控制点的移动事件
    * @param e
    */
-  controlPointMouseMoveHandler2(e) {
+  private controlPointMouseMoveHandler2(e) {
     e.stopImmediatePropagation();
   }
 
@@ -179,7 +203,7 @@ class PlotEdit extends Observable {
    * 对控制点的鼠标按下事件
    * @param e
    */
-  controlPointMouseDownHandler(e) {
+  private controlPointMouseDownHandler(e) {
     this.activeControlPointId = e.target.id;
     this.map.on('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.on(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
@@ -189,7 +213,7 @@ class PlotEdit extends Observable {
    * 对控制点的移动事件
    * @param event
    */
-  controlPointMouseMoveHandler(event) {
+  private controlPointMouseMoveHandler(event) {
     const coordinate = event.coordinate;
     if (this.activeControlPointId) {
       const plot = this.activePlot.getGeometry();
@@ -205,7 +229,7 @@ class PlotEdit extends Observable {
   /**
    * 对控制点的鼠标抬起事件
    */
-  controlPointMouseUpHandler() {
+  private controlPointMouseUpHandler() {
     this.map.un('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.off(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
   }
@@ -215,7 +239,7 @@ class PlotEdit extends Observable {
    * @param plot
    * @returns {boolean}
    */
-  activate(plot) {
+  public activate(plot) {
     if (
       plot &&
       plot instanceof Feature &&
@@ -243,8 +267,8 @@ class PlotEdit extends Observable {
    * 获取要素的控制点
    * @returns {Array}
    */
-  getControlPoints() {
-    let points = [];
+  private getControlPoints() {
+    let points: Point[] = [];
     if (this.activePlot) {
       const geom = this.activePlot.getGeometry();
       if (geom) {
@@ -259,7 +283,7 @@ class PlotEdit extends Observable {
    * @param e
    * @returns {T|undefined}
    */
-  plotMouseOverOutHandler(e) {
+  private plotMouseOverOutHandler(e) {
     const feature = this.map.forEachFeatureAtPixel(e.pixel, (f) => f);
     if (feature && feature === this.activePlot) {
       if (!this.mouseOver) {
@@ -279,7 +303,7 @@ class PlotEdit extends Observable {
    * 在要编辑的要素按下鼠标按键
    * @param event
    */
-  plotMouseDownHandler(event) {
+  private plotMouseDownHandler(event) {
     this.ghostControlPoints = this.getControlPoints();
     this.startPoint = event.coordinate;
     this.disableMapDragPan();
@@ -291,15 +315,16 @@ class PlotEdit extends Observable {
    * 在要编辑的要素上移动鼠标
    * @param event
    */
-  plotMouseMoveHandler(event) {
-    const [deltaX, deltaY, newPoints] = [
+  private plotMouseMoveHandler(event) {
+    if (!this.startPoint) return;
+    const [deltaX, deltaY, newPoints]: [number, number, Point[]] = [
       event.coordinate[0] - this.startPoint[0],
       event.coordinate[1] - this.startPoint[1],
       [],
     ];
     if (this.ghostControlPoints && Array.isArray(this.ghostControlPoints) && this.ghostControlPoints.length > 0) {
       for (let i = 0; i < this.ghostControlPoints.length; i++) {
-        const coordinate = [this.ghostControlPoints[i][0] + deltaX, this.ghostControlPoints[i][1] + deltaY];
+        const coordinate = [this.ghostControlPoints[i][0] + deltaX, this.ghostControlPoints[i][1] + deltaY] as Point;
         newPoints.push(coordinate);
         const id = `${BASE_HELP_CONTROL_POINT_ID}-${i}`;
         const overlay = this.map.getOverlayById(id);
@@ -316,7 +341,7 @@ class PlotEdit extends Observable {
   /**
    * 鼠标抬起事件
    */
-  plotMouseUpHandler() {
+  private plotMouseUpHandler() {
     this.enableMapDragPan();
     this.map.un('pointerup', this.plotMouseUpHandler);
     this.map.un('pointerdrag', this.plotMouseMoveHandler);
@@ -325,7 +350,7 @@ class PlotEdit extends Observable {
   /**
    * 取消事件关联
    */
-  disconnectEventHandlers() {
+  private disconnectEventHandlers() {
     this.map.un('pointermove', this.plotMouseOverOutHandler);
     this.map.un('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.off(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
@@ -337,7 +362,7 @@ class PlotEdit extends Observable {
   /**
    * 取消激活工具
    */
-  deactivate() {
+  public deactivate() {
     if (this.activePlot) {
       this.dispatchEvent(
         new PlotEvent('deactivatePlot', {
@@ -360,7 +385,7 @@ class PlotEdit extends Observable {
   /**
    * 禁止地图的拖拽平移
    */
-  disableMapDragPan() {
+  private disableMapDragPan() {
     const interactions = this.map.getInteractions().getArray();
     interactions.every((item) => {
       if (item instanceof DragPan) {
@@ -375,7 +400,7 @@ class PlotEdit extends Observable {
   /**
    * 激活地图的拖拽平移
    */
-  enableMapDragPan() {
+  private enableMapDragPan() {
     if (this.mapDragPan) {
       this.map.addInteraction(this.mapDragPan);
       this.mapDragPan = null;

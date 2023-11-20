@@ -1,17 +1,28 @@
 /**
- * Created by FDD on 2017/5/24.
- * @desc 自由线
- * @Inherits ol.geom.LineString
+ * Created by FDD on 2017/5/22.
+ * @desc 标绘画弓形算法，继承线要素相关方法和属性
  */
 import { Map } from 'ol';
 import { LineString } from 'ol/geom';
-import { FREEHANDLINE } from '../../utils/PlotTypes';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as PlotUtils from '../../utils/utils';
+import type { Point } from '@/utils/utils';
 
-class FreeHandLine extends LineString {
+class Arc extends LineString {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  freehand: boolean;
+
+  map: any;
+
+  points: Point[];
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = FREEHANDLINE;
-    this.freehand = true;
+    this.type = PlotTypes.ARC;
+    this.fixPointCount = 3;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -32,7 +43,26 @@ class FreeHandLine extends LineString {
    * 执行动作
    */
   generate() {
-    this.setCoordinates(this.points);
+    const count = this.getPointCount();
+    if (count < 2) return;
+    if (count === 2) {
+      this.setCoordinates(this.points);
+    } else {
+      // eslint-disable-next-line
+      let [pnt1, pnt2, pnt3, startAngle, endAngle] = [this.points[0], this.points[1], this.points[2], 0, 0];
+      const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
+      const radius = PlotUtils.MathDistance(pnt1, center);
+      const angle1 = PlotUtils.getAzimuth(pnt1, center);
+      const angle2 = PlotUtils.getAzimuth(pnt2, center);
+      if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
+        startAngle = angle2;
+        endAngle = angle1;
+      } else {
+        startAngle = angle1;
+        endAngle = angle2;
+      }
+      this.setCoordinates(PlotUtils.getArcPoints(center, radius, startAngle, endAngle));
+    }
   }
 
   /**
@@ -116,4 +146,4 @@ class FreeHandLine extends LineString {
   finishDrawing() {}
 }
 
-export default FreeHandLine;
+export default Arc;

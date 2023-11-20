@@ -1,20 +1,27 @@
-/**
- * Created by FDD on 2017/5/15.
- * @desc 点要素
- */
 import { Map } from 'ol';
-import { Point as $Point } from 'ol/geom';
-import { POINT } from '../../utils/PlotTypes';
+import { LineString } from 'ol/geom';
 
-class Point extends $Point {
-  constructor(coordinates, point, params) {
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
+
+class Polyline extends LineString {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  constructor(coordinates, points, params) {
     super([]);
-    this.type = POINT;
-    this.options = params || {};
-    this.set('params', this.options);
-    this.fixPointCount = 1;
-    if (point && point.length > 0) {
-      this.setPoints(point);
+    this.type = PlotTypes.POLYLINE;
+    this.freehand = false;
+    this.set('params', params);
+    if (points && points.length > 0) {
+      this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -28,9 +35,11 @@ class Point extends $Point {
     return this.type;
   }
 
+  /**
+   * 执行动作
+   */
   generate() {
-    const pnt = this.points[0];
-    this.setCoordinates(pnt);
+    this.setCoordinates(this.points);
   }
 
   /**
@@ -47,7 +56,7 @@ class Point extends $Point {
 
   /**
    * 获取当前地图对象
-   * @returns {{}|*}
+   * @returns {ol.Map|*}
    */
   getMap() {
     return this.map;
@@ -114,4 +123,4 @@ class Point extends $Point {
   finishDrawing() {}
 }
 
-export default Point;
+export default Polyline;

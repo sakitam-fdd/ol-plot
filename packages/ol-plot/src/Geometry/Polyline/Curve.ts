@@ -1,17 +1,30 @@
 /**
  * Created by FDD on 2017/5/22.
- * @desc 标绘画弓形算法，继承线要素相关方法和属性
+ * @desc 标绘曲线算法
  */
 import { Map } from 'ol';
 import { LineString } from 'ol/geom';
-import { ARC } from '@/utils/PlotTypes';
+import { PlotTypes } from '@/utils/PlotTypes';
 import * as PlotUtils from '../../utils/utils';
+import type { Point } from '@/utils/utils';
 
-class Arc extends LineString {
+class Curve extends LineString {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  t: number;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = ARC;
-    this.fixPointCount = 3;
+    this.type = PlotTypes.CURVE;
+    this.t = 0.3;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -33,24 +46,14 @@ class Arc extends LineString {
    */
   generate() {
     const count = this.getPointCount();
-    if (count < 2) return;
+    if (count < 2) {
+      return false;
+    }
     if (count === 2) {
       this.setCoordinates(this.points);
     } else {
-      // eslint-disable-next-line
-      let [pnt1, pnt2, pnt3, startAngle, endAngle] = [this.points[0], this.points[1], this.points[2], null, null];
-      const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
-      const radius = PlotUtils.MathDistance(pnt1, center);
-      const angle1 = PlotUtils.getAzimuth(pnt1, center);
-      const angle2 = PlotUtils.getAzimuth(pnt2, center);
-      if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
-        startAngle = angle2;
-        endAngle = angle1;
-      } else {
-        startAngle = angle1;
-        endAngle = angle2;
-      }
-      this.setCoordinates(PlotUtils.getArcPoints(center, radius, startAngle, endAngle));
+      const points = PlotUtils.getCurvePoints(this.t, this.points);
+      this.setCoordinates(points);
     }
   }
 
@@ -135,4 +138,4 @@ class Arc extends LineString {
   finishDrawing() {}
 }
 
-export default Arc;
+export default Curve;

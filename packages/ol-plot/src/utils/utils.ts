@@ -1,4 +1,7 @@
 import * as Constants from '../constants';
+
+export type Point = [number, number];
+
 /**
  * 计算两个坐标之间的距离
  * @param pnt1
@@ -6,14 +9,15 @@ import * as Constants from '../constants';
  * @returns {number}
  * @constructor
  */
-export const MathDistance = (pnt1, pnt2) => Math.sqrt((pnt1[0] - pnt2[0]) ** 2 + (pnt1[1] - pnt2[1]) ** 2);
+export const MathDistance = (pnt1: Point, pnt2: Point): number =>
+  Math.sqrt((pnt1[0] - pnt2[0]) ** 2 + (pnt1[1] - pnt2[1]) ** 2);
 
 /**
  * 计算点集合的总距离
  * @param points
  * @returns {number}
  */
-export const wholeDistance = (points) => {
+export const wholeDistance = (points: Point[]): number => {
   let distance = 0;
   if (points && Array.isArray(points) && points.length > 0) {
     points.forEach((item, index) => {
@@ -29,16 +33,16 @@ export const wholeDistance = (points) => {
  * @param points
  * @returns {number}
  */
-export const getBaseLength = (points) => wholeDistance(points) ** 0.99;
+export const getBaseLength = (points: Point[]): number => wholeDistance(points) ** 0.99;
 
 /**
- * 求取两个坐标的中间值
+ * 求取两个坐标的中间坐标
  * @param point1
  * @param point2
  * @returns {[*,*]}
  * @constructor
  */
-export const Mid = (point1, point2) => [(point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2];
+export const Mid = (point1: Point, point2: Point): Point => [(point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2];
 
 /**
  * 通过三个点确定一个圆的中心点
@@ -46,11 +50,11 @@ export const Mid = (point1, point2) => [(point1[0] + point2[0]) / 2, (point1[1] 
  * @param point2
  * @param point3
  */
-export const getCircleCenterOfThreePoints = (point1, point2, point3) => {
-  const pntA = [(point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2];
-  const pntB = [pntA[0] - point1[1] + point2[1], pntA[1] + point1[0] - point2[0]];
-  const pntC = [(point1[0] + point3[0]) / 2, (point1[1] + point3[1]) / 2];
-  const pntD = [pntC[0] - point1[1] + point3[1], pntC[1] + point1[0] - point3[0]];
+export const getCircleCenterOfThreePoints = (point1: Point, point2: Point, point3: Point): Point => {
+  const pntA = [(point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2] as Point;
+  const pntB = [pntA[0] - point1[1] + point2[1], pntA[1] + point1[0] - point2[0]] as Point;
+  const pntC = [(point1[0] + point3[0]) / 2, (point1[1] + point3[1]) / 2] as Point;
+  const pntD = [pntC[0] - point1[1] + point3[1], pntC[1] + point1[0] - point3[0]] as Point;
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   return getIntersectPoint(pntA, pntB, pntC, pntD);
 };
@@ -63,7 +67,7 @@ export const getCircleCenterOfThreePoints = (point1, point2, point3) => {
  * @param pntD
  * @returns {[*,*]}
  */
-export const getIntersectPoint = (pntA, pntB, pntC, pntD) => {
+export const getIntersectPoint = (pntA: Point, pntB: Point, pntC: Point, pntD: Point): Point => {
   if (pntA[1] === pntB[1]) {
     const f = (pntD[0] - pntC[0]) / (pntD[1] - pntC[1]);
     const x = f * (pntA[1] - pntC[1]) + pntC[0];
@@ -89,8 +93,8 @@ export const getIntersectPoint = (pntA, pntB, pntC, pntD) => {
  * @param endPoint
  * @returns {*}
  */
-export const getAzimuth = (startPoint, endPoint) => {
-  let azimuth;
+export const getAzimuth = (startPoint: Point, endPoint: Point): number => {
+  let azimuth = 0;
   const angle = Math.asin(Math.abs(endPoint[1] - startPoint[1]) / MathDistance(startPoint, endPoint));
   if (endPoint[1] >= startPoint[1] && endPoint[0] >= startPoint[0]) {
     azimuth = angle + Math.PI;
@@ -111,7 +115,7 @@ export const getAzimuth = (startPoint, endPoint) => {
  * @param pntC
  * @returns {number}
  */
-export const getAngleOfThreePoints = (pntA, pntB, pntC) => {
+export const getAngleOfThreePoints = (pntA: Point, pntB: Point, pntC: Point): number => {
   const angle = getAzimuth(pntB, pntA) - getAzimuth(pntB, pntC);
   return angle < 0 ? angle + Math.PI * 2 : angle;
 };
@@ -123,7 +127,7 @@ export const getAngleOfThreePoints = (pntA, pntB, pntC) => {
  * @param pnt3
  * @returns {boolean}
  */
-export const isClockWise = (pnt1, pnt2, pnt3) =>
+export const isClockWise = (pnt1: Point, pnt2: Point, pnt3: Point): boolean =>
   (pnt3[1] - pnt1[1]) * (pnt2[0] - pnt1[0]) > (pnt2[1] - pnt1[1]) * (pnt3[0] - pnt1[0]);
 
 /**
@@ -133,7 +137,7 @@ export const isClockWise = (pnt1, pnt2, pnt3) =>
  * @param endPnt
  * @returns {[*,*]}
  */
-export const getPointOnLine = (t, startPnt, endPnt) => {
+export const getPointOnLine = (t: number, startPnt: Point, endPnt: Point): Point => {
   const x = startPnt[0] + t * (endPnt[0] - startPnt[0]);
   const y = startPnt[1] + t * (endPnt[1] - startPnt[1]);
   return [x, y];
@@ -148,7 +152,7 @@ export const getPointOnLine = (t, startPnt, endPnt) => {
  * @param endPnt
  * @returns {[*,*]}
  */
-export const getCubicValue = (t, startPnt, cPnt1, cPnt2, endPnt) => {
+export const getCubicValue = (t: number, startPnt: Point, cPnt1: Point, cPnt2: Point, endPnt: Point): Point => {
   // eslint-disable-next-line no-param-reassign
   t = Math.max(Math.min(t, 1), 0);
   const [tp, t2] = [1 - t, t * t];
@@ -169,7 +173,7 @@ export const getCubicValue = (t, startPnt, cPnt1, cPnt2, endPnt) => {
  * @param clockWise
  * @returns {[*,*]}
  */
-export const getThirdPoint = (startPnt, endPnt, angle, distance, clockWise) => {
+export const getThirdPoint = (startPnt: Point, endPnt: Point, angle: number, distance: number, clockWise?: boolean): Point => {
   const azimuth = getAzimuth(startPnt, endPnt);
   const alpha = clockWise ? azimuth + angle : azimuth - angle;
   const dx = distance * Math.cos(alpha);
@@ -185,9 +189,9 @@ export const getThirdPoint = (startPnt, endPnt, angle, distance, clockWise) => {
  * @param endAngle
  * @returns {null}
  */
-export const getArcPoints = (center, radius, startAngle, endAngle) => {
+export const getArcPoints = (center: Point, radius: number, startAngle: number, endAngle: number): Point[] => {
   // eslint-disable-next-line
-  let [x, y, pnts, angleDiff] = [null, null, [], endAngle - startAngle];
+  let [x, y, pnts, angleDiff]: [number, number, Point[], number] = [0, 0, [], endAngle - startAngle];
   angleDiff = angleDiff < 0 ? angleDiff + Math.PI * 2 : angleDiff;
   for (let i = 0; i <= 100; i++) {
     const angle = startAngle + (angleDiff * i) / 100;
@@ -206,10 +210,10 @@ export const getArcPoints = (center, radius, startAngle, endAngle) => {
  * @param pnt3
  * @returns {[*,*]}
  */
-export const getBisectorNormals = (t, pnt1, pnt2, pnt3) => {
+export const getBisectorNormals = (t: number, pnt1: Point, pnt2: Point, pnt3: Point): Point[] => {
   // eslint-disable-next-line
   const normal = getNormal(pnt1, pnt2, pnt3);
-  let [bisectorNormalRight, bisectorNormalLeft, dt, x, y] = [null, null, null, null, null];
+  let [bisectorNormalRight, bisectorNormalLeft, dt, x, y]: [Point, Point, number, number, number] = [[0, 0], [0, 0], 0, 0, 0];
   const dist = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
   const uX = normal[0] / dist;
   const uY = normal[1] / dist;
@@ -253,7 +257,7 @@ export const getBisectorNormals = (t, pnt1, pnt2, pnt3) => {
  * @param pnt3
  * @returns {[*,*]}
  */
-export const getNormal = (pnt1, pnt2, pnt3) => {
+export const getNormal = (pnt1: Point, pnt2: Point, pnt3: Point): Point => {
   let dX1 = pnt1[0] - pnt2[0];
   let dY1 = pnt1[1] - pnt2[1];
   const d1 = Math.sqrt(dX1 * dX1 + dY1 * dY1);
@@ -275,9 +279,9 @@ export const getNormal = (pnt1, pnt2, pnt3) => {
  * @param t
  * @returns {[*,*]}
  */
-export const getLeftMostControlPoint = (controlPoints, t) => {
+export const getLeftMostControlPoint = (controlPoints: Point[], t: number): Point => {
   // eslint-disable-next-line
-  let [pnt1, pnt2, pnt3, controlX, controlY] = [controlPoints[0], controlPoints[1], controlPoints[2], null, null];
+  let [pnt1, pnt2, pnt3, controlX, controlY]: [Point, Point, Point, number, number] = [controlPoints[0], controlPoints[1], controlPoints[2], 0, 0];
   const pnts = getBisectorNormals(0, pnt1, pnt2, pnt3);
   const normalRight = pnts[0];
   const normal = getNormal(pnt1, pnt2, pnt3);
@@ -310,7 +314,7 @@ export const getLeftMostControlPoint = (controlPoints, t) => {
  * @param t
  * @returns {[*,*]}
  */
-export const getRightMostControlPoint = (controlPoints, t) => {
+export const getRightMostControlPoint = (controlPoints: Point[], t: number): Point => {
   const count = controlPoints.length;
   const pnt1 = controlPoints[count - 3];
   const pnt2 = controlPoints[count - 2];
@@ -319,7 +323,7 @@ export const getRightMostControlPoint = (controlPoints, t) => {
   const normalLeft = pnts[1];
   const normal = getNormal(pnt1, pnt2, pnt3);
   const dist = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
-  let [controlX, controlY] = [null, null];
+  let [controlX, controlY] = [0, 0];
   if (dist > Constants.ZERO_TOLERANCE) {
     const mid = Mid(pnt2, pnt3);
     const pX = pnt3[0] - mid[0];
@@ -348,10 +352,11 @@ export const getRightMostControlPoint = (controlPoints, t) => {
  * @param controlPoints
  * @returns {null}
  */
-export const getCurvePoints = (t, controlPoints) => {
+export const getCurvePoints = (t: number, controlPoints: Point[]): Point[] => {
   const leftControl = getLeftMostControlPoint(controlPoints, t);
   // eslint-disable-next-line
-  let [pnt1, pnt2, pnt3, normals, points] = [null, null, null, [leftControl], []];
+  // @ts-ignore
+  let [pnt1, pnt2, pnt3, normals, points]: [Point, Point, Point, Point[], Point[]] = [null, null, null, [leftControl], []];
   for (let i = 0; i < controlPoints.length - 2; i++) {
     [pnt1, pnt2, pnt3] = [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]];
     const normalPoints = getBisectorNormals(t, pnt1, pnt2, pnt3);
@@ -379,11 +384,11 @@ export const getCurvePoints = (t, controlPoints) => {
  * @param points
  * @returns {*}
  */
-export const getBezierPoints = function (points) {
+export const getBezierPoints = function (points: Point[]): Point[] {
   if (points.length <= 2) {
     return points;
   }
-  const bezierPoints = [];
+  const bezierPoints: Point[] = [];
   const n = points.length - 1;
   for (let t = 0; t <= 1; t += 0.01) {
     let [x, y] = [0, 0];
@@ -406,9 +411,9 @@ export const getBezierPoints = function (points) {
  * @param n
  * @returns {number}
  */
-export const getFactorial = (n) => {
+export const getFactorial = (n: number): number => {
   let result = 1;
-  switch (n) {
+  switch (true) {
     case n <= 1:
       result = 1;
       break;
@@ -439,18 +444,19 @@ export const getFactorial = (n) => {
  * @param index
  * @returns {number}
  */
-export const getBinomialFactor = (n, index) => getFactorial(n) / (getFactorial(index) * getFactorial(n - index));
+export const getBinomialFactor = (n: number, index: number): number =>
+  getFactorial(n) / (getFactorial(index) * getFactorial(n - index));
 
 /**
  * 插值线性点
  * @param points
  * @returns {*}
  */
-export const getQBSplinePoints = (points) => {
+export const getQBSplinePoints = (points: Point[]): Point[] => {
   if (points.length <= 2) {
     return points;
   }
-  const [n, bSplinePoints] = [2, []];
+  const [n, bSplinePoints]: [number, Point[]] = [2, []];
   const m = points.length - n - 1;
   bSplinePoints.push(points[0]);
   for (let i = 0; i <= m; i++) {
@@ -475,7 +481,7 @@ export const getQBSplinePoints = (points) => {
  * @param t
  * @returns {number}
  */
-export const getQuadricBSplineFactor = (k, t) => {
+export const getQuadricBSplineFactor = (k: number, t: number): number => {
   let res = 0;
   if (k === 0) {
     res = (t - 1) ** 2 / 2;
@@ -488,21 +494,18 @@ export const getQuadricBSplineFactor = (k, t) => {
 };
 
 /**
- * 获取id
- * @returns {*|string|!Array.<T>}
+ * 生成随机字符串
+ * @returns {*}
  */
-export const getuuid = () => {
-  const [s, hexDigits] = [[], '0123456789abcdef'];
-  for (let i = 0; i < 36; i++) {
-    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+export function getuuid(noBit = false) {
+  function b(a?: number) {
+    /* eslint-disable */
+    // @ts-ignore
+    return a ? (a ^ ((Math.random() * 16) >> (a / 4))).toString(16) : ([1e7] + -[1e3] + -4e3 + -8e3 + -1e11).replace(/[018]/g, b);
+    /* eslint-enable */
   }
-  s[14] = '4';
-  // eslint-disable-next-line no-bitwise
-  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
-  // eslint-disable-next-line no-multi-assign
-  s[8] = s[13] = s[18] = s[23] = '-';
-  return s.join('');
-};
+  return noBit ? b().replace(/-/g, '') : b();
+}
 
 /**
  * 添加标识
@@ -520,21 +523,20 @@ export const stamp = function (obj) {
  * @param str
  * @returns {*}
  */
-export const trim = (str) => (str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, ''));
+export const trim = (str: string): string => (str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, ''));
 
 /**
  * 将类名截取成数组
  * @param str
- * @returns {Array|*}
  */
-export const splitWords = (str) => trim(str).split(/\s+/);
+export const splitWords = (str: string) => trim(str).split(/\s+/);
 
 /**
  * 判断是否为对象
  * @param value
  * @returns {boolean}
  */
-export const isObject = (value) => {
+export const isObject = (value: any): value is object => {
   const type = typeof value;
   return value !== null && (type === 'object' || type === 'function');
 };

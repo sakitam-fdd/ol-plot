@@ -1,6 +1,6 @@
 import { Style, Circle, Stroke, Fill } from 'ol/style';
 
-import { Group, Vector } from 'ol/layer';
+import {Group, Layer, Vector} from 'ol/layer';
 
 import { Vector as VectorSource } from 'ol/source';
 
@@ -10,7 +10,7 @@ import { Vector as VectorSource } from 'ol/source';
  * @param layerName
  * @returns {*}
  */
-const getLayerByLayerName = function (map, layerName) {
+const getLayerByLayerName = function (map, layerName): WithNull<Layer> {
   try {
     let targetLayer = null;
     if (map) {
@@ -21,6 +21,7 @@ const getLayerByLayerName = function (map, layerName) {
     return targetLayer;
   } catch (e) {
     console.log(e);
+    return null;
   }
 };
 
@@ -66,7 +67,8 @@ const createVectorLayer = function (map, layerName, params) {
       }
       if (!vectorLayer) {
         if (params && params.create) {
-          vectorLayer = new Vector({
+          new Vector({
+            // @ts-ignore
             layerName,
             params,
             layerType: 'vector',

@@ -5,38 +5,41 @@
 import { Fill, Icon, RegularShape, Stroke, Style, Text } from 'ol/style';
 import { Geometry } from 'ol/geom';
 
-const StyleFactory = function (options) {
-  const option = options && typeof options === 'object' ? options : {};
-  const style = new Style({});
-  if (option.geometry && option.geometry instanceof Geometry) {
-    style.setGeometry(option.geometry);
-  }
-  if (option.zIndex && typeof option.zIndex === 'number') {
-    style.setZIndex(option.zIndex);
-  }
-  if (option.fill && typeof option.fill === 'object') {
-    style.setFill(this._getFill(option.fill));
-  }
-  if (option.image && typeof option.image === 'object') {
-    style.setImage(this._getImage(option.image));
-  }
-  if (option.stroke && typeof option.stroke === 'object') {
-    style.setStroke(this._getStroke(option.stroke));
-  }
-  if (option.text && typeof option.text === 'object') {
-    style.setText(this._getText(option.text));
-  }
-  return style;
-};
+class StyleFactory {
+  public style: Style;
 
-/**
- * 获取规则样式图形
- * @param options
- * @returns {*}
- * @private
- */
-StyleFactory.prototype._getRegularShape = function (options) {
-  try {
+  constructor(options: any) {
+    const option = options && typeof options === 'object' ? options : {};
+    const style = new Style({});
+    if (option.geometry && option.geometry instanceof Geometry) {
+      style.setGeometry(option.geometry);
+    }
+    if (option.zIndex && typeof option.zIndex === 'number') {
+      style.setZIndex(option.zIndex);
+    }
+    if (option.fill && typeof option.fill === 'object') {
+      style.setFill(this._getFill(option.fill));
+    }
+    if (option.image && typeof option.image === 'object') {
+      style.setImage(this._getImage(option.image));
+    }
+    if (option.stroke && typeof option.stroke === 'object') {
+      style.setStroke(this._getStroke(option.stroke));
+    }
+    if (option.text && typeof option.text === 'object') {
+      style.setText(this._getText(option.text));
+    }
+
+    this.style = style;
+  }
+
+  /**
+   * 获取规则样式图形
+   * @param options
+   * @returns {*}
+   * @private
+   */
+  _getRegularShape(options: any): RegularShape {
     return new RegularShape({
       fill: this._getFill(options.fill) || undefined,
       points: typeof options.points === 'number' ? options.points : 1,
@@ -47,21 +50,18 @@ StyleFactory.prototype._getRegularShape = function (options) {
       stroke: this._getStroke(options.stroke) || undefined,
       rotation: typeof options.rotation === 'number' ? options.rotation : 0,
       rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
+      // @ts-ignore
       atlasManager: options.atlasManager ? options.atlasManager : undefined,
     });
-  } catch (e) {
-    console.log(e);
   }
-};
 
-/**
- * 获取图标样式
- * @param options
- * @returns {*}
- * @private
- */
-StyleFactory.prototype._getImage = function (options) {
-  try {
+  /**
+   * 获取图标样式
+   * @param options
+   * @returns {*}
+   * @private
+   */
+  _getImage(options): Icon | RegularShape {
     let image;
     // eslint-disable-next-line no-param-reassign
     options = options || {};
@@ -71,19 +71,15 @@ StyleFactory.prototype._getImage = function (options) {
       image = this._getRegularShape(options.image);
     }
     return image;
-  } catch (e) {
-    console.log(e);
   }
-};
 
-/**
- * 获取icon
- * @param options
- * @returns {Icon}
- * @private
- */
-StyleFactory.prototype._getIcon = function (options) {
-  try {
+  /**
+   * 获取icon
+   * @param options
+   * @returns {Icon}
+   * @private
+   */
+  _getIcon(options): Icon {
     // eslint-disable-next-line no-param-reassign
     options = options || {};
     return new Icon({
@@ -105,18 +101,15 @@ StyleFactory.prototype._getIcon = function (options) {
         options.imgSize && Array.isArray(options.imgSize) && options.imgSize.length === 2 ? options.imgSize : undefined,
       src: options.imageSrc ? options.imageSrc : undefined,
     });
-  } catch (error) {
-    console.log(error);
   }
-};
-/**
- * 获取线条样式
- * @param options
- * @returns {Stroke}
- * @private
- */
-StyleFactory.prototype._getStroke = function (options) {
-  try {
+
+  /**
+   * 获取线条样式
+   * @param options
+   * @returns {Stroke}
+   * @private
+   */
+  _getStroke(options): Stroke {
     // eslint-disable-next-line no-param-reassign
     options = options || {};
     return new Stroke({
@@ -128,19 +121,15 @@ StyleFactory.prototype._getStroke = function (options) {
       miterLimit: typeof options.strokeMiterLimit === 'number' ? options.strokeMiterLimit : 10,
       width: typeof options.strokeWidth === 'number' ? options.strokeWidth : undefined,
     });
-  } catch (error) {
-    console.log(error);
   }
-};
 
-/**
- * 获取样式文本
- * @param options
- * @returns {Text}
- * @private
- */
-StyleFactory.prototype._getText = function (options) {
-  try {
+  /**
+   * 获取样式文本
+   * @param options
+   * @returns {Text}
+   * @private
+   */
+  _getText(options): Text {
     return new Text({
       font: options.textFont && typeof options.textFont === 'string' ? options.textFont : '10px sans-serif',
       offsetX: typeof options.textOffsetX === 'number' ? options.textOffsetX : 0,
@@ -155,27 +144,21 @@ StyleFactory.prototype._getText = function (options) {
       fill: this._getFill(options.textFill),
       stroke: this._getStroke(options.textStroke),
     });
-  } catch (error) {
-    console.log(error);
   }
-};
 
-/**
- * 获取填充颜色
- * @param options
- * @returns {Fill}
- * @private
- */
-StyleFactory.prototype._getFill = function (options) {
-  try {
+  /**
+   * 获取填充颜色
+   * @param options
+   * @returns {Fill}
+   * @private
+   */
+  _getFill(options): Fill {
     // eslint-disable-next-line no-param-reassign
     options = options || {};
     return new Fill({
       color: options.fillColor ? options.fillColor : undefined,
     });
-  } catch (error) {
-    console.log(error);
   }
-};
+}
 
 export default StyleFactory;
