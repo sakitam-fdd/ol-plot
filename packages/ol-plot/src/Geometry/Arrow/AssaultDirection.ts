@@ -3,8 +3,8 @@
  * @desc 粗单直箭头
  * @Inherits FineArrow
  */
+import { PlotTypes } from '@/utils/PlotTypes';
 import FineArrow from './FineArrow';
-import { ASSAULT_DIRECTION } from '../../utils/PlotTypes';
 
 class AssaultDirection extends FineArrow {
   constructor(coordinates, points, params) {
@@ -12,7 +12,7 @@ class AssaultDirection extends FineArrow {
     this.tailWidthFactor = 0.05;
     this.neckWidthFactor = 0.1;
     this.headWidthFactor = 0.15;
-    this.type = ASSAULT_DIRECTION;
+    this.type = PlotTypes.ASSAULT_DIRECTION;
     this.headAngle = Math.PI / 4;
     this.neckAngle = Math.PI * 0.17741;
     if (points && points.length > 0) {

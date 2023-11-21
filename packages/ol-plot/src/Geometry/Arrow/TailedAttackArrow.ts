@@ -4,14 +4,14 @@
  * @Inherits AttackArrow
  */
 
-import { TAILED_ATTACK_ARROW } from '../../utils/PlotTypes';
+import { PlotTypes } from '@/utils/PlotTypes';
 import AttackArrow from './AttackArrow';
 import * as PlotUtils from '../../utils/utils';
 
 class TailedAttackArrow extends AttackArrow {
   constructor(coordinates, points, params) {
     super(coordinates, points, params);
-    this.type = TAILED_ATTACK_ARROW;
+    this.type = PlotTypes.TAILED_ATTACK_ARROW;
     this.headHeightFactor = 0.18;
     this.headWidthFactor = 0.3;
     this.neckHeightFactor = 0.85;
@@ -50,21 +50,23 @@ class TailedAttackArrow extends AttackArrow {
       const midTail = PlotUtils.Mid(tailLeft, tailRight);
       const bonePnts = [midTail].concat(pnts.slice(2));
       const headPnts = this.getArrowHeadPoints(bonePnts, tailLeft, tailRight);
-      const [neckLeft, neckRight] = [headPnts[0], headPnts[4]];
-      const tailWidth = PlotUtils.MathDistance(tailLeft, tailRight);
-      const allLen = PlotUtils.getBaseLength(bonePnts);
-      const len = allLen * this.tailWidthFactor * this.swallowTailFactor;
-      this.swallowTailPnt = PlotUtils.getThirdPoint(bonePnts[1], bonePnts[0], 0, len, true);
-      const factor = tailWidth / allLen;
-      const bodyPnts = this.getArrowBodyPoints(bonePnts, neckLeft, neckRight, factor);
-      const count = bodyPnts.length;
-      let leftPnts = [tailLeft].concat(bodyPnts.slice(0, count / 2));
-      leftPnts.push(neckLeft);
-      let rightPnts = [tailRight].concat(bodyPnts.slice(count / 2, count));
-      rightPnts.push(neckRight);
-      leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
-      rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
-      this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse(), [this.swallowTailPnt, leftPnts[0]])]);
+      if (headPnts && headPnts.length > 4) {
+        const [neckLeft, neckRight] = [headPnts[0], headPnts[4]];
+        const tailWidth = PlotUtils.MathDistance(tailLeft, tailRight);
+        const allLen = PlotUtils.getBaseLength(bonePnts);
+        const len = allLen * this.tailWidthFactor * this.swallowTailFactor;
+        this.swallowTailPnt = PlotUtils.getThirdPoint(bonePnts[1], bonePnts[0], 0, len, true);
+        const factor = tailWidth / allLen;
+        const bodyPnts = this.getArrowBodyPoints(bonePnts, neckLeft, neckRight, factor);
+        const count = bodyPnts.length;
+        let leftPnts = [tailLeft].concat(bodyPnts.slice(0, count / 2));
+        leftPnts.push(neckLeft);
+        let rightPnts = [tailRight].concat(bodyPnts.slice(count / 2, count));
+        rightPnts.push(neckRight);
+        leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
+        rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
+        this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse(), [this.swallowTailPnt, leftPnts[0]])]);
+      }
     } catch (e) {
       console.log(e);
     }

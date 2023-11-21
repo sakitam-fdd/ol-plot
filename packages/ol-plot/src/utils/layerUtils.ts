@@ -1,6 +1,6 @@
 import { Style, Circle, Stroke, Fill } from 'ol/style';
 
-import {Group, Layer, Vector} from 'ol/layer';
+import { Group, type Layer, Vector } from 'ol/layer';
 
 import { Vector as VectorSource } from 'ol/source';
 
@@ -67,8 +67,8 @@ const createVectorLayer = function (map, layerName, params) {
       }
       if (!vectorLayer) {
         if (params && params.create) {
-          new Vector({
-            // @ts-ignore
+          vectorLayer = new Vector({
+            // @ts-ignore this is unsafe
             layerName,
             params,
             layerType: 'vector',

@@ -1,20 +1,34 @@
 /**
- * Created by FDD on 2017/9/13.
- * @desc 三角旗标（使用两个控制点直接创建三角旗标）
+ * Created by FDD on 2017/5/15.
+ * @desc 点要素
  */
 import { Map } from 'ol';
-import { Polygon } from 'ol/geom';
+import { Point } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point as TPoint } from '@/utils/utils';
 
-import { TRIANGLEFLAG } from '../../utils/PlotTypes';
+class Pennant extends Point {
+  type: PlotTypes;
 
-class TriangleFlag extends Polygon {
-  constructor(coordinates, points, params) {
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: TPoint[];
+
+  freehand: boolean;
+
+  options: any;
+
+  constructor(coordinates, point, params) {
     super([]);
-    this.type = TRIANGLEFLAG;
-    this.fixPointCount = 2;
-    this.set('params', params);
-    if (points && points.length > 0) {
-      this.setPoints(points);
+    this.type = PlotTypes.PENNANT;
+    this.options = params || {};
+    this.freehand = false;
+    this.fixPointCount = undefined;
+    this.set('params', this.options);
+    if (point && point.length > 0) {
+      this.setPoints(point);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -28,36 +42,8 @@ class TriangleFlag extends Polygon {
     return this.type;
   }
 
-  /**
-   * 执行动作
-   */
   generate() {
-    const count = this.getPointCount();
-    if (count < 2) {
-      return false;
-    }
-    this.setCoordinates([this.calculatePonits(this.points)]);
-  }
-
-  /**
-   * 插值点数据
-   * @param points
-   * @returns {Array}
-   */
-  calculatePonits(points) {
-    let components = [];
-    // 至少需要两个控制点
-    if (points.length > 1) {
-      // 取第一个
-      const startPoint = points[0];
-      // 取最后一个
-      const endPoint = points[points.length - 1];
-      const point1 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      const point2 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      const point3 = [startPoint[0], endPoint[1]];
-      components = [startPoint, point1, point2, point3];
-    }
-    return components;
+    this.setCoordinates(this.points);
   }
 
   /**
@@ -74,7 +60,7 @@ class TriangleFlag extends Polygon {
 
   /**
    * 获取当前地图对象
-   * @returns {Map|*}
+   * @returns {{}|*}
    */
   getMap() {
     return this.map;
@@ -141,4 +127,4 @@ class TriangleFlag extends Polygon {
   finishDrawing() {}
 }
 
-export default TriangleFlag;
+export default Pennant;

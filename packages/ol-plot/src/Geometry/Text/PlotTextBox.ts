@@ -8,7 +8,7 @@ import PlotEvent from '@/core/PlotEvent';
 
 class PlotTextBox extends Overlay {
   // eslint-disable-next-line default-param-last
-  constructor(options = {}, parent) {
+  constructor(options: any = {}, parent) {
     const [
       id,
       element,

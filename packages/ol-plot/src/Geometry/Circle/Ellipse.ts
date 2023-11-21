@@ -20,8 +20,6 @@ class Ellipse extends Polygon {
 
   freehand: boolean;
 
-  options: any;
-
   constructor(coordinates, points, params) {
     super([]);
     this.type = PlotTypes.ELLIPSE;

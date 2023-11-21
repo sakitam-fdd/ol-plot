@@ -5,8 +5,8 @@
 import { Map } from 'ol';
 import { LineString } from 'ol/geom';
 import { PlotTypes } from '@/utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
 import type { Point } from '@/utils/utils';
+import * as PlotUtils from '../../utils/utils';
 
 class Curve extends LineString {
   type: PlotTypes;

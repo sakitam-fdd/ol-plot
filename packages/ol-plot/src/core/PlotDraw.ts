@@ -1,4 +1,4 @@
-import { Map, Observable, Feature, View } from 'ol';
+import { Map, Observable, Feature } from 'ol';
 import Draw, { createBox } from 'ol/interaction/Draw';
 import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
 import { Style, Icon, Stroke, Fill } from 'ol/style';

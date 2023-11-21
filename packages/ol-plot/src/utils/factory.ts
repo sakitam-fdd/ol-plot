@@ -50,7 +50,7 @@ class StyleFactory {
       stroke: this._getStroke(options.stroke) || undefined,
       rotation: typeof options.rotation === 'number' ? options.rotation : 0,
       rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
-      // @ts-ignore
+      // @ts-ignore this is unsafe
       atlasManager: options.atlasManager ? options.atlasManager : undefined,
     });
   }

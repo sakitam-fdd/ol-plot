@@ -1,34 +1,31 @@
 /**
- * Created by FDD on 2017/5/15.
- * @desc 点要素
+ * Created by FDD on 2017/5/24.
+ * @desc 自由面
+ * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
-import { Point } from 'ol/geom';
-import type { Point as TPoint } from '../../utils/utils';
+import { Polygon } from 'ol/geom';
 import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
 
-class Pennant extends Point {
+class FreePolygon extends Polygon {
   type: PlotTypes;
 
   fixPointCount: WithUndef<number>;
 
   map: any;
 
-  points: TPoint[];
+  points: Point[];
 
   freehand: boolean;
 
-  options: any;
-
-  constructor(coordinates, point, params) {
+  constructor(coordinates, points, params) {
     super([]);
-    this.type = PlotTypes.PENNANT;
-    this.options = params || {};
-    this.freehand = false;
-    this.fixPointCount = undefined;
-    this.set('params', this.options);
-    if (point && point.length > 0) {
-      this.setPoints(point);
+    this.type = PlotTypes.FREE_POLYGON;
+    this.freehand = true;
+    this.set('params', params);
+    if (points && points.length > 0) {
+      this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -42,8 +39,11 @@ class Pennant extends Point {
     return this.type;
   }
 
+  /**
+   * 执行动作
+   */
   generate() {
-    this.setCoordinates(this.points);
+    this.setCoordinates([this.points]);
   }
 
   /**
@@ -60,7 +60,7 @@ class Pennant extends Point {
 
   /**
    * 获取当前地图对象
-   * @returns {{}|*}
+   * @returns {Map|*}
    */
   getMap() {
     return this.map;
@@ -127,4 +127,4 @@ class Pennant extends Point {
   finishDrawing() {}
 }
 
-export default Pennant;
+export default FreePolygon;

@@ -1,23 +1,26 @@
 /**
- * Created by FDD on 2017/5/24.
- * @desc 粗单尖头箭头
- * @Inherits ol.geom.Polygon
+ * Created by FDD on 2017/9/13.
+ * @desc 直角旗标（使用两个控制点直接创建直角旗标）
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { FINE_ARROW } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
-import * as Constants from '../../constants';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
 
-class FineArrow extends Polygon {
+class RectFlag extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = FINE_ARROW;
-    this.tailWidthFactor = 0.1;
-    this.neckWidthFactor = 0.2;
-    this.headWidthFactor = 0.25;
-    this.headAngle = Math.PI / 8.5;
-    this.neckAngle = Math.PI / 13;
+    this.type = PlotTypes.RECTFLAG;
     this.fixPointCount = 2;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -39,28 +42,33 @@ class FineArrow extends Polygon {
    * 执行动作
    */
   generate() {
-    try {
-      const cont = this.getPointCount();
-      if (cont < 2) {
-        return false;
-      }
-      const pnts = this.getPoints();
-      const [pnt1, pnt2] = [pnts[0], pnts[1]];
-      const len = PlotUtils.getBaseLength(pnts);
-      const tailWidth = len * this.tailWidthFactor;
-      const neckWidth = len * this.neckWidthFactor;
-      const headWidth = len * this.headWidthFactor;
-      const tailLeft = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, true);
-      const tailRight = PlotUtils.getThirdPoint(pnt2, pnt1, Constants.HALF_PI, tailWidth, false);
-      const headLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, false);
-      const headRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, true);
-      const neckLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, false);
-      const neckRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, true);
-      const pList = [tailLeft, neckLeft, headLeft, pnt2, headRight, neckRight, tailRight];
-      this.setCoordinates([pList]);
-    } catch (e) {
-      console.log(e);
+    const count = this.getPointCount();
+    if (count < 2) {
+      return false;
     }
+    this.setCoordinates([this.calculatePonits(this.points)]);
+  }
+
+  /**
+   * 插值点数据
+   * @param points
+   * @returns {Array}
+   */
+  calculatePonits(points) {
+    let components: Point[] = [];
+    // 至少需要两个控制点
+    if (points.length > 1) {
+      // 取第一个
+      const startPoint = points[0];
+      // 取最后一个
+      const endPoint = points[points.length - 1];
+      const point1 = [endPoint[0], startPoint[1]];
+      const point2 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point3 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point4 = [startPoint[0], endPoint[1]];
+      components = [startPoint, point1, point2, point3, point4];
+    }
+    return components;
   }
 
   /**
@@ -144,4 +152,4 @@ class FineArrow extends Polygon {
   finishDrawing() {}
 }
 
-export default FineArrow;
+export default RectFlag;

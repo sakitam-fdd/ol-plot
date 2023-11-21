@@ -1,19 +1,27 @@
 /**
- * Created by FDD on 2017/5/25.
- * @desc 闭合曲面
+ * Created by FDD on 2017/5/24.
+ * @desc 多边形
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
-import { Polygon } from 'ol/geom';
-import { CLOSED_CURVE } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
-import * as Constants from '../../constants';
+import { Polygon as $Polygon } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
 
-class ClosedCurve extends Polygon {
+class Polygon extends $Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = CLOSED_CURVE;
-    this.t = 0.3;
+    this.type = PlotTypes.POLYGON;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -34,41 +42,11 @@ class ClosedCurve extends Polygon {
    * 执行动作
    */
   generate() {
-    const points = this.getPointCount();
-    if (points < 2) {
+    const count = this.getPointCount();
+    if (count < 2) {
       return false;
     }
-    if (points === 2) {
-      this.setCoordinates([this.points]);
-    } else {
-      const pnts = this.getPoints();
-      pnts.push(pnts[0], pnts[1]);
-      let [normals] = [[]];
-      const pList = [];
-      for (let i = 0; i < pnts.length - 2; i++) {
-        const normalPoints = PlotUtils.getBisectorNormals(this.t, pnts[i], pnts[i + 1], pnts[i + 2]);
-        normals = normals.concat(normalPoints);
-      }
-      const count = normals.length;
-      normals = [normals[count - 1]].concat(normals.slice(0, count - 1));
-      for (let i = 0; i < pnts.length - 2; i++) {
-        const pnt1 = pnts[i];
-        const pnt2 = pnts[i + 1];
-        pList.push(pnt1);
-        for (let t = 0; t <= Constants.FITTING_COUNT; t++) {
-          const pnt = PlotUtils.getCubicValue(
-            t / Constants.FITTING_COUNT,
-            pnt1,
-            normals[i * 2],
-            normals[i * 2 + 1],
-            pnt2,
-          );
-          pList.push(pnt);
-        }
-        pList.push(pnt2);
-      }
-      this.setCoordinates([pList]);
-    }
+    this.setCoordinates([this.points]);
   }
 
   /**
@@ -152,4 +130,4 @@ class ClosedCurve extends Polygon {
   finishDrawing() {}
 }
 
-export default ClosedCurve;
+export default Polygon;
