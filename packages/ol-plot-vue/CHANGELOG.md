@@ -1,5 +1,12 @@
 # ol-plot-vue
 
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies [0f8524c]
+  - ol-plot@4.1.6
+
 ## 1.1.6
 
 ### Patch Changes
