@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.4
+
+### Patch Changes
+
+- 68913ec: bump version
+
 ## 4.1.3
 
 ### Patch Changes
