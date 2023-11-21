@@ -3,7 +3,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "pnpm@8.6.5",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "pnpm run -r dev",

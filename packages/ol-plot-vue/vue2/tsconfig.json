@@ -32,6 +32,7 @@
     "lib": ["esnext", "dom", "dom.iterable", "webworker"],
     "skipLibCheck": true,
     "suppressImplicitAnyIndexErrors": false,
+    "disableSizeLimit": true,
     "paths": {
       "~/*": ["./*"],
       "@/*": ["../src/*"]
