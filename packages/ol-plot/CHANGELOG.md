@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.5
+
+### Patch Changes
+
+- 8180246: fix: ci error
+
 ## 4.1.4
 
 ### Patch Changes
