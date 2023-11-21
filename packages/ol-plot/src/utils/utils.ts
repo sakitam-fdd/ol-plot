@@ -173,7 +173,13 @@ export const getCubicValue = (t: number, startPnt: Point, cPnt1: Point, cPnt2: P
  * @param clockWise
  * @returns {[*,*]}
  */
-export const getThirdPoint = (startPnt: Point, endPnt: Point, angle: number, distance: number, clockWise?: boolean): Point => {
+export const getThirdPoint = (
+  startPnt: Point,
+  endPnt: Point,
+  angle: number,
+  distance: number,
+  clockWise?: boolean,
+): Point => {
   const azimuth = getAzimuth(startPnt, endPnt);
   const alpha = clockWise ? azimuth + angle : azimuth - angle;
   const dx = distance * Math.cos(alpha);
@@ -213,7 +219,13 @@ export const getArcPoints = (center: Point, radius: number, startAngle: number, 
 export const getBisectorNormals = (t: number, pnt1: Point, pnt2: Point, pnt3: Point): Point[] => {
   // eslint-disable-next-line
   const normal = getNormal(pnt1, pnt2, pnt3);
-  let [bisectorNormalRight, bisectorNormalLeft, dt, x, y]: [Point, Point, number, number, number] = [[0, 0], [0, 0], 0, 0, 0];
+  let [bisectorNormalRight, bisectorNormalLeft, dt, x, y]: [Point, Point, number, number, number] = [
+    [0, 0],
+    [0, 0],
+    0,
+    0,
+    0,
+  ];
   const dist = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
   const uX = normal[0] / dist;
   const uY = normal[1] / dist;
@@ -356,7 +368,8 @@ export const getCurvePoints = (t: number, controlPoints: Point[]): Point[] => {
   const leftControl = getLeftMostControlPoint(controlPoints, t);
   // eslint-disable-next-line
   // @ts-ignore
-  let [pnt1, pnt2, pnt3, normals, points]: [Point, Point, Point, Point[], Point[]] = [null, null, null, [leftControl], []];
+  let [pnt1, pnt2, pnt3, normals]: [Point, Point, Point, Point[], Point[]] = [null, null, null, [leftControl]];
+  const points: Point[] = [];
   for (let i = 0; i < controlPoints.length - 2; i++) {
     [pnt1, pnt2, pnt3] = [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]];
     const normalPoints = getBisectorNormals(t, pnt1, pnt2, pnt3);

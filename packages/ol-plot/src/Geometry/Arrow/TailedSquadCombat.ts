@@ -4,7 +4,7 @@
  * @Inherits AttackArrow
  */
 
-import { TAILED_SQUAD_COMBAT } from '../../utils/PlotTypes';
+import { PlotTypes } from '../../utils/PlotTypes';
 import AttackArrow from './AttackArrow';
 import * as PlotUtils from '../../utils/utils';
 import * as Constants from '../../constants';
@@ -12,7 +12,7 @@ import * as Constants from '../../constants';
 class TailedSquadCombat extends AttackArrow {
   constructor(coordinates, points, params) {
     super(coordinates, points, params);
-    this.type = TAILED_SQUAD_COMBAT;
+    this.type = PlotTypes.TAILED_SQUAD_COMBAT;
     this.headHeightFactor = 0.18;
     this.headWidthFactor = 0.3;
     this.neckHeightFactor = 0.85;
@@ -42,18 +42,20 @@ class TailedSquadCombat extends AttackArrow {
         const pnts = this.getPoints();
         const tailPnts = this.getTailPoints(pnts);
         const headPnts = this.getArrowHeadPoints(pnts, tailPnts[0], tailPnts[2]);
-        const neckLeft = headPnts[0];
-        const neckRight = headPnts[4];
-        const bodyPnts = this.getArrowBodyPoints(pnts, neckLeft, neckRight, this.tailWidthFactor);
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        const count = bodyPnts.length;
-        let leftPnts = [tailPnts[0]].concat(bodyPnts.slice(0, count / 2));
-        leftPnts.push(neckLeft);
-        let rightPnts = [tailPnts[2]].concat(bodyPnts.slice(count / 2, count));
-        rightPnts.push(neckRight);
-        leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
-        rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
-        this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse(), [tailPnts[1], leftPnts[0]])]);
+        if (headPnts && headPnts.length > 4) {
+          const neckLeft = headPnts[0];
+          const neckRight = headPnts[4];
+          const bodyPnts = this.getArrowBodyPoints(pnts, neckLeft, neckRight, this.tailWidthFactor);
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const count = bodyPnts.length;
+          let leftPnts = [tailPnts[0]].concat(bodyPnts.slice(0, count / 2));
+          leftPnts.push(neckLeft);
+          let rightPnts = [tailPnts[2]].concat(bodyPnts.slice(count / 2, count));
+          rightPnts.push(neckRight);
+          leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
+          rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
+          this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse(), [tailPnts[1], leftPnts[0]])]);
+        }
       }
     } catch (e) {
       console.log(e);

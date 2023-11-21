@@ -1,22 +1,34 @@
 /**
- * Created by FDD on 2017/5/24.
- * @desc 细直箭头
+ * Created by FDD on 2017/5/15.
+ * @desc 点要素
  */
 import { Map } from 'ol';
-import { LineString } from 'ol/geom';
-import { STRAIGHT_ARROW } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
+import { Point as $Point } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point as TPoint } from '@/utils/utils';
 
-class StraightArrow extends LineString {
-  constructor(coordinates, points, params) {
+class Point extends $Point {
+  type: PlotTypes;
+
+  fixPointCount: number;
+
+  map: any;
+
+  points: TPoint[];
+
+  freehand: boolean;
+
+  options: any;
+
+  constructor(coordinates, point, params) {
     super([]);
-    this.type = STRAIGHT_ARROW;
-    this.fixPointCount = 2;
-    this.maxArrowLength = 3000000;
-    this.arrowLengthScale = 5;
-    this.set('params', params);
-    if (points && points.length > 0) {
-      this.setPoints(points);
+    this.type = PlotTypes.POINT;
+    this.options = params || {};
+    this.freehand = false;
+    this.set('params', this.options);
+    this.fixPointCount = 1;
+    if (point && point.length > 0) {
+      this.setPoints(point);
     } else if (coordinates && coordinates.length > 0) {
       this.setCoordinates(coordinates);
     }
@@ -30,26 +42,9 @@ class StraightArrow extends LineString {
     return this.type;
   }
 
-  /**
-   * 执行动作
-   */
   generate() {
-    try {
-      const count = this.getPointCount();
-      if (count < 2) {
-        return false;
-      }
-      const pnts = this.getPoints();
-      const [pnt1, pnt2] = [pnts[0], pnts[1]];
-      const distance = PlotUtils.MathDistance(pnt1, pnt2);
-      let len = distance / this.arrowLengthScale;
-      len = len > this.maxArrowLength ? this.maxArrowLength : len;
-      const leftPnt = PlotUtils.getThirdPoint(pnt1, pnt2, Math.PI / 6, len, false);
-      const rightPnt = PlotUtils.getThirdPoint(pnt1, pnt2, Math.PI / 6, len, true);
-      this.setCoordinates([pnt1, pnt2, leftPnt, pnt2, rightPnt]);
-    } catch (e) {
-      console.log(e);
-    }
+    const pnt = this.points[0];
+    this.setCoordinates(pnt as unknown as any[]);
   }
 
   /**
@@ -133,4 +128,4 @@ class StraightArrow extends LineString {
   finishDrawing() {}
 }
 
-export default StraightArrow;
+export default Point;

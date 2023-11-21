@@ -1,5 +1,5 @@
-import type Point from '../Geometry/point/Point';
-import type Pennant from '../Geometry/point/Pennant';
+import type Point from '../Geometry/Point/Point';
+import type Pennant from '../Geometry/Point/Pennant';
 import type Polyline from '../Geometry/Polyline/Polyline';
 import type Arc from '../Geometry/Arc/Arc';
 import type Circle from '../Geometry/Circle/Circle';

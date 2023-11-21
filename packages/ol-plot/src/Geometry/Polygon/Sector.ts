@@ -1,21 +1,30 @@
 /**
- * Created by FDD on 2017/5/24.
- * @desc 规则矩形
+ * Created by FDD on 2017/5/25.
+ * @desc 扇形
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
 import { Polygon as $Polygon } from 'ol/geom';
-import { fromExtent } from 'ol/geom/Polygon';
-import { boundingExtent } from 'ol/extent';
-import { RECTANGLE } from '@/utils/PlotTypes';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as PlotUtils from '@/utils/utils';
+import type { Point } from '@/utils/utils';
 
-class RectAngle extends $Polygon {
+class Sector extends $Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = RECTANGLE;
-    this.fixPointCount = 2;
+    this.type = PlotTypes.SECTOR;
+    this.fixPointCount = 3;
     this.set('params', params);
-    this.isFill = params.isFill === false ? params.isFill : true;
     if (points && points.length > 0) {
       this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
@@ -35,18 +44,21 @@ class RectAngle extends $Polygon {
    * 执行动作
    */
   generate() {
-    if (this.points.length === 2) {
-      let coordinates = [];
-      if (this.isFill) {
-        const extent = boundingExtent(this.points);
-        const polygon = fromExtent(extent);
-        coordinates = polygon.getCoordinates();
-      } else {
-        const start = this.points[0];
-        const end = this.points[1];
-        coordinates = [start, [start[0], end[1]], end, [end[0], start[1]], start];
-      }
-      this.setCoordinates(coordinates);
+    const points = this.getPointCount();
+    if (points < 2) {
+      return false;
+    }
+    if (points === 2) {
+      this.setCoordinates([this.points]);
+    } else {
+      const pnts = this.getPoints();
+      const [center, pnt2, pnt3] = [pnts[0], pnts[1], pnts[2]];
+      const radius = PlotUtils.MathDistance(pnt2, center);
+      const startAngle = PlotUtils.getAzimuth(pnt2, center);
+      const endAngle = PlotUtils.getAzimuth(pnt3, center);
+      const pList = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
+      pList.push(center, pList[0]);
+      this.setCoordinates([pList]);
     }
   }
 
@@ -64,7 +76,7 @@ class RectAngle extends $Polygon {
 
   /**
    * 获取当前地图对象
-   * @returns {Map|*}
+   * @returns {ol.Map|*}
    */
   getMap() {
     return this.map;
@@ -131,4 +143,4 @@ class RectAngle extends $Polygon {
   finishDrawing() {}
 }
 
-export default RectAngle;
+export default Sector;

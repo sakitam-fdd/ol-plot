@@ -8,11 +8,10 @@ import { getSize, getBottomLeft, getTopRight, buffer } from 'ol/extent';
 
 import { createVectorLayer, getLayerByLayerName } from '@/utils/layerUtils';
 import { BASE_LAYERNAME } from '@/constants';
-
+import type olPlot from '@/index';
 import StyleFactory from '../utils/factory';
 import PlotTextBox from '../Geometry/Text/PlotTextBox';
 import * as Geometry from '../Geometry';
-import type olPlot from '@/index';
 
 class PlotUtils {
   public map: any;

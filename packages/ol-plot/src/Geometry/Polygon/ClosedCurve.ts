@@ -1,19 +1,32 @@
 /**
- * Created by FDD on 2017/5/24.
- * @desc 弓形
+ * Created by FDD on 2017/5/25.
+ * @desc 闭合曲面
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { LUNE } from '../../utils/PlotTypes';
-import * as Constants from '../../constants';
-import * as PlotUtils from '../../utils/utils';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as PlotUtils from '@/utils/utils';
+import * as Constants from '@/constants';
+import type { Point } from '@/utils/utils';
 
-class Lune extends Polygon {
+class ClosedCurve extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  t: number;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = LUNE;
-    this.fixPointCount = 3;
+    this.type = PlotTypes.CLOSED_CURVE;
+    this.t = 0.3;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -34,32 +47,41 @@ class Lune extends Polygon {
    * 执行动作
    */
   generate() {
-    if (this.getPointCount() < 2) {
+    const points = this.getPointCount();
+    if (points < 2) {
       return false;
     }
-    let pnts = this.getPoints();
-    if (this.getPointCount() === 2) {
-      const mid = PlotUtils.Mid(pnts[0], pnts[1]);
-      const d = PlotUtils.MathDistance(pnts[0], mid);
-      const pnt = PlotUtils.getThirdPoint(pnts[0], mid, Constants.HALF_PI, d);
-      pnts.push(pnt);
-    }
-    // eslint-disable-next-line
-    let [pnt1, pnt2, pnt3, startAngle, endAngle] = [pnts[0], pnts[1], pnts[2], undefined, undefined];
-    const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
-    const radius = PlotUtils.MathDistance(pnt1, center);
-    const angle1 = PlotUtils.getAzimuth(pnt1, center);
-    const angle2 = PlotUtils.getAzimuth(pnt2, center);
-    if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
-      startAngle = angle2;
-      endAngle = angle1;
+    if (points === 2) {
+      this.setCoordinates([this.points]);
     } else {
-      startAngle = angle1;
-      endAngle = angle2;
+      const pnts = this.getPoints();
+      pnts.push(pnts[0], pnts[1]);
+      let normals: Point[] = [];
+      const pList: Point[] = [];
+      for (let i = 0; i < pnts.length - 2; i++) {
+        const normalPoints = PlotUtils.getBisectorNormals(this.t, pnts[i], pnts[i + 1], pnts[i + 2]);
+        normals = normals.concat(normalPoints);
+      }
+      const count = normals.length;
+      normals = [normals[count - 1]].concat(normals.slice(0, count - 1));
+      for (let i = 0; i < pnts.length - 2; i++) {
+        const pnt1 = pnts[i];
+        const pnt2 = pnts[i + 1];
+        pList.push(pnt1);
+        for (let t = 0; t <= Constants.FITTING_COUNT; t++) {
+          const pnt = PlotUtils.getCubicValue(
+            t / Constants.FITTING_COUNT,
+            pnt1,
+            normals[i * 2],
+            normals[i * 2 + 1],
+            pnt2,
+          );
+          pList.push(pnt);
+        }
+        pList.push(pnt2);
+      }
+      this.setCoordinates([pList]);
     }
-    pnts = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
-    pnts.push(pnts[0]);
-    this.setCoordinates([pnts]);
   }
 
   /**
@@ -143,4 +165,4 @@ class Lune extends Polygon {
   finishDrawing() {}
 }
 
-export default Lune;
+export default ClosedCurve;

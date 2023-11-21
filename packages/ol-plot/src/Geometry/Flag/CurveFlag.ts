@@ -4,13 +4,24 @@
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { CURVEFLAG } from '../../utils/PlotTypes';
-import { getBezierPoints } from '../../utils/utils';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
+import { getBezierPoints } from '@/utils/utils';
 
 class CurveFlag extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = CURVEFLAG;
+    this.type = PlotTypes.CURVEFLAG;
     this.fixPointCount = 2;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -45,7 +56,7 @@ class CurveFlag extends Polygon {
    * @returns {Array}
    */
   calculatePonits(points) {
-    let components = [];
+    let components: Point[] = [];
     // 至少需要两个控制点
     if (points.length > 1) {
       // 取第一个
@@ -85,11 +96,11 @@ class CurveFlag extends Polygon {
       // 下曲线起始点
       const point10 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
       // 旗杆底部点
-      const point11 = [startPoint[0], endPoint[1]];
+      const point11: Point = [startPoint[0], endPoint[1]];
       // 计算上曲线
       const curve1 = getBezierPoints([point1, point2, point3, point4, point5]);
       // 计算下曲线
-      const curve2 = getBezierPoints([point6, point7, point8, point9, point10]);
+      const curve2 = getBezierPoints([point6, point7, point8, point9, point10] as Point[]);
       // 合并
       components = curve1.concat(curve2);
       components.push(point11);

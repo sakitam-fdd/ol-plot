@@ -1,17 +1,29 @@
 /**
- * Created by FDD on 2017/5/25.
- * @desc 扇形
+ * Created by FDD on 2017/5/24.
+ * @desc 弓形
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
-import { Polygon as $Polygon } from 'ol/geom';
-import { SECTOR } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
+import { Polygon } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as Constants from '@/constants';
+import * as PlotUtils from '@/utils/utils';
+import type { Point } from '@/utils/utils';
 
-class Sector extends $Polygon {
+class Lune extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = SECTOR;
+    this.type = PlotTypes.LUNE;
     this.fixPointCount = 3;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -33,22 +45,32 @@ class Sector extends $Polygon {
    * 执行动作
    */
   generate() {
-    const points = this.getPointCount();
-    if (points < 2) {
+    if (this.getPointCount() < 2) {
       return false;
     }
-    if (points === 2) {
-      this.setCoordinates([this.points]);
-    } else {
-      const pnts = this.getPoints();
-      const [center, pnt2, pnt3] = [pnts[0], pnts[1], pnts[2]];
-      const radius = PlotUtils.MathDistance(pnt2, center);
-      const startAngle = PlotUtils.getAzimuth(pnt2, center);
-      const endAngle = PlotUtils.getAzimuth(pnt3, center);
-      const pList = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
-      pList.push(center, pList[0]);
-      this.setCoordinates([pList]);
+    let pnts = this.getPoints();
+    if (this.getPointCount() === 2) {
+      const mid = PlotUtils.Mid(pnts[0], pnts[1]);
+      const d = PlotUtils.MathDistance(pnts[0], mid);
+      const pnt = PlotUtils.getThirdPoint(pnts[0], mid, Constants.HALF_PI, d);
+      pnts.push(pnt);
     }
+    // eslint-disable-next-line
+    let [pnt1, pnt2, pnt3, startAngle, endAngle] = [pnts[0], pnts[1], pnts[2], 0, 0];
+    const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
+    const radius = PlotUtils.MathDistance(pnt1, center);
+    const angle1 = PlotUtils.getAzimuth(pnt1, center);
+    const angle2 = PlotUtils.getAzimuth(pnt2, center);
+    if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
+      startAngle = angle2;
+      endAngle = angle1;
+    } else {
+      startAngle = angle1;
+      endAngle = angle2;
+    }
+    pnts = PlotUtils.getArcPoints(center, radius, startAngle, endAngle);
+    pnts.push(pnts[0]);
+    this.setCoordinates([pnts]);
   }
 
   /**
@@ -65,7 +87,7 @@ class Sector extends $Polygon {
 
   /**
    * 获取当前地图对象
-   * @returns {ol.Map|*}
+   * @returns {Map|*}
    */
   getMap() {
     return this.map;
@@ -132,4 +154,4 @@ class Sector extends $Polygon {
   finishDrawing() {}
 }
 
-export default Sector;
+export default Lune;

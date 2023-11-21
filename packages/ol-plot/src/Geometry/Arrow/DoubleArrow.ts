@@ -1,23 +1,48 @@
 /**
  * Created by FDD on 2017/5/24.
- * @desc 进攻方向
+ * @desc 双箭头
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { ATTACK_ARROW } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
-import * as Constants from '../../constants';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as Constants from '@/constants';
+import * as PlotUtils from '@/utils/utils';
+import type { Point } from '@/utils/utils';
 
-class AttackArrow extends Polygon {
+class DoubleArrow extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  neckHeightFactor: number;
+
+  headHeightFactor: number;
+
+  headWidthFactor: number;
+
+  neckWidthFactor: number;
+
+  connPoint: WithNull<Point>;
+
+  tempPoint4: WithNull<Point>;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = ATTACK_ARROW;
-    this.headHeightFactor = 0.18;
+    this.type = PlotTypes.DOUBLE_ARROW;
+    this.headHeightFactor = 0.25;
     this.headWidthFactor = 0.3;
     this.neckHeightFactor = 0.85;
     this.neckWidthFactor = 0.15;
-    this.headTailFactor = 0.8;
+    this.connPoint = null;
+    this.tempPoint4 = null;
+    this.fixPointCount = 4;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -39,33 +64,48 @@ class AttackArrow extends Polygon {
    */
   generate() {
     try {
-      const points = this.getPointCount();
-      if (points < 2) {
+      const count = this.getPointCount();
+      if (count < 2) {
         return false;
       }
-      if (points === 2) {
+      if (count === 2) {
         this.setCoordinates([this.points]);
-      } else {
-        const pnts = this.getPoints();
-        let [tailLeft, tailRight] = [pnts[0], pnts[1]];
-        if (PlotUtils.isClockWise(pnts[0], pnts[1], pnts[2])) {
-          tailLeft = pnts[1];
-          tailRight = pnts[0];
+        return false;
+      }
+      if (count > 2) {
+        const [pnt1, pnt2, pnt3] = [this.points[0], this.points[1], this.points[2]];
+        if (count === 3) {
+          this.tempPoint4 = this.getTempPoint4(pnt1, pnt2, pnt3);
+          this.connPoint = PlotUtils.Mid(pnt1, pnt2);
+        } else if (count === 4) {
+          this.tempPoint4 = this.points[3];
+          this.connPoint = PlotUtils.Mid(pnt1, pnt2);
+        } else {
+          this.tempPoint4 = this.points[3];
+          this.connPoint = this.points[4];
         }
-        const midTail = PlotUtils.Mid(tailLeft, tailRight);
-        const bonePnts = [midTail].concat(pnts.slice(2));
-        const headPnts = this.getArrowHeadPoints(bonePnts, tailLeft, tailRight);
-        const [neckLeft, neckRight] = [headPnts[0], headPnts[4]];
-        const tailWidthFactor = PlotUtils.MathDistance(tailLeft, tailRight) / PlotUtils.getBaseLength(bonePnts);
-        const bodyPnts = this.getArrowBodyPoints(bonePnts, neckLeft, neckRight, tailWidthFactor);
-        const count = bodyPnts.length;
-        let leftPnts = [tailLeft].concat(bodyPnts.slice(0, count / 2));
-        leftPnts.push(neckLeft);
-        let rightPnts = [tailRight].concat(bodyPnts.slice(count / 2, count));
-        rightPnts.push(neckRight);
-        leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
-        rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
-        this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse())]);
+        let leftArrowPnts;
+        let rightArrowPnts;
+        if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
+          leftArrowPnts = this.getArrowPoints(pnt1, this.connPoint, this.tempPoint4, false);
+          rightArrowPnts = this.getArrowPoints(this.connPoint, pnt2, pnt3, true);
+        } else {
+          leftArrowPnts = this.getArrowPoints(pnt2, this.connPoint, pnt3, false);
+          rightArrowPnts = this.getArrowPoints(this.connPoint, pnt1, this.tempPoint4, true);
+        }
+        const m = leftArrowPnts.length;
+        const t = (m - 5) / 2;
+        const llBodyPnts = leftArrowPnts.slice(0, t);
+        const lArrowPnts = leftArrowPnts.slice(t, t + 5);
+        let lrBodyPnts = leftArrowPnts.slice(t + 5, m);
+        let rlBodyPnts = rightArrowPnts.slice(0, t);
+        const rArrowPnts = rightArrowPnts.slice(t, t + 5);
+        const rrBodyPnts = rightArrowPnts.slice(t + 5, m);
+        rlBodyPnts = PlotUtils.getBezierPoints(rlBodyPnts);
+        const bodyPnts = PlotUtils.getBezierPoints(rrBodyPnts.concat(llBodyPnts.slice(1)));
+        lrBodyPnts = PlotUtils.getBezierPoints(lrBodyPnts);
+        const pnts = rlBodyPnts.concat(rArrowPnts, bodyPnts, lArrowPnts, lrBodyPnts);
+        this.setCoordinates([pnts]);
       }
     } catch (e) {
       console.log(e);
@@ -115,19 +155,13 @@ class AttackArrow extends Polygon {
    * @param points
    * @returns {[*,*,*,*,*]}
    */
-  getArrowHeadPoints(points, tailLeft, tailRight) {
+  getArrowHeadPoints(points) {
     try {
-      let len = PlotUtils.getBaseLength(points);
-      let headHeight = len * this.headHeightFactor;
+      const len = PlotUtils.getBaseLength(points);
+      const headHeight = len * this.headHeightFactor;
       const headPnt = points[points.length - 1];
-      len = PlotUtils.MathDistance(headPnt, points[points.length - 2]);
-      const tailWidth = PlotUtils.MathDistance(tailLeft, tailRight);
-      if (headHeight > tailWidth * this.headTailFactor) {
-        headHeight = tailWidth * this.headTailFactor;
-      }
       const headWidth = headHeight * this.headWidthFactor;
       const neckWidth = headHeight * this.neckWidthFactor;
-      headHeight = headHeight > len ? len : headHeight;
       const neckHeight = headHeight * this.neckHeightFactor;
       const headEndPnt = PlotUtils.getThirdPoint(points[points.length - 2], headPnt, 0, headHeight, true);
       const neckEndPnt = PlotUtils.getThirdPoint(points[points.length - 2], headPnt, 0, neckHeight, true);
@@ -156,7 +190,9 @@ class AttackArrow extends Polygon {
     const neckWidth = PlotUtils.MathDistance(neckLeft, neckRight);
     const widthDif = (tailWidth - neckWidth) / 2;
     // eslint-disable-next-line
-    let [tempLen, leftBodyPnts, rightBodyPnts] = [0, [], []];
+    let tempLen = 0;
+    const leftBodyPnts: Point[] = [];
+    const rightBodyPnts: Point[] = [];
     for (let i = 1; i < points.length - 1; i++) {
       const angle = PlotUtils.getAngleOfThreePoints(points[i - 1], points[i], points[i + 1]) / 2;
       tempLen += PlotUtils.MathDistance(points[i - 1], points[i]);
@@ -181,7 +217,10 @@ class AttackArrow extends Polygon {
       const midPnt = PlotUtils.Mid(linePnt1, linePnt2);
       const len = PlotUtils.MathDistance(midPnt, point);
       const angle = PlotUtils.getAngleOfThreePoints(linePnt1, midPnt, point);
-      let [symPnt, distance1, distance2, mid] = [undefined, undefined, undefined, undefined];
+      let symPnt;
+      let distance1 = 0;
+      let distance2 = 0;
+      let mid: Point;
       if (angle < Constants.HALF_PI) {
         distance1 = len * Math.sin(angle);
         distance2 = len * Math.cos(angle);
@@ -223,7 +262,7 @@ class AttackArrow extends Polygon {
 
   /**
    * 获取当前地图对象
-   * @returns {ol.Map|*}
+   * @returns {Map|*}
    */
   getMap() {
     return this.map;
@@ -287,7 +326,14 @@ class AttackArrow extends Polygon {
   /**
    * 结束绘制
    */
-  finishDrawing() {}
+  finishDrawing() {
+    if (this.getPointCount() === 3 && this.tempPoint4 !== null) {
+      this.points.push(this.tempPoint4);
+    }
+    if (this.connPoint !== null) {
+      this.points.push(this.connPoint);
+    }
+  }
 }
 
-export default AttackArrow;
+export default DoubleArrow;

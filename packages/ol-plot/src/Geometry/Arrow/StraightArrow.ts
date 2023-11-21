@@ -1,16 +1,34 @@
 /**
  * Created by FDD on 2017/5/24.
- * @desc 多边形
- * @Inherits ol.geom.Polygon
+ * @desc 细直箭头
  */
 import { Map } from 'ol';
-import { Polygon as $Polygon } from 'ol/geom';
-import { POLYGON } from '../../utils/PlotTypes';
+import { LineString } from 'ol/geom';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as PlotUtils from '@/utils/utils';
+import type { Point } from '@/utils/utils';
 
-class Polygon extends $Polygon {
+class StraightArrow extends LineString {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  maxArrowLength: number;
+
+  arrowLengthScale: number;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = POLYGON;
+    this.type = PlotTypes.STRAIGHT_ARROW;
+    this.fixPointCount = 2;
+    this.maxArrowLength = 3000000;
+    this.arrowLengthScale = 5;
     this.set('params', params);
     if (points && points.length > 0) {
       this.setPoints(points);
@@ -31,11 +49,22 @@ class Polygon extends $Polygon {
    * 执行动作
    */
   generate() {
-    const count = this.getPointCount();
-    if (count < 2) {
-      return false;
+    try {
+      const count = this.getPointCount();
+      if (count < 2) {
+        return false;
+      }
+      const pnts = this.getPoints();
+      const [pnt1, pnt2] = [pnts[0], pnts[1]];
+      const distance = PlotUtils.MathDistance(pnt1, pnt2);
+      let len = distance / this.arrowLengthScale;
+      len = len > this.maxArrowLength ? this.maxArrowLength : len;
+      const leftPnt = PlotUtils.getThirdPoint(pnt1, pnt2, Math.PI / 6, len, false);
+      const rightPnt = PlotUtils.getThirdPoint(pnt1, pnt2, Math.PI / 6, len, true);
+      this.setCoordinates([pnt1, pnt2, leftPnt, pnt2, rightPnt]);
+    } catch (e) {
+      console.log(e);
     }
-    this.setCoordinates([this.points]);
   }
 
   /**
@@ -52,7 +81,7 @@ class Polygon extends $Polygon {
 
   /**
    * 获取当前地图对象
-   * @returns {Map|*}
+   * @returns {{}|*}
    */
   getMap() {
     return this.map;
@@ -119,4 +148,4 @@ class Polygon extends $Polygon {
   finishDrawing() {}
 }
 
-export default Polygon;
+export default StraightArrow;

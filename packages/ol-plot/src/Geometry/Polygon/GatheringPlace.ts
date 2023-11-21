@@ -5,14 +5,27 @@
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { GATHERING_PLACE } from '../../utils/PlotTypes';
-import * as PlotUtils from '../../utils/utils';
-import * as Constants from '../../constants';
+import { PlotTypes } from '@/utils/PlotTypes';
+import * as PlotUtils from '@/utils/utils';
+import * as Constants from '@/constants';
+import type { Point } from '@/utils/utils';
 
 class GatheringPlace extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
+  t: number;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = GATHERING_PLACE;
+    this.type = PlotTypes.GATHERING_PLACE;
     this.t = 0.4;
     this.fixPointCount = 3;
     this.set('params', params);
@@ -48,8 +61,9 @@ class GatheringPlace extends Polygon {
     }
     const mid = PlotUtils.Mid(pnts[0], pnts[2]);
     pnts.push(mid, pnts[0], pnts[1]);
-    let [normals, pnt1, pnt2, pnt3] = [[], undefined, undefined, undefined];
-    const pList = [];
+    let normals: Point[] = [];
+    let pnt1, pnt2, pnt3;
+    const pList: Point[] = [];
     for (let i = 0; i < pnts.length - 2; i++) {
       pnt1 = pnts[i];
       pnt2 = pnts[i + 1];

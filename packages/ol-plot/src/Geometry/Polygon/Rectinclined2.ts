@@ -1,27 +1,27 @@
 /**
- * Created by FDD on 2017/5/22.
- * @desc 标绘画弓形算法，继承线要素相关方法和属性
+ * Created by wh on 2023.6.1
+ * @desc 斜矩形2
+ * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
-import { LineString } from 'ol/geom';
+import { Polygon as $Polygon } from 'ol/geom';
 import { PlotTypes } from '@/utils/PlotTypes';
-import * as PlotUtils from '@/utils/utils';
 import type { Point } from '@/utils/utils';
 
-class Arc extends LineString {
+class Rectinclined extends $Polygon {
   type: PlotTypes;
 
-  fixPointCount: number;
-
-  freehand: boolean;
+  fixPointCount: WithUndef<number>;
 
   map: any;
 
   points: Point[];
 
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = PlotTypes.ARC;
+    this.type = PlotTypes.RECTINCLINED2;
     this.fixPointCount = 3;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -43,26 +43,56 @@ class Arc extends LineString {
    * 执行动作
    */
   generate() {
-    const count = this.getPointCount();
-    if (count < 2) return;
-    if (count === 2) {
-      this.setCoordinates(this.points);
-    } else {
-      // eslint-disable-next-line
-      let [pnt1, pnt2, pnt3, startAngle, endAngle] = [this.points[0], this.points[1], this.points[2], 0, 0];
-      const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
-      const radius = PlotUtils.MathDistance(pnt1, center);
-      const angle1 = PlotUtils.getAzimuth(pnt1, center);
-      const angle2 = PlotUtils.getAzimuth(pnt2, center);
-      if (PlotUtils.isClockWise(pnt1, pnt2, pnt3)) {
-        startAngle = angle2;
-        endAngle = angle1;
-      } else {
-        startAngle = angle1;
-        endAngle = angle2;
-      }
-      this.setCoordinates(PlotUtils.getArcPoints(center, radius, startAngle, endAngle));
+    const points = this.getPointCount();
+    if (points < 2) {
+      return false;
     }
+    if (points === 2) {
+      this.setCoordinates([this.points]);
+    } else {
+      const pnts = this.getPoints();
+      const [pnt1, pnt2, mouse] = [pnts[0], pnts[1], pnts[2]];
+      const intersect = this.calculateIntersectionPoint(pnt1, pnt2, mouse);
+      const pnt4 = this.calculateFourthPoint(pnt1, intersect, mouse);
+      const pList: Point[] = [];
+      pList.push(pnt1, intersect, mouse, pnt4, pnt1);
+      this.setCoordinates([pList]);
+    }
+  }
+
+  /**
+   * 已知p1，p2，p3点求矩形的p4点
+   * @param {*} p1
+   * @param {*} p2
+   * @param {*} p3
+   */
+  calculateFourthPoint(p1, p2, p3): Point {
+    const x = p1[0] + p3[0] - p2[0];
+    const y = p1[1] + p3[1] - p2[1];
+    return [x, y];
+  }
+
+  /**
+   * 已知p1点和p2点，求p3点到p1p2垂线的交点
+   * @param {*} p1
+   * @param {*} p2
+   * @param {*} p3
+   */
+  calculateIntersectionPoint(p1, p2, p3): Point {
+    const v = {
+      x: p2[0] - p1[0],
+      y: p2[1] - p1[1],
+    };
+    const u = {
+      x: p3[0] - p1[0],
+      y: p3[1] - p1[1],
+    };
+    const projectionLength = (u.x * v.x + u.y * v.y) / (v.x * v.x + v.y * v.y);
+    const intersectionPoint: { x: number; y: number } = {
+      x: p1[0] + v.x * projectionLength,
+      y: p1[1] + v.y * projectionLength,
+    };
+    return [intersectionPoint.x, intersectionPoint.y];
   }
 
   /**
@@ -146,4 +176,4 @@ class Arc extends LineString {
   finishDrawing() {}
 }
 
-export default Arc;
+export default Rectinclined;

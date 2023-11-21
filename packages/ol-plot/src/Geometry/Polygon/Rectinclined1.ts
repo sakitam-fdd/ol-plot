@@ -5,12 +5,23 @@
  */
 import { Map } from 'ol';
 import { Polygon as $Polygon } from 'ol/geom';
-import { RECTINCLINED1 } from '@/utils/PlotTypes';
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
 
 class Rectinclined extends $Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = RECTINCLINED1;
+    this.type = PlotTypes.RECTINCLINED1;
     this.fixPointCount = 3;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -45,7 +56,7 @@ class Rectinclined extends $Polygon {
       const direction = this.calculatePositionRelativeToLine(pnt1, pnt2, mouse);
       const pnt3 = this.calculatePerpendicularPoint(pnt1, pnt2, direction * d);
       const pnt4 = this.calculateFourthPoint(pnt1, pnt2, pnt3);
-      const pList = [];
+      const pList: Point[] = [];
       pList.push(pnt1, pnt2, pnt3, pnt4, pnt1);
       this.setCoordinates([pList]);
     }
@@ -106,12 +117,10 @@ class Rectinclined extends $Polygon {
    * @param {*} p2
    * @param {*} p3
    */
-  calculateFourthPoint(p1, p2, p3) {
-    const p4 = [];
+  calculateFourthPoint(p1, p2, p3): Point {
     const x = p1[0] + p3[0] - p2[0];
     const y = p1[1] + p3[1] - p2[1];
-    p4.push(x, y);
-    return p4;
+    return [x, y];
   }
 
   /**
@@ -120,7 +129,7 @@ class Rectinclined extends $Polygon {
    * @param {*} p2
    * @param {*} d
    */
-  calculatePerpendicularPoint(p1, p2, d) {
+  calculatePerpendicularPoint(p1, p2, d): Point {
     // 计算p1p2的斜率
     const m = (p2[1] - p1[1]) / (p2[0] - p1[0]);
 

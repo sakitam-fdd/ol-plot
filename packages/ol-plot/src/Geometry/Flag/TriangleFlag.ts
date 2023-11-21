@@ -1,15 +1,27 @@
 /**
  * Created by FDD on 2017/9/13.
- * @desc 直角旗标（使用两个控制点直接创建直角旗标）
+ * @desc 三角旗标（使用两个控制点直接创建三角旗标）
  */
 import { Map } from 'ol';
 import { Polygon } from 'ol/geom';
-import { RECTFLAG } from '../../utils/PlotTypes';
 
-class RectFlag extends Polygon {
+import { PlotTypes } from '@/utils/PlotTypes';
+import type { Point } from '@/utils/utils';
+
+class TriangleFlag extends Polygon {
+  type: PlotTypes;
+
+  fixPointCount: WithUndef<number>;
+
+  map: any;
+
+  points: Point[];
+
+  freehand: boolean;
+
   constructor(coordinates, points, params) {
     super([]);
-    this.type = RECTFLAG;
+    this.type = PlotTypes.TRIANGLEFLAG;
     this.fixPointCount = 2;
     this.set('params', params);
     if (points && points.length > 0) {
@@ -44,18 +56,17 @@ class RectFlag extends Polygon {
    * @returns {Array}
    */
   calculatePonits(points) {
-    let components = [];
+    let components: Point[] = [];
     // 至少需要两个控制点
     if (points.length > 1) {
       // 取第一个
       const startPoint = points[0];
       // 取最后一个
       const endPoint = points[points.length - 1];
-      const point1 = [endPoint[0], startPoint[1]];
-      const point2 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      const point3 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
-      const point4 = [startPoint[0], endPoint[1]];
-      components = [startPoint, point1, point2, point3, point4];
+      const point1 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point2 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
+      const point3 = [startPoint[0], endPoint[1]];
+      components = [startPoint, point1, point2, point3];
     }
     return components;
   }
@@ -141,4 +152,4 @@ class RectFlag extends Polygon {
   finishDrawing() {}
 }
 
-export default RectFlag;
+export default TriangleFlag;

@@ -3,8 +3,8 @@
  * @desc 标绘画圆算法，继承面要素相关方法和属性
  */
 import { Map } from 'ol';
-import type { Point } from '@/utils/utils';
 import { Polygon } from 'ol/geom';
+import type { Point } from '@/utils/utils';
 import { PlotTypes } from '@/utils/PlotTypes';
 import * as PlotUtils from '../../utils/utils';
 
@@ -18,8 +18,6 @@ class Circle extends Polygon {
   points: Point[];
 
   freehand: boolean;
-
-  options: any;
 
   constructor(coordinates, points, params) {
     super([]);
