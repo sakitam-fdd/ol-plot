@@ -28,7 +28,7 @@ class RectAngle extends $Polygon {
     this.type = PlotTypes.RECTANGLE;
     this.fixPointCount = 2;
     this.set('params', params);
-    this.isFill = !params.isFill ? params.isFill : true;
+    this.isFill = params.isFill === false ? params.isFill : true;
     if (points && points.length > 0) {
       this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
