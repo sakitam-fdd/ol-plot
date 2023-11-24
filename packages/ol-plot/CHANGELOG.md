@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.8
+
+### Patch Changes
+
+- 4adb920: fix: draw event
+
 ## 4.1.7
 
 ### Patch Changes
