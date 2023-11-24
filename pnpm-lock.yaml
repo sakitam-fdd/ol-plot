@@ -18,7 +18,7 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(@typescript-eslint/parser@5.59.0)(eslint@8.38.0)(typescript@5.0.4)
       '@changesets/changelog-github':
-        specifier: ^0.4.7
+        specifier: ^0.4.8
         version: 0.4.8
       '@changesets/cli':
         specifier: ^2.25.0
@@ -5025,6 +5025,7 @@ packages:
   /esm@3.2.25:
     resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
     engines: {node: '>=6'}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -6981,6 +6982,7 @@ packages:
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -7252,6 +7254,7 @@ packages:
 
   /sax@1.2.4:
     resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
+    requiresBuild: true
     dev: true
     optional: true
 
