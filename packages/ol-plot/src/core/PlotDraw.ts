@@ -103,6 +103,7 @@ class PlotDraw extends Observable {
 
     bindAll(
       [
+        'textAreaDrawStart',
         'textAreaDrawEnd',
         'mapFirstClickHandler',
         'mapNextClickHandler',
@@ -246,7 +247,18 @@ class PlotDraw extends Observable {
       geometryFunction: createBox(),
     });
     this.map.addInteraction(this.drawInteraction_);
+    this.drawInteraction_.on('drawstart', this.textAreaDrawStart);
     this.drawInteraction_.on('drawend', this.textAreaDrawEnd);
+  }
+
+  textAreaDrawStart(event) {
+    this.dispatchEvent(
+      new PlotEvent('drawStart', {
+        originalEvent: event,
+        feature: null,
+        type: PlotTypes.TEXTAREA,
+      }),
+    );
   }
 
   /**
@@ -254,13 +266,14 @@ class PlotDraw extends Observable {
    * @param event
    */
   textAreaDrawEnd(event) {
+    let _plotText;
     if (event && event.feature) {
       const extent = event.feature.getGeometry().getExtent();
       const _center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
       const topLeft = this.map.getPixelFromCoordinate([extent[0], extent[1]]);
       const bottomRight = this.map.getPixelFromCoordinate([extent[2], extent[3]]);
       const [_width, _height] = [Math.abs(topLeft[0] - bottomRight[0]), Math.abs(topLeft[1] - bottomRight[1])];
-      const _plotText = new PlotTextBox(
+      _plotText = new PlotTextBox(
         {
           id: getuuid(),
           position: _center,
@@ -282,6 +295,14 @@ class PlotDraw extends Observable {
     } else {
       console.info('未获取到要素！');
     }
+
+    this.dispatchEvent(
+      new PlotEvent('drawEnd', {
+        originalEvent: event,
+        feature: _plotText,
+        type: PlotTypes.TEXTAREA,
+      }),
+    );
 
     this.deactivate();
   }
@@ -333,6 +354,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawStart', {
         originalEvent: event,
         feature: this.feature,
+        type: this.plotType,
       }),
     );
     this.feature.set('isPlot', true);
@@ -429,6 +451,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawEnd', {
         originalEvent: event,
         feature: this.feature,
+        type: this.plotType,
       }),
     );
     if (this.feature && this.options.isClear) {
