@@ -136,11 +136,11 @@ plot.plotDraw.on('drawEnd', onDrawEnd);
 
 #### drawStart
 
-监听符号开始绘制，通过事件类型 ``type`` 判断是哪种标绘类型
+监听符号开始绘制，通过事件类型 ``plotType`` 判断是哪种标绘类型
 
 #### drawEnd
 
-监听符号结束绘制，通过事件类型 ``type`` 判断是哪种标绘类型
+监听符号结束绘制，通过事件类型 ``plotType`` 判断是哪种标绘类型
 
 ### plotEdit
 

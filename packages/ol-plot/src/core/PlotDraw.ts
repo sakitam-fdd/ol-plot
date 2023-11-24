@@ -256,7 +256,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawStart', {
         originalEvent: event,
         feature: null,
-        type: PlotTypes.TEXTAREA,
+        plotType: PlotTypes.TEXTAREA,
       }),
     );
   }
@@ -300,7 +300,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawEnd', {
         originalEvent: event,
         feature: _plotText,
-        type: PlotTypes.TEXTAREA,
+        plotType: PlotTypes.TEXTAREA,
       }),
     );
 
@@ -354,7 +354,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawStart', {
         originalEvent: event,
         feature: this.feature,
-        type: this.plotType,
+        plotType: this.plotType,
       }),
     );
     this.feature.set('isPlot', true);
@@ -451,7 +451,7 @@ class PlotDraw extends Observable {
       new PlotEvent('drawEnd', {
         originalEvent: event,
         feature: this.feature,
-        type: this.plotType,
+        plotType: this.plotType,
       }),
     );
     if (this.feature && this.options.isClear) {
