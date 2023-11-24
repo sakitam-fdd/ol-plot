@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.7
+
+### Patch Changes
+
+- b8a8055: feat: add TextArea event (drawStart, drawEnd)
+
 ## 4.1.6
 
 ### Patch Changes
