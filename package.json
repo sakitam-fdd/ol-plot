@@ -27,7 +27,7 @@
     "@aurorafe/eslint-config-base": "^1.0.1",
     "@aurorafe/eslint-config-ts": "^1.0.1",
     "@aurorafe/eslint-config-vue": "^1.0.1",
-    "@changesets/changelog-github": "^0.4.7",
+    "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.25.0",
     "@types/node": "^18.6.4",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
