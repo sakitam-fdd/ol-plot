@@ -1,5 +1,27 @@
 # ol-plot-vue
 
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies [0f8524c]
+  - ol-plot@4.1.6
+
+## 1.1.6
+
+### Patch Changes
+
+- 8180246: fix: ci error
+- Updated dependencies [8180246]
+  - ol-plot@4.1.5
+
+## 1.1.5
+
+### Patch Changes
+
+- Updated dependencies [68913ec]
+  - ol-plot@4.1.4
+
 ## 1.1.4
 
 ### Patch Changes

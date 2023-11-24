@@ -1,5 +1,23 @@
 # ol-plot
 
+## 4.1.6
+
+### Patch Changes
+
+- 0f8524c: fix: PlotType export and Rect draw
+
+## 4.1.5
+
+### Patch Changes
+
+- 8180246: fix: ci error
+
+## 4.1.4
+
+### Patch Changes
+
+- 68913ec: bump version
+
 ## 4.1.3
 
 ### Patch Changes

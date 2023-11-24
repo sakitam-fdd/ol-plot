@@ -3,7 +3,7 @@ import { Observable } from 'ol';
 import PlotDraw from './core/PlotDraw';
 import PlotEdit from './core/PlotEdit';
 import PlotUtils from './core/PlotUtils';
-import * as PlotTypes from './utils/PlotTypes';
+import { PlotTypes } from './utils/PlotTypes';
 import * as Geometry from './Geometry';
 
 import StyleFactory from './utils/factory';

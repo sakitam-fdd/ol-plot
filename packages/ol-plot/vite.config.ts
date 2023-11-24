@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import path, { resolve } from 'path';
 import { fileURLToPath } from 'url';
-// import dts from 'rollup-plugin-dts';
+import dts from 'vite-plugin-dts';
 import eslint from 'vite-plugin-eslint';
 import { viteExternalsPlugin } from 'vite-plugin-externals';
 
@@ -60,7 +60,11 @@ export default defineConfig(({ command, mode }) => ({
     },
   },
   plugins: [
-    // dts({ respectExternal: true }),
+    dts({
+      rollupTypes: true,
+      staticImport: true,
+      insertTypesEntry: true
+    }),
     viteExternalsPlugin(),
     ...(mode === 'watch' ? [eslint()] : []),
   ],
