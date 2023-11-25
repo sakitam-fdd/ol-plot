@@ -100,6 +100,7 @@ class PlotEdit extends Observable {
         'plotMouseDownHandler',
         'plotMouseUpHandler',
         'plotMouseMoveHandler',
+        'handleContextmenu',
       ],
       this,
     );
@@ -151,8 +152,9 @@ class PlotEdit extends Observable {
         }
         const element = htmlUtils.getElement(`${BASE_HELP_CONTROL_POINT_ID}-${index}`);
         if (element) {
-          htmlUtils.off(element, 'mousedown', this.controlPointMouseDownHandler.bind(this));
-          htmlUtils.off(element, 'mousemove', this.controlPointMouseMoveHandler2.bind(this));
+          htmlUtils.off(element, 'contextmenu', this.handleContextmenu);
+          htmlUtils.off(element, 'mousedown', this.controlPointMouseDownHandler);
+          htmlUtils.off(element, 'mousemove', this.controlPointMouseMoveHandler2);
         }
       });
       this.controlPoints = [];
@@ -184,11 +186,16 @@ class PlotEdit extends Observable {
           this.controlPoints.push(pnt);
           this.map.addOverlay(pnt);
           this.map.render();
+          htmlUtils.on(element, 'contextmenu', this.handleContextmenu);
           htmlUtils.on(element, 'mousedown', this.controlPointMouseDownHandler);
           htmlUtils.on(element, 'mousemove', this.controlPointMouseMoveHandler2);
         }
       });
     }
+  }
+
+  private handleContextmenu(e) {
+    e.preventDefault();
   }
 
   /**
@@ -205,8 +212,10 @@ class PlotEdit extends Observable {
    */
   private controlPointMouseDownHandler(e) {
     this.activeControlPointId = e.target.id;
+    this.map.un('pointermove', this.controlPointMouseMoveHandler);
     this.map.on('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.on(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
+    document.addEventListener('mouseup', this.controlPointMouseUpHandler, true);
   }
 
   /**
@@ -232,6 +241,7 @@ class PlotEdit extends Observable {
   private controlPointMouseUpHandler() {
     this.map.un('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.off(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
+    document.removeEventListener('mouseup', this.controlPointMouseUpHandler, true);
   }
 
   /**
@@ -353,6 +363,7 @@ class PlotEdit extends Observable {
   private disconnectEventHandlers() {
     this.map.un('pointermove', this.plotMouseOverOutHandler);
     this.map.un('pointermove', this.controlPointMouseMoveHandler);
+    document.removeEventListener('mouseup', this.controlPointMouseUpHandler, true);
     htmlUtils.off(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
     this.map.un('pointerdown', this.plotMouseDownHandler);
     this.map.un('pointerup', this.plotMouseUpHandler);
