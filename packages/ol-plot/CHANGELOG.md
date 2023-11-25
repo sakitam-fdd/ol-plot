@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.9
+
+### Patch Changes
+
+- [`6f4c382`](https://github.com/sakitam-fdd/ol-plot/commit/6f4c3827b1195d91d180a9cbee1c124ce45d0be2) Thanks [@sakitam-fdd](https://github.com/sakitam-fdd)! - fix bugs
+
 ## 4.1.8
 
 ### Patch Changes
