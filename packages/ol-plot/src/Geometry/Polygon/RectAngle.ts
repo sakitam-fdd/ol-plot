@@ -4,13 +4,13 @@
  * @Inherits ol.geom.Polygon
  */
 import { Map } from 'ol';
-import { Polygon as $Polygon } from 'ol/geom';
+import { Polygon } from 'ol/geom';
 import { fromExtent } from 'ol/geom/Polygon';
 import { boundingExtent } from 'ol/extent';
 import { PlotTypes } from '@/utils/PlotTypes';
 import type { Point } from '@/utils/utils';
 
-class RectAngle extends $Polygon {
+class RectAngle extends Polygon {
   type: PlotTypes;
 
   fixPointCount: WithUndef<number>;
@@ -28,7 +28,7 @@ class RectAngle extends $Polygon {
     this.type = PlotTypes.RECTANGLE;
     this.fixPointCount = 2;
     this.set('params', params);
-    this.isFill = !params.isFill ? params.isFill : true;
+    this.isFill = params.isFill === false ? params.isFill : true;
     if (points && points.length > 0) {
       this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {
