@@ -2,4 +2,4 @@
 'ol-plot': patch
 ---
 
-fix: RectAngle fill optiond
+fix: RectAngle fill options
