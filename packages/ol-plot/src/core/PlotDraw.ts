@@ -10,10 +10,10 @@ import { createVectorLayer } from '@/utils/layerUtils';
 import type { PlotTypesSource } from '@/utils/PlotTypes';
 import { PlotTypes } from '@/utils/PlotTypes';
 import type { Point } from '@/utils/utils';
+import PlotTextBox from '@/geometry/Text/PlotTextBox';
 import type olPlot from '../index';
 import PlotEvent from './PlotEvent';
-import PlotTextBox from '../Geometry/Text/PlotTextBox';
-import * as Plots from '../Geometry';
+import * as Plots from '../geometry';
 
 class PlotDraw extends Observable {
   public map: any;

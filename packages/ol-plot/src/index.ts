@@ -4,7 +4,7 @@ import PlotDraw from './core/PlotDraw';
 import PlotEdit from './core/PlotEdit';
 import PlotUtils from './core/PlotUtils';
 import { PlotTypes } from './utils/PlotTypes';
-import * as Geometry from './Geometry';
+import * as Geometry from './geometry';
 
 import StyleFactory from './utils/factory';
 

@@ -2,8 +2,8 @@
  * Created by FDD on 2017/5/20.
  * @desc 标绘图形构造类
  */
-import Point from '@/Geometry/Point/Point';
-import Pennant from '@/Geometry/Point/Pennant';
+import Point from '@/geometry/Point/Point';
+import Pennant from '@/geometry/Point/Pennant';
 import Polyline from './Polyline/Polyline';
 import Arc from './Arc/Arc';
 import Circle from './Circle/Circle';
