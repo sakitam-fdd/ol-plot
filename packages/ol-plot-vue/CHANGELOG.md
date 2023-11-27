@@ -1,5 +1,12 @@
 # ol-plot-vue
 
+## 1.1.11
+
+### Patch Changes
+
+- Updated dependencies [[`dda6ab2`](https://github.com/sakitam-fdd/ol-plot/commit/dda6ab237db2293fe53f5d4195681cfd341f2b6a)]:
+  - ol-plot@4.1.10
+
 ## 1.1.10
 
 ### Patch Changes
