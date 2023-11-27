@@ -1,5 +1,11 @@
 # ol-plot
 
+## 4.1.10
+
+### Patch Changes
+
+- [`dda6ab2`](https://github.com/sakitam-fdd/ol-plot/commit/dda6ab237db2293fe53f5d4195681cfd341f2b6a) Thanks [@sakitam-fdd](https://github.com/sakitam-fdd)! - fix: RectAngle fill options
+
 ## 4.1.9
 
 ### Patch Changes
