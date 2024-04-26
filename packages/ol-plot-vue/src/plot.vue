@@ -396,7 +396,7 @@
        * @param feature
        */
       const activeToolPanel = (feature: any) => {
-        if (feature && feature.getGeometry()) {
+        if (feature && feature.getGeometry && feature.getGeometry()) {
           const type = feature.getGeometry().getPlotType();
           if (type) {
             selected.value = type;
@@ -414,7 +414,7 @@
           const _style = overlay.getStyle();
           if (_style) {
             if (_style.fontSize) {
-              state.textAreaFontSize = parseInt(_style.fontSize);
+              state.textAreaFontSize = parseInt(_style.fontSize, 10);
             }
             if (_style.color) {
               state.textAreaColor = _style.color;
@@ -423,7 +423,7 @@
               const _border = _style.border.split(' ');
               _border.every((item: any) => {
                 if (item.indexOf('px')) {
-                  state.textAreaBorderWidth = parseInt(item);
+                  state.textAreaBorderWidth = parseInt(item, 10);
                   return false;
                 }
                 return true;
