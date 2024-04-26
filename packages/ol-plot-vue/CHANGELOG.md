@@ -1,5 +1,11 @@
 # ol-plot-vue
 
+## 1.1.12
+
+### Patch Changes
+
+- [`5a3fcec`](https://github.com/sakitam-fdd/ol-plot/commit/5a3fcec886eb5cd30012c3ebd36c0a9614a84dce) Thanks [@sakitam-fdd](https://github.com/sakitam-fdd)! - fix plot activeToolPanel
+
 ## 1.1.11
 
 ### Patch Changes
