@@ -119,7 +119,7 @@ importers:
         version: 10.0.2(@vue/composition-api@1.7.1)(vue@3.2.47)
       ol-plot:
         specifier: workspace:*
-        version: file:packages/ol-plot(ol@7.3.0)
+        version: file:packages/ol-plot(ol@6.15.1)
       vue-demi:
         specifier: ^0.14.0
         version: 0.14.0(@vue/composition-api@1.7.1)(vue@3.2.47)
@@ -155,11 +155,11 @@ importers:
   playground/single:
     dependencies:
       ol:
-        specifier: ^7.3.0
-        version: 7.3.0
+        specifier: ^6.15.1
+        version: 6.15.1
       ol-plot:
         specifier: workspace:*
-        version: file:packages/ol-plot(ol@7.3.0)
+        version: file:packages/ol-plot(ol@6.15.1)
     devDependencies:
       vite:
         specifier: ^4.3.0
@@ -5320,7 +5320,6 @@ packages:
       parse-headers: 2.0.5
       web-worker: 1.2.0
       xml-utils: 1.7.0
-    dev: true
 
   /geotiff@2.0.7:
     resolution: {integrity: sha512-FKvFTNowMU5K6lHYY2f83d4lS2rsCNdpUC28AX61x9ZzzqPNaWFElWv93xj0eJFaNyOYA63ic5OzJ88dHpoA5Q==}
@@ -6618,7 +6617,6 @@ packages:
     dependencies:
       '@mapbox/mapbox-gl-style-spec': 13.28.0
       mapbox-to-css-font: 2.4.2
-    dev: true
 
   /ol-mapbox-style@9.7.0:
     resolution: {integrity: sha512-YX3u8FBJHsRHaoGxmd724Mp5WPTuV7wLQW6zZhcihMuInsSdCX1EiZfU+8IAL7jG0pbgl5YgC0aWE/MXJcUXxg==}
@@ -6645,7 +6643,6 @@ packages:
       ol-mapbox-style: 8.2.1
       pbf: 3.2.1
       rbush: 3.0.1
-    dev: true
 
   /ol@7.3.0:
     resolution: {integrity: sha512-08vJE4xITKPazQ9qJjeqYjRngnM9s+1eSv219Pdlrjj3LpLqjEH386ncq+76Dw1oGPGR8eLVEePk7FEd9XqqMw==}
@@ -8767,10 +8764,21 @@ packages:
     id: file:packages/ol-plot
     name: ol-plot
     peerDependencies:
-      ol: ^5.0.0 || ^6.0.0 || ^7.0.0
+      ol: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
       autosize: 6.0.1
       ol: 6.12.0
+    dev: false
+
+  file:packages/ol-plot(ol@6.15.1):
+    resolution: {directory: packages/ol-plot, type: directory}
+    id: file:packages/ol-plot
+    name: ol-plot
+    peerDependencies:
+      ol: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      autosize: 6.0.1
+      ol: 6.15.1
     dev: false
 
   file:packages/ol-plot(ol@7.3.0):
@@ -8778,7 +8786,7 @@ packages:
     id: file:packages/ol-plot
     name: ol-plot
     peerDependencies:
-      ol: ^5.0.0 || ^6.0.0 || ^7.0.0
+      ol: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
       autosize: 6.0.1
       ol: 7.3.0

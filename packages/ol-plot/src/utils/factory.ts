@@ -2,7 +2,7 @@
  * Created by FDD on 2017/5/1.
  * @desc 通过json获取样式
  */
-import { Fill, Icon, RegularShape, Stroke, Style, Text } from 'ol/style';
+import { Fill, Icon, RegularShape, Stroke, Style, Text, Circle } from 'ol/style';
 import { Geometry } from 'ol/geom';
 
 class StyleFactory {
@@ -47,11 +47,25 @@ class StyleFactory {
       radius1: typeof options.radius1 === 'number' ? options.radius1 : undefined,
       radius2: typeof options.radius2 === 'number' ? options.radius2 : undefined,
       angle: typeof options.angle === 'number' ? options.angle : 0,
+      displacement: options.displacement ? options.displacement : [0, 0],
+      scale: options.scale ? options.scale : 1,
       stroke: this._getStroke(options.stroke) || undefined,
       rotation: typeof options.rotation === 'number' ? options.rotation : 0,
       rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
-      // @ts-ignore this is unsafe
-      atlasManager: options.atlasManager ? options.atlasManager : undefined,
+      declutterMode: options.declutterMode ? options.declutterMode : undefined,
+    });
+  }
+
+  _getCircleShape(options: any): any {
+    return new Circle({
+      fill: this._getFill(options.fill) || undefined,
+      radius: typeof options.radius === 'number' ? options.radius : undefined,
+      stroke: this._getStroke(options.stroke) || undefined,
+      displacement: options.displacement ? options.displacement : [0, 0],
+      scale: options.scale ? options.scale : undefined,
+      rotation: typeof options.rotation === 'number' ? options.rotation : 0,
+      rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
+      declutterMode: options.declutterMode ? options.declutterMode : undefined,
     });
   }
 
@@ -67,6 +81,8 @@ class StyleFactory {
     options = options || {};
     if (options.type === 'icon') {
       image = this._getIcon(options.image);
+    } else if (options.type === 'circle') {
+      image = this._getCircleShape(options.image);
     } else {
       image = this._getRegularShape(options.image);
     }
@@ -92,6 +108,7 @@ class StyleFactory {
       img: options.img ? options.img : undefined,
       offset: options.offset && Array.isArray(options.offset) && options.offset.length === 2 ? options.offset : [0, 0],
       offsetOrigin: options.offsetOrigin ? options.offsetOrigin : 'top-left',
+      displacement: options.displacement ? options.displacement : [0, 0],
       scale: typeof options.scale === 'number' ? options.scale : 1,
       rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
       opacity: typeof options.imageOpacity === 'number' ? options.imageOpacity : 1,
@@ -100,6 +117,7 @@ class StyleFactory {
       imgSize:
         options.imgSize && Array.isArray(options.imgSize) && options.imgSize.length === 2 ? options.imgSize : undefined,
       src: options.imageSrc ? options.imageSrc : undefined,
+      declutterMode: options.declutterMode ? options.declutterMode : undefined,
     });
   }
 

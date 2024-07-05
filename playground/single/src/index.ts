@@ -10,7 +10,7 @@ const map = new Map({
   layers: [
     new Tile({
       source: new OSM({
-        url: 'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}',
+        url: 'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
       }),
     }),
   ],
@@ -28,11 +28,9 @@ const plot = new Plot(map, {
   zoomToExtent: true,
 });
 
-map.on('click', function (event) {
+map.on('click', (event) => {
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
-    return feature;
-  });
+  const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
   if (feature && feature.get('isPlot') && !plot.plotDraw.isDrawing()) {
     plot.plotEdit.activate(feature);
   } else {
@@ -78,11 +76,11 @@ plot.plotEdit.on('deactivatePlot', (e) => {
   console.log(e);
 });
 
-plot.on('activeTextArea', function (event) {
+plot.on('activeTextArea', (event) => {
   const style = event.overlay.getStyle();
   console.log(style);
 });
-plot.on('deactivateTextArea', function (event) {
+plot.on('deactivateTextArea', (event) => {
   const style = event.overlay.getStyle();
   console.log(style);
 });
@@ -95,7 +93,6 @@ function activate(type) {
 
 function getFeatures() {
   const features = plot.plotUtils.getFeatures();
-  console.log(JSON.stringify(features));
   plot.plotUtils.removeAllFeatures();
   plot.plotEdit.deactivate();
   plot.plotUtils.addFeatures(features);

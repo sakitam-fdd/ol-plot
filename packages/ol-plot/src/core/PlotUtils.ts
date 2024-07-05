@@ -1,5 +1,5 @@
 import { Map, Feature } from 'ol';
-import { Style, Icon, RegularShape } from 'ol/style';
+import { Style, Icon, RegularShape, Circle } from 'ol/style';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
 import { asArray, asString } from 'ol/color';
@@ -188,12 +188,13 @@ class PlotUtils {
    * @param color
    * @returns {string}
    */
-  getColor(color) {
+  getColor(color: string): WithUndef<string> {
     try {
       const colorTarget = asArray(color);
       return asString(colorTarget);
     } catch (e) {
       console.warn(e);
+      return undefined;
     }
   }
 
@@ -308,8 +309,19 @@ class PlotUtils {
           image.image.rotateWithView = olStyle_.getRotateWithView();
           image.image.imageOpacity = olStyle_.getOpacity();
           image.image.offset = olStyle_.getOrigin();
+        } else if (olStyle_ instanceof Circle) {
+          image.type = 'circle';
+          image.image = {};
+          image.image.fill = this.getFill_(olStyle_);
+          image.image.radius = olStyle_.getRadius();
+          image.image.stroke = this.getStroke_(olStyle_);
+          image.image.rotation = olStyle_.getRotation();
+          image.image.rotateWithView = olStyle_.getRotateWithView();
+          image.image.scale = olStyle_.getScale();
+          image.image.declutterMode = olStyle_.getDeclutterMode();
+          image.image.displacement = olStyle_.getDisplacement();
         } else if (olStyle_ instanceof RegularShape) {
-          image.type = '';
+          image.type = 'regularShape';
           image.image = {};
           image.image.fill = this.getFill_(olStyle_);
           image.image.points = olStyle_.getPoints();
@@ -318,6 +330,10 @@ class PlotUtils {
           image.image.angle = olStyle_.getAngle();
           image.image.stroke = this.getStroke_(olStyle_);
           image.image.rotateWithView = olStyle_.getRotateWithView();
+          image.image.rotation = olStyle_.getRotation();
+          image.image.scale = olStyle_.getScale();
+          image.image.declutterMode = olStyle_.getDeclutterMode();
+          image.image.displacement = olStyle_.getDisplacement();
         }
       }
     }
@@ -360,6 +376,8 @@ class PlotUtils {
             image: icon,
             text,
           };
+        } else {
+          console.warn('不是合法的 Style 实例');
         }
       }
     } catch (e) {

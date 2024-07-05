@@ -11,7 +11,7 @@
     }
   },
   "dependencies": {
-    "ol": "^7.3.0",
+    "ol": "^6.15.1",
     "ol-plot": "workspace:*"
   },
   "devDependencies": {

@@ -10,6 +10,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>军事标绘(ol3-4)</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    ul,
+    li {
+      list-style: none;
+    }
+    .clearfix {
+      *zoom: 1;
+    }
+    .clearfix:after {
+      visibility: hidden;
+      display: block;
+      font-size: 0;
+      content: ' ';
+      clear: both;
+      height: 0;
+    }
+    :focus {
+      outline: none;
+    }
+    a {
+      text-decoration: none;
+      outline: none;
+    }
+
     html, body, #map {
       width: 100%;
       height: 100%;
@@ -17,18 +45,22 @@
       margin: 0;
       font-family: "Microsoft YaHei",serif;
     }
+
     .user-tool {
       position: absolute;
       top: 10px;
       left: calc(50% - (50% - 50px));
+      z-index: 2;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
     }
     .ol-viewport {
-      position: inherit!important;
+      position: inherit !important;
     }
     .btn {
       display: inline-block;
       padding: 6px 12px;
-      margin-bottom: 10px;
       font-size: 14px;
       font-weight: normal;
       line-height: 1.42857143;
@@ -65,8 +97,8 @@
     .btn.active {
       background-image: none;
       outline: 0;
-      -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-      box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     }
     .btn-success {
       color: #fff;
