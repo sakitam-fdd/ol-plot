@@ -14,7 +14,7 @@ class StyleFactory {
     if (option.geometry && option.geometry instanceof Geometry) {
       style.setGeometry(option.geometry);
     }
-    if (option.zIndex && typeof option.zIndex === 'number') {
+    if (typeof option.zIndex === 'number') {
       style.setZIndex(option.zIndex);
     }
     if (option.fill && typeof option.fill === 'object') {
@@ -44,7 +44,6 @@ class StyleFactory {
       fill: this._getFill(options.fill) || undefined,
       points: typeof options.points === 'number' ? options.points : 1,
       radius: typeof options.radius === 'number' ? options.radius : undefined,
-      radius1: typeof options.radius1 === 'number' ? options.radius1 : undefined,
       radius2: typeof options.radius2 === 'number' ? options.radius2 : undefined,
       angle: typeof options.angle === 'number' ? options.angle : 0,
       displacement: options.displacement ? options.displacement : [0, 0],
@@ -53,7 +52,7 @@ class StyleFactory {
       rotation: typeof options.rotation === 'number' ? options.rotation : 0,
       rotateWithView: typeof options.rotateWithView === 'boolean' ? options.rotateWithView : false,
       declutterMode: options.declutterMode ? options.declutterMode : undefined,
-    });
+    } as any);
   }
 
   _getCircleShape(options: any): any {
@@ -102,7 +101,7 @@ class StyleFactory {
       anchor: options.imageAnchor ? options.imageAnchor : [0.5, 0.5],
       anchorXUnits: options.imageAnchorXUnits ? options.imageAnchorXUnits : 'fraction',
       anchorYUnits: options.imageAnchorYUnits ? options.imageAnchorYUnits : 'fraction',
-      anchorOrigin: options.imageAnchorOrigin ? options.imageAnchorYUnits : 'top-left',
+      anchorOrigin: options.imageAnchorOrigin ? options.imageAnchorOrigin : 'top-left',
       color: options.imageColor ? options.imageColor : undefined,
       crossOrigin: options.crossOrigin ? options.crossOrigin : undefined,
       img: options.img ? options.img : undefined,
@@ -118,7 +117,7 @@ class StyleFactory {
         options.imgSize && Array.isArray(options.imgSize) && options.imgSize.length === 2 ? options.imgSize : undefined,
       src: options.imageSrc ? options.imageSrc : undefined,
       declutterMode: options.declutterMode ? options.declutterMode : undefined,
-    });
+    } as any);
   }
 
   /**
@@ -135,7 +134,7 @@ class StyleFactory {
       lineCap: options.strokeLineCap && typeof options.strokeLineCap === 'string' ? options.strokeLineCap : 'round',
       lineJoin: options.strokeLineJoin && typeof options.strokeLineJoin === 'string' ? options.strokeLineJoin : 'round',
       lineDash: options.strokeLineDash ? options.strokeLineDash : undefined,
-      lineDashOffset: typeof options.strokeLineDashOffset === 'number' ? options.strokeLineDashOffset : '0',
+      lineDashOffset: typeof options.strokeLineDashOffset === 'number' ? options.strokeLineDashOffset : 0,
       miterLimit: typeof options.strokeMiterLimit === 'number' ? options.strokeMiterLimit : 10,
       width: typeof options.strokeWidth === 'number' ? options.strokeWidth : undefined,
     });

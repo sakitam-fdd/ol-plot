@@ -94,7 +94,7 @@ const createVectorLayer = function (map, layerName, params) {
         }
       }
       if (map && vectorLayer) {
-        if (params && params.hasOwnProperty('selectable')) {
+        if (params && Object.prototype.hasOwnProperty.call(params, 'selectable')) {
           vectorLayer.set('selectable', params.selectable);
         }
         // 图层只添加一次

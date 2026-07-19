@@ -81,8 +81,10 @@
 <script lang="ts">
   import 'ol-plot/dist/ol-plot.css';
   import Plot from 'ol-plot';
+  import type Map from 'ol/Map';
 
   import { defineComponent, ref, onMounted, shallowRef, reactive, watch } from 'vue-demi';
+  import type { PropType } from 'vue-demi';
   import ColorPicker from './ColorPicker/index.vue';
 
   export default defineComponent({
@@ -92,9 +94,9 @@
     },
 
     props: {
-      map: Object,
+      map: Object as PropType<Map>,
       plots: {
-        type: Object,
+        type: Array as PropType<any[]>,
         default: () => [
           {
             id: 'Point',

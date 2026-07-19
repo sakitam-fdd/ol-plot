@@ -81,9 +81,9 @@
       // 计算属性：显示面板颜色
       const showPanelColor = computed(() => {
         if (hoveColor.value) {
-          return hoveColor;
+          return hoveColor.value;
         }
-        return showColor;
+        return showColor.value;
       });
       // 计算属性：显示颜色
       const showColor = computed(() => {

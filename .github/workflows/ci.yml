@@ -5,122 +5,109 @@ on:
     branches: [master, dev]
   pull_request:
     branches: [master, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
-
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node-version: [18.x]
-
-    runs-on: ${{ matrix.os }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+        node-version: [22.x, 24.x]
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm type-check
+      - run: pnpm test
 
-      - name: Cache ~/.pnpm-store
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-pnpm-store
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ matrix.node-version }}-test-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-${{ matrix.node-version }}-test-
-            ${{ runner.os }}-
-      - name: Install pnpm
-        run: npm i -g pnpm@8.6.5
-
-      - name: Install deps
-        run: pnpm i
-
-      # Runs a set of commands using the runners shell
-      - name: Build and Test
-        run: pnpm test && pnpm coverage
-#      - name: Coveralls
-#        uses: coverallsapp/github-action@master
-#        with:
-#          # https://github.com/coverallsapp/github-action/issues/81
-#          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication
-#          git-branch: master
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#          flag-name: ${{matrix.os}}-node-${{ matrix.node }}
-#          parallel: true
-
-  release:
+  openlayers-compat:
     runs-on: ubuntu-latest
-    needs: ['test']
-    if: "!contains(github.event.head_commit.message, 'skip-release') && !contains(github.event.head_commit.message, 'skip-ci') && github.event_name != 'pull_request'"
+    strategy:
+      fail-fast: false
+      matrix:
+        ol-version: [6.15.1, 7.5.2, 8.2.0, 9.2.4, 10.9.0]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18.x
-      - name: Cache ~/.pnpm-store
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-pnpm-store
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ matrix.node-version }}-release-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-release-${{ env.cache-name }}-
-            ${{ runner.os }}-${{ matrix.node-version }}-release-
-            ${{ runner.os }}-
-      - run: npm i -g pnpm@8.6.5
-      - run: pnpm i
-
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@master
-        with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
-          commit: 'chore(release): publish'
-          title: Publish next versions
-        env:
-          GITHUB_TOKEN: ${{ secrets.PKG_DEPLOY_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_PKG_PUBLIC_TOKEN }}
+          node-version: 24.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Use OpenLayers ${{ matrix.ol-version }}
+        run: pnpm --filter ol-plot add --save-dev ol@${{ matrix.ol-version }} --lockfile=false
+      - run: pnpm --filter ol-plot type-check
+      - run: pnpm --filter ol-plot test:compat
 
   docs:
     runs-on: ubuntu-latest
-    needs: [ 'test' ]
-    if: "!contains(github.event.head_commit.message, 'skip-release') && !contains(github.event.head_commit.message, 'skip-ci') && github.event_name != 'pull_request'"
+    needs: [test, openlayers-compat]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
         with:
-          node-version: 18.x
-      - name: Cache ~/.pnpm-store
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-pnpm-store
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ matrix.node-version }}-release-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-release-${{ env.cache-name }}-
-            ${{ runner.os }}-${{ matrix.node-version }}-release-
-            ${{ runner.os }}-
-      - run: npm i -g pnpm@8.6.5
-      - run: pnpm i
-      - run: pnpm --filter "./packages/ol-plot-vue" build:vue3 && pnpm --filter "./packages/**" build
-      # ???
-      - run: pnpm i
-      - run: pnpm --filter "./playground/vue3" build
+          node-version: 24.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm docs:build
+      - uses: actions/configure-pages@v4
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        with:
+          path: docs/.vitepress/dist
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+  deploy-docs:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: docs
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy documentation
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: [test, openlayers-compat]
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          github_token: ${{ secrets.PKG_DEPLOY_TOKEN }}
-          publish_dir: playground/vue3/dist
-          cname: blog.sakitam.com
+          node-version: 24.x
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          commit: 'chore(release): publish'
+          title: 'chore(release): publish'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PKG_DEPLOY_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PKG_PUBLIC_TOKEN }}

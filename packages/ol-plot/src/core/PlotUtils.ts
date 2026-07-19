@@ -174,7 +174,7 @@ class PlotUtils {
   handleBackgroundColor(color, opacity) {
     try {
       // eslint-disable-next-line no-param-reassign
-      if (!opacity) opacity = 1;
+      if (typeof opacity !== 'number') opacity = 1;
       const tempColor = asArray(color);
       tempColor[3] = opacity;
       return `rgba(${tempColor.join(',')})`;
@@ -376,9 +376,8 @@ class PlotUtils {
             image: icon,
             text,
           };
-        } else {
-          console.warn('不是合法的 Style 实例');
         }
+        console.warn('不是合法的 Style 实例');
       }
     } catch (e) {
       console.warn(e);
@@ -390,20 +389,34 @@ class PlotUtils {
    */
   removeAllFeatures() {
     const layer = getLayerByLayerName(this.map, this.layerName);
-    const overlays_ = this.map.getOverlays().getArray();
+    const overlays_ = this.map.getOverlays().getArray().slice();
     if (layer) {
       const source = layer.getSource() as VectorSource;
       source.clear();
     }
     if (overlays_ && overlays_.length > 0) {
-      const len = overlays_.length;
-      for (let i = 0; i < len; i++) {
+      for (let i = 0; i < overlays_.length; i += 1) {
         if (overlays_[i] && overlays_[i].get('isPlotText')) {
-          this.map.removeOverlay(overlays_[i]);
-          i--;
+          const overlay = overlays_[i];
+          this.map.removeOverlay(overlay);
+          if (overlay instanceof PlotTextBox) overlay.dispose();
         }
       }
     }
+  }
+
+  /** Dispose SDK text overlays without clearing vector feature data. */
+  destroy() {
+    this.map
+      .getOverlays()
+      .getArray()
+      .slice()
+      .forEach((overlay) => {
+        if (overlay.get('isPlotText')) {
+          this.map.removeOverlay(overlay);
+          if (overlay instanceof PlotTextBox) overlay.dispose();
+        }
+      });
   }
 
   /**
@@ -491,7 +504,8 @@ class PlotUtils {
                   geometry: new Geometry[feature.properties.type]([], feature.properties.points, feature.properties),
                 });
                 feat.set('isPlot', true);
-                _extents.push(feat.getGeometry().getExtent());
+                const geometry = feat.getGeometry();
+                if (geometry) _extents.push(geometry.getExtent());
                 if (feature.properties.style) {
                   /* eslint new-cap: 0 */
                   const style_ = new StyleFactory(feature.properties.style).style;

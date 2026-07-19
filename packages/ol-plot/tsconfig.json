@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
+    "declaration": true,
     "module": "esnext",
     "target": "esnext",
     "lib": [

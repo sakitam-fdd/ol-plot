@@ -5,10 +5,55 @@ import { DEF_TEXT_STYEL } from '@/constants';
 import { merge, bindAll } from '@/utils/utils';
 import { on, off, hasClass, setStyle, getStyle } from '@/utils/domUtils';
 import PlotEvent from '@/core/PlotEvent';
+import type olPlot from '@/index';
+import type { Coordinate } from '@/types';
+
+interface PlotTextBoxOptions {
+  id?: string;
+  element?: HTMLElement;
+  offset?: number[];
+  stopEvent?: boolean;
+  positioning?: any;
+  insertFirst?: boolean;
+  autoPan?: boolean | Record<string, unknown>;
+  autoPanAnimation?: Record<string, unknown>;
+  autoPanMargin?: number;
+  className?: string;
+  position?: Coordinate;
+  width?: number;
+  height?: number;
+  minHeight?: number;
+  value?: string;
+  style?: Record<string, unknown>;
+}
 
 class PlotTextBox extends Overlay {
+  public parent: olPlot;
+
+  public freehand: boolean;
+
+  private mapDragPan?: DragPan;
+
+  private mapDragPanWasActive = false;
+
+  private isClick_: boolean;
+
+  private dragging_: boolean;
+
+  private isFocus_: boolean;
+
+  private options_: PlotTextBoxOptions;
+
+  private _position: Coordinate | undefined;
+
+  private handleTimer_: number | null;
+
+  private currentPixel_: number[];
+
+  private preCursor_ = '';
+
   // eslint-disable-next-line default-param-last
-  constructor(options: any = {}, parent) {
+  constructor(options: PlotTextBoxOptions = {}, parent: olPlot) {
     const [
       id,
       element,
@@ -41,7 +86,7 @@ class PlotTextBox extends Overlay {
       autoPanAnimation,
       autoPanMargin,
       className,
-    });
+    } as any);
 
     this.parent = parent;
 
@@ -87,7 +132,7 @@ class PlotTextBox extends Overlay {
      * @type {Array}
      * @private
      */
-    this._position = options.position && options.position.length > 0 ? options.position : [];
+    this._position = options.position && options.position.length > 0 ? options.position : undefined;
 
     /**
      * 防抖延时
@@ -132,15 +177,15 @@ class PlotTextBox extends Overlay {
    * 创建文本框父容器
    * @param options
    */
-  createTextContent(options) {
+  createTextContent(options: PlotTextBoxOptions) {
     const _className = options.className || 'ol-plot-text-editor';
     const content = document.createElement('textarea');
     content.className = _className;
     content.style.width = `${options.width}px`;
     content.style.height = `${options.height}px`;
     content.style.minHeight = `${options.minHeight}px`;
-    content.setAttribute('id', options.id);
-    content.setAttribute('autofocus', true);
+    if (options.id) content.setAttribute('id', options.id);
+    content.setAttribute('autofocus', 'true');
     autosize(content);
     on(content, 'focus', this.handleFocus_);
     on(content, 'blur', this.handleBlur_);
@@ -166,13 +211,13 @@ class PlotTextBox extends Overlay {
    * @returns {string}
    * @private
    */
-  getTextAreaFromContent_() {
-    let _node = '';
+  getTextAreaFromContent_(): HTMLTextAreaElement | null {
+    let _node: HTMLTextAreaElement | null = null;
     const childrens_ = Array.prototype.slice.call(this.element && this.element.children, 0);
     if (childrens_.length > 0) {
       childrens_.every((ele) => {
         if (ele.nodeType === 1 && ele.nodeName.toLowerCase() === 'textarea') {
-          _node = ele;
+          _node = ele as HTMLTextAreaElement;
           return false;
         }
         return true;
@@ -185,10 +230,10 @@ class PlotTextBox extends Overlay {
    * 创建关闭按钮
    * @param options
    */
-  createCloseButton(options) {
+  createCloseButton(options: PlotTextBoxOptions) {
     const _closeSpan = document.createElement('span');
     _closeSpan.className = 'ol-plot-text-editor-close';
-    _closeSpan.setAttribute('data-id', options.id);
+    if (options.id) _closeSpan.setAttribute('data-id', options.id);
     off(_closeSpan, 'click', this.closeCurrentPlotText);
     on(_closeSpan, 'click', this.closeCurrentPlotText);
     this.element.appendChild(_closeSpan);
@@ -198,10 +243,10 @@ class PlotTextBox extends Overlay {
    * 创建文本框大小调整按钮
    * @param options
    */
-  createResizeButton(options) {
+  createResizeButton(options: PlotTextBoxOptions) {
     const _resizeSpan = document.createElement('span');
     _resizeSpan.className = 'ol-plot-text-editor-resize';
-    _resizeSpan.setAttribute('data-id', options.id);
+    if (options.id) _resizeSpan.setAttribute('data-id', options.id);
     off(_resizeSpan, 'mousedown', this.handleResizeMouseDown_);
     off(_resizeSpan, 'mousemove', this.handleResizeMouseMove_);
     on(_resizeSpan, 'mousedown', this.handleResizeMouseDown_);
@@ -225,7 +270,7 @@ class PlotTextBox extends Overlay {
     setStyle(element_, 'width', `${_width}px`);
     setStyle(element_, 'height', `${_height}px`);
     this.currentPixel_ = pixel_;
-    this.getMap().render();
+    this.getMap()?.render();
   }
 
   /**
@@ -243,10 +288,11 @@ class PlotTextBox extends Overlay {
    * @private
    */
   handleResizeMouseDown_(event) {
-    if (!this.getMap()) return;
+    const map = this.getMap();
+    if (!map) return;
     this.currentPixel_ = [event.x, event.y];
-    this.getMap().on('pointermove', this.resizeButtonMoveHandler_);
-    on(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_);
+    map.on('pointermove', this.resizeButtonMoveHandler_);
+    on(map.getViewport(), 'mouseup', this.handleResizeMouseUp_);
   }
 
   /**
@@ -254,9 +300,10 @@ class PlotTextBox extends Overlay {
    * @private
    */
   handleResizeMouseUp_() {
-    if (!this.getMap()) return;
-    this.getMap().un('pointermove', this.resizeButtonMoveHandler_);
-    off(this.getMap().getViewport(), 'mouseup', this.handleResizeMouseUp_);
+    const map = this.getMap();
+    if (!map) return;
+    map.un('pointermove', this.resizeButtonMoveHandler_);
+    off(map.getViewport(), 'mouseup', this.handleResizeMouseUp_);
     this.currentPixel_ = [];
   }
 
@@ -265,13 +312,14 @@ class PlotTextBox extends Overlay {
    * @param event
    */
   closeCurrentPlotText(event) {
-    if (!this.getMap()) return;
+    const map = this.getMap();
+    if (!map) return;
     if (event && hasClass(event.target, 'ol-plot-text-editor-close')) {
       const _id = event.target.getAttribute('data-id');
       if (_id) {
-        const _overlay = this.getMap().getOverlayById(_id);
+        const _overlay = map.getOverlayById(_id);
         if (_overlay) {
-          this.getMap().removeOverlay(_overlay);
+          map.removeOverlay(_overlay);
         }
       }
     }
@@ -315,13 +363,14 @@ class PlotTextBox extends Overlay {
     if (!this.getMap()) return;
     if (!this.dragging_ && this.isMoveModel() && this.isFocus_) {
       this.handleTimer_ = window.setTimeout(() => {
-        window.clearTimeout(this.handleTimer_);
+        if (this.handleTimer_ !== null) window.clearTimeout(this.handleTimer_);
         this.handleTimer_ = null;
         if (!this.isClick_) {
           this.dragging_ = true;
           this.disableMapDragPan();
           this.preCursor_ = this.element.style.cursor;
-          on(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_);
+          const map = this.getMap();
+          if (map) on(map.getViewport(), 'mousemove', this.handleDragDrag_);
           on(this.element, 'mouseup', this.handleDragEnd_);
         }
       }, 300);
@@ -334,9 +383,10 @@ class PlotTextBox extends Overlay {
    * @private
    */
   handleDragDrag_(event) {
-    if (this.dragging_) {
+    const map = this.getMap();
+    if (this.dragging_ && map) {
       this.element.style.cursor = 'move';
-      this._position = this.getMap().getCoordinateFromPixel([event.clientX, event.clientY]);
+      this._position = map.getCoordinateFromPixel([event.clientX, event.clientY]) as Coordinate;
       this.setPosition(this._position);
     }
   }
@@ -347,13 +397,14 @@ class PlotTextBox extends Overlay {
    */
   handleDragEnd_() {
     this.isClick_ = false;
-    window.clearTimeout(this.handleTimer_);
+    if (this.handleTimer_ !== null) window.clearTimeout(this.handleTimer_);
     this.handleTimer_ = null;
     if (this.dragging_ && this.isFocus_) {
       this.dragging_ = false;
       this.enableMapDragPan();
       this.element.style.cursor = this.preCursor_;
-      off(this.getMap().getViewport(), 'mousemove', this.handleDragDrag_);
+      const map = this.getMap();
+      if (map) off(map.getViewport(), 'mousemove', this.handleDragDrag_);
       off(this.element, 'mouseup', this.handleDragEnd_);
     }
   }
@@ -376,11 +427,12 @@ class PlotTextBox extends Overlay {
    * @returns {boolean}
    */
   isMoveModel() {
-    if (!window) return false;
+    if (typeof window === 'undefined') return false;
     try {
       const selection = window.getSelection();
       if (selection) {
-        const range = window.getSelection().getRangeAt(0);
+        if (selection.rangeCount === 0) return false;
+        const range = selection.getRangeAt(0);
         return range.collapsed;
       }
 
@@ -433,7 +485,7 @@ class PlotTextBox extends Overlay {
       if (value) {
         autosize.update(_element);
       }
-      this.getMap().render();
+      this.getMap()?.render();
     }
   }
 
@@ -480,8 +532,9 @@ class PlotTextBox extends Overlay {
     const _map = this.getMap();
     if (!_map) return;
     if (this.mapDragPan) {
-      _map.addInteraction(this.mapDragPan);
-      delete this.mapDragPan;
+      this.mapDragPan.setActive(this.mapDragPanWasActive);
+      this.mapDragPan = undefined;
+      this.mapDragPanWasActive = false;
     }
   }
 
@@ -494,8 +547,9 @@ class PlotTextBox extends Overlay {
     const interactions = _map.getInteractions().getArray();
     interactions.every((item) => {
       if (item instanceof DragPan || item.constructor.name.indexOf('DragPan') > -1) {
-        this.mapDragPan = item;
-        _map.removeInteraction(item);
+        this.mapDragPan = item as DragPan;
+        this.mapDragPanWasActive = item.getActive();
+        item.setActive(false);
         return false;
       }
       return true;
@@ -506,12 +560,27 @@ class PlotTextBox extends Overlay {
    * set map
    * @param map
    */
-  setMap(map) {
+  setMap(map: Map | null) {
     super.setMap(map);
     if (map && map instanceof Map) {
-      this.setStyle(merge(DEF_TEXT_STYEL, this.options_.style));
+      this.setStyle(merge({ ...DEF_TEXT_STYEL }, this.options_.style || {}));
       this.setValue(this.options_.value);
     }
+  }
+
+  protected disposeInternal() {
+    const element = this.getTextAreaFromContent_();
+    if (element) {
+      off(element, 'focus', this.handleFocus_);
+      off(element, 'blur', this.handleBlur_);
+      off(element, 'click', this.handleClick_);
+      off(element, 'mousedown', this.handleDragStart_);
+      autosize.destroy(element);
+    }
+    off(window, 'mouseup', this.handleDragEnd_);
+    this.handleResizeMouseUp_();
+    this.handleDragEnd_();
+    super.disposeInternal();
   }
 
   finishDrawing() {}

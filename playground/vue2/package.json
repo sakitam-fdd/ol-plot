@@ -6,21 +6,15 @@
     "build": "vite build",
     "build:lib": "vue-demi-switch 2 && vite build --config vite.lib.ts"
   },
-  "dependenciesMeta": {
-    "ol-plot-vue": {
-      "injected": true
-    }
-  },
   "dependencies": {
-    "@vue/composition-api": "^1.7.1",
-    "vue": "2.6.14",
+    "vue": "2.7.16",
     "vue-demi": "^0.14.0",
-    "vue-template-compiler": "2.6.14",
+    "vue-template-compiler": "2.7.16",
     "ol": "^7.3.0",
     "ol-plot-vue": "workspace:*"
   },
   "devDependencies": {
     "vite": "^4.4.7",
-    "vite-plugin-vue2": "^2.0.3"
+    "@vitejs/plugin-vue2": "^2.3.4"
   }
 }

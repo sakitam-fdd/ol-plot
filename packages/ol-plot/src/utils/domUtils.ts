@@ -55,11 +55,12 @@ const camelCase = function (name: string) {
     .replace(MOZ_HACK_REGEXP, 'Moz$1');
 };
 
-type eventFn = (element: HTMLElement, event: string, handler: any) => void;
+type EventElement = HTMLElement | Window | Document;
+type eventFn = (element: EventElement, event: string, handler: any) => void;
 
 export const on = (function () {
-  if (document) {
-    return function (element: HTMLElement, event: string, handler: any) {
+  if (typeof document !== 'undefined') {
+    return function (element: EventElement, event: string, handler: any) {
       if (element && event && handler) {
         element.addEventListener(event, handler, false);
       }
@@ -68,8 +69,8 @@ export const on = (function () {
 })() as eventFn;
 
 export const off = (function () {
-  if (document) {
-    return function (element: HTMLElement, event: string, handler: any) {
+  if (typeof document !== 'undefined') {
+    return function (element: EventElement, event: string, handler: any) {
       if (element && event) {
         element.removeEventListener(event, handler, false);
       }

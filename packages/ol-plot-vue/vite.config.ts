@@ -1,13 +1,12 @@
 import { resolve } from 'path';
 
 import { defineConfig } from 'vite';
-import type { UserConfigExport } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 
 const name = 'ol-plot-vue';
 export default defineConfig((env) => {
-  const defaultConfig: UserConfigExport = {
+  const defaultConfig = {
     plugins: [
       vue(),
       dts({
@@ -36,6 +35,7 @@ export default defineConfig((env) => {
         external: (id) => /^ol/.test(id) || id === 'vue' || id === 'vue-demi',
         output: {
           globals: {
+            'ol-plot': 'olPlot',
             vue: 'Vue',
             'vue-demi': 'VueDemi',
             ol: 'ol',
@@ -60,6 +60,6 @@ export default defineConfig((env) => {
     test: {
       environment: 'happy-dom',
     },
-  };
+  } as any;
   return defaultConfig;
 });

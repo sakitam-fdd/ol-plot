@@ -2,6 +2,13 @@ import * as Constants from '../constants';
 
 export type Point = [number, number];
 
+/** Squared distance avoids a square root in hot pointer-move paths. */
+export const squaredDistance = (pnt1: Point, pnt2: Point): number => {
+  const dx = pnt1[0] - pnt2[0];
+  const dy = pnt1[1] - pnt2[1];
+  return dx * dx + dy * dy;
+};
+
 /**
  * 计算两个坐标之间的距离
  * @param pnt1
@@ -9,8 +16,7 @@ export type Point = [number, number];
  * @returns {number}
  * @constructor
  */
-export const MathDistance = (pnt1: Point, pnt2: Point): number =>
-  Math.sqrt((pnt1[0] - pnt2[0]) ** 2 + (pnt1[1] - pnt2[1]) ** 2);
+export const MathDistance = (pnt1: Point, pnt2: Point): number => Math.sqrt(squaredDistance(pnt1, pnt2));
 
 /**
  * 计算点集合的总距离
@@ -19,12 +25,10 @@ export const MathDistance = (pnt1: Point, pnt2: Point): number =>
  */
 export const wholeDistance = (points: Point[]): number => {
   let distance = 0;
-  if (points && Array.isArray(points) && points.length > 0) {
-    points.forEach((item, index) => {
-      if (index < points.length - 1) {
-        distance += MathDistance(item, points[index + 1]);
-      }
-    });
+  if (Array.isArray(points)) {
+    for (let index = 1; index < points.length; index += 1) {
+      distance += MathDistance(points[index - 1], points[index]);
+    }
   }
   return distance;
 };
@@ -68,23 +72,26 @@ export const getCircleCenterOfThreePoints = (point1: Point, point2: Point, point
  * @returns {[*,*]}
  */
 export const getIntersectPoint = (pntA: Point, pntB: Point, pntC: Point, pntD: Point): Point => {
-  if (pntA[1] === pntB[1]) {
-    const f = (pntD[0] - pntC[0]) / (pntD[1] - pntC[1]);
-    const x = f * (pntA[1] - pntC[1]) + pntC[0];
-    const y = pntA[1];
-    return [x, y];
+  const x1 = pntA[0];
+  const y1 = pntA[1];
+  const x2 = pntB[0];
+  const y2 = pntB[1];
+  const x3 = pntC[0];
+  const y3 = pntC[1];
+  const x4 = pntD[0];
+  const y4 = pntD[1];
+  const denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+  if (Math.abs(denominator) <= Constants.ZERO_TOLERANCE) {
+    return Mid(pntA, pntC);
   }
-  if (pntC[1] === pntD[1]) {
-    const e = (pntB[0] - pntA[0]) / (pntB[1] - pntA[1]);
-    const x = e * (pntC[1] - pntA[1]) + pntA[0];
-    const y = pntC[1];
-    return [x, y];
-  }
-  const e = (pntB[0] - pntA[0]) / (pntB[1] - pntA[1]);
-  const f = (pntD[0] - pntC[0]) / (pntD[1] - pntC[1]);
-  const y = (e * pntA[1] - pntA[0] - f * pntC[1] + pntC[0]) / (e - f);
-  const x = e * y - e * pntA[1] + pntA[0];
-  return [x, y];
+
+  const determinant1 = x1 * y2 - y1 * x2;
+  const determinant2 = x3 * y4 - y3 * x4;
+  return [
+    (determinant1 * (x3 - x4) - (x1 - x2) * determinant2) / denominator,
+    (determinant1 * (y3 - y4) - (y1 - y2) * determinant2) / denominator,
+  ];
 };
 
 /**
@@ -94,8 +101,10 @@ export const getIntersectPoint = (pntA: Point, pntB: Point, pntC: Point, pntD: P
  * @returns {*}
  */
 export const getAzimuth = (startPoint: Point, endPoint: Point): number => {
+  const distance = MathDistance(startPoint, endPoint);
+  if (distance <= Constants.ZERO_TOLERANCE) return 0;
   let azimuth = 0;
-  const angle = Math.asin(Math.abs(endPoint[1] - startPoint[1]) / MathDistance(startPoint, endPoint));
+  const angle = Math.asin(Math.min(1, Math.abs(endPoint[1] - startPoint[1]) / distance));
   if (endPoint[1] >= startPoint[1] && endPoint[0] >= startPoint[0]) {
     azimuth = angle + Math.PI;
   } else if (endPoint[1] >= startPoint[1] && endPoint[0] < startPoint[0]) {
@@ -153,14 +162,14 @@ export const getPointOnLine = (t: number, startPnt: Point, endPnt: Point): Point
  * @returns {[*,*]}
  */
 export const getCubicValue = (t: number, startPnt: Point, cPnt1: Point, cPnt2: Point, endPnt: Point): Point => {
-  // eslint-disable-next-line no-param-reassign
-  t = Math.max(Math.min(t, 1), 0);
-  const [tp, t2] = [1 - t, t * t];
-  const t3 = t2 * t;
+  const ratio = Math.max(Math.min(t, 1), 0);
+  const tp = 1 - ratio;
+  const t2 = ratio * ratio;
+  const t3 = t2 * ratio;
   const tp2 = tp * tp;
   const tp3 = tp2 * tp;
-  const x = tp3 * startPnt[0] + 3 * tp2 * t * cPnt1[0] + 3 * tp * t2 * cPnt2[0] + t3 * endPnt[0];
-  const y = tp3 * startPnt[1] + 3 * tp2 * t * cPnt1[1] + 3 * tp * t2 * cPnt2[1] + t3 * endPnt[1];
+  const x = tp3 * startPnt[0] + 3 * tp2 * ratio * cPnt1[0] + 3 * tp * t2 * cPnt2[0] + t3 * endPnt[0];
+  const y = tp3 * startPnt[1] + 3 * tp2 * ratio * cPnt1[1] + 3 * tp * t2 * cPnt2[1] + t3 * endPnt[1];
   return [x, y];
 };
 
@@ -196,14 +205,12 @@ export const getThirdPoint = (
  * @returns {null}
  */
 export const getArcPoints = (center: Point, radius: number, startAngle: number, endAngle: number): Point[] => {
-  // eslint-disable-next-line
-  let [x, y, pnts, angleDiff]: [number, number, Point[], number] = [0, 0, [], endAngle - startAngle];
+  const pnts = new Array<Point>(Constants.FITTING_COUNT + 1);
+  let angleDiff = endAngle - startAngle;
   angleDiff = angleDiff < 0 ? angleDiff + Math.PI * 2 : angleDiff;
-  for (let i = 0; i <= 100; i++) {
-    const angle = startAngle + (angleDiff * i) / 100;
-    x = center[0] + radius * Math.cos(angle);
-    y = center[1] + radius * Math.sin(angle);
-    pnts.push([x, y]);
+  for (let i = 0; i <= Constants.FITTING_COUNT; i += 1) {
+    const angle = startAngle + (angleDiff * i) / Constants.FITTING_COUNT;
+    pnts[i] = [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle)];
   }
   return pnts;
 };
@@ -273,11 +280,13 @@ export const getNormal = (pnt1: Point, pnt2: Point, pnt3: Point): Point => {
   let dX1 = pnt1[0] - pnt2[0];
   let dY1 = pnt1[1] - pnt2[1];
   const d1 = Math.sqrt(dX1 * dX1 + dY1 * dY1);
+  if (d1 <= Constants.ZERO_TOLERANCE) return [0, 0];
   dX1 /= d1;
   dY1 /= d1;
   let dX2 = pnt3[0] - pnt2[0];
   let dY2 = pnt3[1] - pnt2[1];
   const d2 = Math.sqrt(dX2 * dX2 + dY2 * dY2);
+  if (d2 <= Constants.ZERO_TOLERANCE) return [0, 0];
   dX2 /= d2;
   dY2 /= d2;
   const uX = dX1 + dX2;
@@ -293,7 +302,13 @@ export const getNormal = (pnt1: Point, pnt2: Point, pnt3: Point): Point => {
  */
 export const getLeftMostControlPoint = (controlPoints: Point[], t: number): Point => {
   // eslint-disable-next-line
-  let [pnt1, pnt2, pnt3, controlX, controlY]: [Point, Point, Point, number, number] = [controlPoints[0], controlPoints[1], controlPoints[2], 0, 0];
+  let [pnt1, pnt2, pnt3, controlX, controlY]: [Point, Point, Point, number, number] = [
+    controlPoints[0],
+    controlPoints[1],
+    controlPoints[2],
+    0,
+    0,
+  ];
   const pnts = getBisectorNormals(0, pnt1, pnt2, pnt3);
   const normalRight = pnts[0];
   const normal = getNormal(pnt1, pnt2, pnt3);
@@ -399,23 +414,29 @@ export const getCurvePoints = (t: number, controlPoints: Point[]): Point[] => {
  */
 export const getBezierPoints = function (points: Point[]): Point[] {
   if (points.length <= 2) {
-    return points;
+    return points.slice();
   }
-  const bezierPoints: Point[] = [];
+  const bezierPoints = new Array<Point>(Constants.FITTING_COUNT + 1);
   const n = points.length - 1;
-  for (let t = 0; t <= 1; t += 0.01) {
+  const factors = new Array<number>(n + 1);
+  factors[0] = 1;
+  for (let index = 1; index <= n; index += 1) {
+    factors[index] = (factors[index - 1] * (n - index + 1)) / index;
+  }
+  for (let sample = 0; sample <= Constants.FITTING_COUNT; sample += 1) {
+    const t = sample / Constants.FITTING_COUNT;
     let [x, y] = [0, 0];
-    for (let index = 0; index <= n; index++) {
-      // eslint-disable-next-line
-      const factor = getBinomialFactor(n, index);
+    for (let index = 0; index <= n; index += 1) {
       const a = t ** index;
       const b = (1 - t) ** (n - index);
-      x += factor * a * b * points[index][0];
-      y += factor * a * b * points[index][1];
+      const weight = factors[index] * a * b;
+      x += weight * points[index][0];
+      y += weight * points[index][1];
     }
-    bezierPoints.push([x, y]);
+    bezierPoints[sample] = [x, y];
   }
-  bezierPoints.push(points[n]);
+  bezierPoints[0] = points[0].slice() as Point;
+  bezierPoints[Constants.FITTING_COUNT] = points[n].slice() as Point;
   return bezierPoints;
 };
 
@@ -436,7 +457,7 @@ export const getFactorial = (n: number): number => {
     case n === 3:
       result = 6;
       break;
-    case n === 24:
+    case n === 4:
       result = 24;
       break;
     case n === 5:
@@ -510,14 +531,16 @@ export const getQuadricBSplineFactor = (k: number, t: number): number => {
  * 生成随机字符串
  * @returns {*}
  */
-export function getuuid(noBit = false) {
-  function b(a?: number) {
-    /* eslint-disable */
-    // @ts-ignore
-    return a ? (a ^ ((Math.random() * 16) >> (a / 4))).toString(16) : ([1e7] + -[1e3] + -4e3 + -8e3 + -1e11).replace(/[018]/g, b);
-    /* eslint-enable */
-  }
-  return noBit ? b().replace(/-/g, '') : b();
+export function getuuid(noBit = false): string {
+  const uuid =
+    typeof globalThis.crypto?.randomUUID === 'function'
+      ? globalThis.crypto.randomUUID()
+      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+          const random = Math.floor(Math.random() * 16);
+          const value = character === 'x' ? random : (random % 4) + 8;
+          return value.toString(16);
+        });
+  return noBit ? uuid.replace(/-/g, '') : uuid;
 }
 
 /**

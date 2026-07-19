@@ -4,12 +4,13 @@ import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
 import { Style, Icon, Stroke, Fill } from 'ol/style';
 
 import type VectorLayer from 'ol/layer/Vector';
-import { getuuid, MathDistance, bindAll } from '@/utils/utils';
+import { getuuid, bindAll, squaredDistance } from '@/utils/utils';
 import { BASE_LAYERNAME } from '@/constants';
 import { createVectorLayer } from '@/utils/layerUtils';
 import type { PlotTypesSource } from '@/utils/PlotTypes';
 import { PlotTypes } from '@/utils/PlotTypes';
 import type { Point } from '@/utils/utils';
+import type { PlotFeatureParams, PlotOptions } from '@/types';
 import PlotTextBox from '@/geometry/Text/PlotTextBox';
 import type olPlot from '../index';
 import PlotEvent from './PlotEvent';
@@ -20,7 +21,7 @@ class PlotDraw extends Observable {
 
   public ctx: olPlot;
 
-  public options: any;
+  public options: PlotOptions;
 
   public feature: WithNull<Feature>;
 
@@ -42,7 +43,9 @@ class PlotDraw extends Observable {
 
   private dblClickZoomInteraction: WithNull<DoubleClickZoom>;
 
-  constructor(map, params, ctx) {
+  private dblClickZoomWasActive: boolean;
+
+  constructor(map: Map, params: PlotOptions | undefined, ctx: olPlot) {
     super();
     if (map && map instanceof Map) {
       this.map = map;
@@ -87,6 +90,7 @@ class PlotDraw extends Observable {
      * @type {null}
      */
     this.dblClickZoomInteraction = null;
+    this.dblClickZoomWasActive = false;
 
     /**
      * draw交互工具
@@ -130,7 +134,7 @@ class PlotDraw extends Observable {
    * @param _params
    * @returns {*}
    */
-  private createPlot(type: PlotTypes, points: Point[], _params: any): WithNull<PlotTypesSource> {
+  private createPlot(type: PlotTypes, points: Point[], _params: PlotFeatureParams): WithNull<PlotTypesSource> {
     const params = _params || {};
     switch (type) {
       case PlotTypes.TEXTAREA:
@@ -197,7 +201,7 @@ class PlotDraw extends Observable {
     return null;
   }
 
-  public active(type: PlotTypes, params = {}) {
+  public active(type: PlotTypes, params: PlotFeatureParams = {}) {
     this.activate(type, params);
     console.warn('[ol-plot]: active 方法即将废弃，请使用 activate');
   }
@@ -207,7 +211,7 @@ class PlotDraw extends Observable {
    * @param type
    * @param params
    */
-  public activate(type, params = {}) {
+  public activate(type: PlotTypes, params: PlotFeatureParams = {}) {
     this.deactivate();
     this.deactiveMapTools();
     this.plotType = type;
@@ -269,7 +273,7 @@ class PlotDraw extends Observable {
     let _plotText;
     if (event && event.feature) {
       const extent = event.feature.getGeometry().getExtent();
-      const _center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
+      const _center: Point = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
       const topLeft = this.map.getPixelFromCoordinate([extent[0], extent[1]]);
       const bottomRight = this.map.getPixelFromCoordinate([extent[2], extent[3]]);
       const [_width, _height] = [Math.abs(topLeft[0] - bottomRight[0]), Math.abs(topLeft[1] - bottomRight[1])];
@@ -358,7 +362,7 @@ class PlotDraw extends Observable {
       }),
     );
     this.feature.set('isPlot', true);
-    this.drawLayer.getSource().addFeature(this.feature);
+    this.drawLayer.getSource()?.addFeature(this.feature);
     if (this.plotType === PlotTypes.POINT || this.plotType === PlotTypes.PENNANT) {
       this.plot.finishDrawing();
       this.drawEnd(event);
@@ -385,7 +389,7 @@ class PlotDraw extends Observable {
     if (!this.plot) return;
 
     if (!this.plot.freehand) {
-      if (MathDistance(event.coordinate, this.points[this.points.length - 1]) < 0.0001) {
+      if (this.isWithinPointTolerance(event.coordinate, this.points[this.points.length - 1])) {
         return false;
       }
     }
@@ -421,7 +425,7 @@ class PlotDraw extends Observable {
   private mapMouseMoveHandler(event) {
     const coordinate = event.coordinate;
     if (!this.plot) return;
-    if (MathDistance(coordinate, this.points[this.points.length - 1]) < 0.0001) {
+    if (this.isWithinPointTolerance(coordinate, this.points[this.points.length - 1])) {
       return false;
     }
     if (!this.plot.freehand) {
@@ -444,6 +448,17 @@ class PlotDraw extends Observable {
   }
 
   /**
+   * Compare coordinates using a pixel-based tolerance. This keeps drawing
+   * behaviour consistent across projections and zoom levels.
+   */
+  private isWithinPointTolerance(a: Point, b: Point): boolean {
+    const resolution = this.map.getView().getResolution() || 1;
+    const pixelTolerance = Math.max(0, this.options.pointTolerance ?? 4);
+    const coordinateTolerance = pixelTolerance * resolution;
+    return squaredDistance(a, b) <= coordinateTolerance * coordinateTolerance;
+  }
+
+  /**
    * 绘制结束
    */
   private drawEnd(event) {
@@ -455,7 +470,7 @@ class PlotDraw extends Observable {
       }),
     );
     if (this.feature && this.options.isClear) {
-      this.drawLayer.getSource().removeFeature(this.feature);
+      this.drawLayer.getSource()?.removeFeature(this.feature);
     }
     this.deactivate();
   }
@@ -466,7 +481,7 @@ class PlotDraw extends Observable {
   public addFeature() {
     this.feature = new Feature(this.plot as any);
     if (this.feature && this.drawLayer) {
-      this.drawLayer.getSource().addFeature(this.feature);
+      this.drawLayer.getSource()?.addFeature(this.feature);
     }
   }
 
@@ -478,7 +493,8 @@ class PlotDraw extends Observable {
     interactions.every((item) => {
       if (item instanceof DoubleClickZoom) {
         this.dblClickZoomInteraction = item;
-        this.map.removeInteraction(item);
+        this.dblClickZoomWasActive = item.getActive();
+        item.setActive(false);
         return false;
       }
       return true;
@@ -491,8 +507,9 @@ class PlotDraw extends Observable {
    */
   private activateMapTools() {
     if (this.dblClickZoomInteraction) {
-      this.map.addInteraction(this.dblClickZoomInteraction);
+      this.dblClickZoomInteraction.setActive(this.dblClickZoomWasActive);
       this.dblClickZoomInteraction = null;
+      this.dblClickZoomWasActive = false;
     }
   }
 }

@@ -93,7 +93,7 @@
       const stateValue = ref(props.value);
       const focused = ref(false);
       const hovering = ref(false);
-      const input = ref<HTMLInputElement | null>(null);
+      const input = ref<any>(null);
 
       const minDisabled = computed(() => _decrease(props.value, props.step) < props.min);
       const maxDisabled = computed(() => _increase(props.value, props.step) > props.max);
@@ -142,7 +142,7 @@
       };
 
       const increase = () => {
-        if (props.disabled || maxDisabled) return;
+        if (props.disabled || maxDisabled.value) return;
         const value = props.value || 0;
         const newVal = _increase(value, props.step);
         if (newVal > props.max) return;
@@ -150,7 +150,7 @@
       };
 
       const decrease = () => {
-        if (props.disabled || minDisabled) return;
+        if (props.disabled || minDisabled.value) return;
         const value = props.value || 0;
         const newVal = _decrease(value, props.step);
         if (newVal < props.min) return;
@@ -218,6 +218,7 @@
 
       return {
         input,
+        currentValue: stateValue,
         inputNumberSize,
         controlsAtRight,
         maxDisabled,

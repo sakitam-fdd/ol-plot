@@ -24,7 +24,18 @@
       :tabindex="tabindex"
       v-if="type !== 'textarea'"
       class="ol-plot-vue-input__inner"
-      v-bind="$props"
+      :type="type"
+      :placeholder="placeholder"
+      :name="name"
+      :form="form"
+      :id="id"
+      :maxlength="maxlength"
+      :minlength="minlength"
+      :readonly="readonly"
+      :autofocus="autofocus"
+      :max="max"
+      :min="min"
+      :step="step"
       :disabled="inputDisabled"
       :autocomplete="autoComplete"
       :value="stateValue"
@@ -91,9 +102,9 @@
         type: String,
         default: 'off',
       },
-      max: {},
-      min: {},
-      step: {},
+      max: [String, Number],
+      min: [String, Number],
+      step: [String, Number],
       suffixIcon: String,
       prefixIcon: String,
       label: String,
@@ -166,9 +177,11 @@
         const pendant = pendantMap[place];
 
         if (slots[pendant] && root.value) {
+          const pendantElement = root.value.querySelector<HTMLElement>(`.ol-plot-vue-input-group__${pendant}`);
+          if (!pendantElement) return undefined;
           return {
             transform: `translateX(${place === 'suf' ? '-' : ''}${
-              root.value.querySelector(`.ol-plot-vue-input-group__${pendant}`).offsetWidth
+              pendantElement.offsetWidth
             }px)`,
           };
         }
@@ -197,10 +210,16 @@
 
       return {
         input,
+        stateValue,
+        hovering,
         inputSize,
         inputDisabled,
         isGroup,
         showClear,
+        prefixOffset: computed(() => state.prefixOffset),
+        suffixOffset: computed(() => state.suffixOffset),
+        validateState: false,
+        needStatusIcon: false,
 
         focus,
         clear,

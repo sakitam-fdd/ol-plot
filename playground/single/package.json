@@ -5,16 +5,11 @@
     "start": "vite --host",
     "build": "vite build"
   },
-  "dependenciesMeta": {
-    "ol-plot": {
-      "injected": true
-    }
-  },
   "dependencies": {
-    "ol": "^6.15.1",
+    "ol": "^10.9.0",
     "ol-plot": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^4.3.0"
+    "vite": "^7.3.6"
   }
 }

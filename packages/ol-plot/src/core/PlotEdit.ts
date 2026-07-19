@@ -23,6 +23,8 @@ class PlotEdit extends Observable {
 
   private mapDragPan: WithNull<DragPan>;
 
+  private mapDragPanWasActive: boolean;
+
   private activeControlPointId: WithNull<string>;
 
   private elementTable: { [key: string]: number };
@@ -83,6 +85,7 @@ class PlotEdit extends Observable {
      * @type {null}
      */
     this.mapDragPan = null;
+    this.mapDragPanWasActive = false;
     /**
      * 未激活之前鼠标样式
      * @type {null}
@@ -242,6 +245,7 @@ class PlotEdit extends Observable {
     this.map.un('pointermove', this.controlPointMouseMoveHandler);
     htmlUtils.off(this.mapViewport, 'mouseup', this.controlPointMouseUpHandler);
     document.removeEventListener('mouseup', this.controlPointMouseUpHandler, true);
+    this.activeControlPointId = null;
   }
 
   /**
@@ -383,7 +387,7 @@ class PlotEdit extends Observable {
     }
     this.activePlot = null;
     this.mouseOver = false;
-    this.map.getTargetElement().style.cursor = this.previousCursor_;
+    this.map.getTargetElement().style.cursor = this.previousCursor_ || '';
     this.previousCursor_ = null;
     this.destroyHelperDom();
     this.disconnectEventHandlers();
@@ -401,7 +405,8 @@ class PlotEdit extends Observable {
     interactions.every((item) => {
       if (item instanceof DragPan) {
         this.mapDragPan = item;
-        this.map.removeInteraction(item);
+        this.mapDragPanWasActive = item.getActive();
+        item.setActive(false);
         return false;
       }
       return true;
@@ -413,8 +418,9 @@ class PlotEdit extends Observable {
    */
   private enableMapDragPan() {
     if (this.mapDragPan) {
-      this.map.addInteraction(this.mapDragPan);
+      this.mapDragPan.setActive(this.mapDragPanWasActive);
       this.mapDragPan = null;
+      this.mapDragPanWasActive = false;
     }
   }
 }

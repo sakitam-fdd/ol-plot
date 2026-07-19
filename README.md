@@ -1,185 +1,90 @@
-# openlayers 扩展标绘
+# OL Plot
 
 [![CI](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml/badge.svg)](https://github.com/sakitam-fdd/ol-plot/actions/workflows/ci.yml)
 [![npm version](https://badgen.net/npm/v/ol-plot)](https://npm.im/ol-plot)
 [![npm downloads](https://badgen.net/npm/dm/ol-plot)](https://npm.im/ol-plot)
-![JS gzip size](http://img.badgesize.io/https://unpkg.com/ol-plot/dist/ol-plot.js?compression=gzip&label=gzip%20size:%20JS)
-[![GitHub stars](https://img.shields.io/github/stars/sakitam-fdd/ol-plot.svg)](https://github.com/sakitam-fdd/ol-plot/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/master/LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-635bff.svg)](./LICENSE)
 
-标绘功能，支持openlayers5 / 6 / 7；同时也实现了一个简单的 Vue 组件，请查看 `playground/vue3` 使用，npm 发布的包为 [![npm version](https://badgen.net/npm/v/ol-plot-vue)](https://npm.im/ol-plot-vue)
+面向 OpenLayers 的 TypeScript 地图标绘 SDK。包含 27 种点、线、面、箭头和旗标，支持控制点编辑、样式序列化与场景恢复。
 
-## build
+- OpenLayers `6.15–10.x`
+- 原生 JavaScript / TypeScript 与 Vue 2 / Vue 3
+- ESM、CommonJS 与 UMD 构建
+- 可恢复 JSON 与完整 TypeScript 类型
 
-> 重要: 如果想要使用 Github 上最新的源码，你需要自己构建。
+## 在线文档
 
----
+- [快速开始](https://sakitam-fdd.github.io/ol-plot/guide/getting-started)
+- [交互式 Playground](https://sakitam-fdd.github.io/ol-plot/examples/playground)
+- [OpenLayers 兼容矩阵](https://sakitam-fdd.github.io/ol-plot/guide/compatibility)
+- [核心 API](https://sakitam-fdd.github.io/ol-plot/sdk/core-api)
 
-```bash
-git clone https://github.com/sakitam-fdd/ol-plot.git
-pnpm run dev
-pnpm run build
-```
-
-## Use
-
-> `new olPlot.(map) 初始化标绘绘制工具`
-
-### CDN
+## 安装
 
 ```bash
-https://unpkg.com/ol-plot/dist/ol-plot.js
-https://unpkg.com/ol-plot/dist/ol-plot.css
+pnpm add ol ol-plot
 ```
 
-### NPM
+```ts
+import 'ol/ol.css'
+import 'ol-plot/style.css'
+
+import Map from 'ol/Map.js'
+import View from 'ol/View.js'
+import Plot, { PlotTypes } from 'ol-plot'
+
+const map = new Map({
+  target: 'map',
+  view: new View({ center: [0, 0], zoom: 4 })
+})
+
+const plot = new Plot(map, {
+  layerName: 'plot-layer',
+  pointTolerance: 5,
+  zIndex: 20
+})
+
+plot.plotDraw.activate(PlotTypes.ATTACK_ARROW)
+plot.plotDraw.on('drawEnd', (event) => {
+  if (event.feature) plot.plotEdit.activate(event.feature)
+})
+```
+
+单页应用卸载时释放实例：
+
+```ts
+plot.destroy()
+map.setTarget(undefined)
+```
+
+## 序列化
+
+```ts
+const snapshot = plot.plotUtils.getFeatures()
+plot.plotUtils.removeAllFeatures()
+plot.plotUtils.addFeatures(snapshot)
+```
+
+快照包含几何、原始控制点和样式，可存储到数据库或浏览器本地存储。
+
+## 本地开发
+
+需要 Node.js 22+ 与 pnpm 10：
 
 ```bash
-npm install ol-plot --save
-import 'ol-plot/dist/ol-plot.css'
-import Plot form 'ol-plot'
+pnpm install
+pnpm --filter ol-plot test:compat
+pnpm docs
 ```
 
-## Examples
+工作区还包含：
 
-[![site](https://github.com/sakitam-fdd/ol-plot/blob/master/playground/vue3/public/image/plot.png?raw=true)](https://sakitam-fdd.github.io/ol-plot)
+- `packages/ol-plot`：核心 SDK
+- `packages/ol-plot-vue`：Vue 2/3 工具面板
+- `docs`：VitePress 2 文档与内嵌 Demo
+- `playground/single`：现代化原生 JavaScript 示例
+- `playground/vue2`、`playground/vue3`：框架集成示例
 
-[![demo](https://raw.githubusercontent.com/sakitam-fdd/ol-plot/V1.0.0/examples/images/demo.png)](https://codepen.io/sakitam-fdd/pen/QMQydz)
+## License
 
-其他示例请参看 playground 文件夹
-
-## 实例方法
-
-### plotDraw Methods
-
-#### `activate(type, params)`
-
-> 激活标绘工具
-
-| key      | type     | desc   |
-|:---------|:---------|:-------|
-| `type`   | `string` | 标绘符号类型 |
-| `params` | `Object` | 标绘符号参数 |
-
-##### `type`
-
-> 标绘类型
-
-###### type:
-
-| key                                    | type | desc      |
-|:---------------------------------------| :--- |:----------|
-| `olPlot.PlotTypes.ARC`                 | `string` | 弓形        |
-| `olPlot.PlotTypes.ELLIPSE`             | `string` | 椭圆        |
-| `olPlot.PlotTypes.CURVE`               | `string` | 曲线        |
-| `olPlot.PlotTypes.CLOSED_CURVE`        | `string` | 闭合曲面      |
-| `olPlot.PlotTypes.LUNE`                | `string` | 弓形        |
-| `olPlot.PlotTypes.SECTOR`              | `string` | 扇形        |
-| `olPlot.PlotTypes.GATHERING_PLACE`     | `string` | 集结地       |
-| `olPlot.PlotTypes.STRAIGHT_ARROW`      | `string` | 细直箭头      |
-| `olPlot.PlotTypes.ASSAULT_DIRECTION`   | `string` | 粗单直箭头     |
-| `olPlot.PlotTypes.ATTACK_ARROW`        | `string` | 进攻方向      |
-| `olPlot.PlotTypes.TAILED_ATTACK_ARROW` | `string` | 进攻方向（尾）   |
-| `olPlot.PlotTypes.SQUAD_COMBAT`        | `string` | 战斗行动      |
-| `olPlot.PlotTypes.TAILED_SQUAD_COMBAT` | `string` | 分队战斗行动（尾） |
-| `olPlot.PlotTypes.FINE_ARROW`          | `string` | 粗单尖头箭头    |
-| `olPlot.PlotTypes.CIRCLE`              | `string` | 圆         |
-| `olPlot.PlotTypes.DOUBLE_ARROW`        | `string` | 双箭头       |
-| `olPlot.PlotTypes.POLYLINE`            | `string` | 线         |
-| `olPlot.PlotTypes.FREEHAND_LINE`       | `string` | 自由线       |
-| `olPlot.PlotTypes.POLYGON`             | `string` | 面         |
-| `olPlot.PlotTypes.FREEHAND_POLYGON`    | `string` | 自由面       |
-| `olPlot.PlotTypes.RECTANGLE`           | `string` | 矩形        |
-| `olPlot.PlotTypes.RectInclined1`       | `string` | 斜矩形1      |
-| `olPlot.PlotTypes.RectInclined2`       | `string` | 斜矩形2      |
-| `olPlot.PlotTypes.MARKER`              | `string` | 点         |
-| `olPlot.PlotTypes.TEXTAREA`            | `string` | 文本框       |
-
-#### `deactivate()`
-
-取消绘制工具的激活状态
-
-### plotEdit Methods
-
-#### `activate(feature)`
-
-| key | type | desc |
-| :--- | :--- | :---------- |
-| `feature` | `ol.Feature` | 要激活的标绘符号 |
-
-激活符号要素编辑
-
-#### `deactivate()`
-
-取消符号要素编辑状态
-
-### PlotUtils Methods
-
-| 方法 | 说明 | 参数 |
-| :--- | :--- | :---------- |
-| `getFeatures` | 序列化地图上所有符号 | -- |
-| `addFeatures` | 反序列化保存的符号 | `features : Array` |
-| `removeAllFeatures` | 删除所有符号 | -- |
-
-
-## 事件
-
-### plotDraw
-
-```js
-plot.plotDraw.on('drawStart', (e) => {
-  console.log(e);
-});
-
-plot.plotDraw.on('drawEnd', onDrawEnd);
-```
-
-#### drawStart
-
-监听符号开始绘制，通过事件类型 ``plotType`` 判断是哪种标绘类型
-
-#### drawEnd
-
-监听符号结束绘制，通过事件类型 ``plotType`` 判断是哪种标绘类型
-
-### plotEdit
-
-```js
-plot.plotEdit.on('activePlotChange', (e) => {
-  console.log(e);
-});
-
-plot.plotEdit.on('deactivatePlot', (e) => {
-  console.log(e);
-});
-```
-
-#### activePlotChange
-
-激活编辑状态的要素变化事件
-
-#### deactivatePlot
-
-监听要素结束编辑状态
-
-### plot 实例事件
-
-比较特殊，3.0 版本是绑定在 map 实例上的，从 4.0 版本起需要绑定在 plot 实例上。
-
-```js
-plot.on('activeTextArea', (e) => {
-  console.log(e);
-});
-
-plot.on('deactivateTextArea', (e) => {
-  console.log(e);
-});
-```
-
-#### activeTextArea
-
-激活文本框编辑事件
-
-#### deactivateTextArea
-
-取消激活文本框编辑事件
+[MIT](./LICENSE)

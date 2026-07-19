@@ -2,7 +2,7 @@
   "name": "ol-plot-vue",
   "version": "1.1.12",
   "description": "openlayers 标绘 Vue 组件",
-  "main": "dist/ol-plot-vue.es.js",
+  "main": "dist/ol-plot-vue.cjs.js",
   "module": "dist/ol-plot-vue.es.js",
   "unpkg": "dist/ol-plot-vue.js",
   "commonjs": "dist/ol-plot-vue.cjs.js",
@@ -30,6 +30,7 @@
       "import": "./dist/*.css",
       "require": "./dist/*.css"
     },
+    "./style.css": "./dist/style.css",
     "./package.json": "./package.json"
   },
   "sideEffects": [
@@ -64,6 +65,7 @@
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.0",
+    "ol": ">=6.15.0 <11",
     "vue": "^2.6.0 || >=3.0.0"
   },
   "peerDependenciesMeta": {
@@ -74,11 +76,6 @@
       "optional": true
     }
   },
-  "dependenciesMeta": {
-    "ol-plot": {
-      "injected": true
-    }
-  },
   "dependencies": {
     "vue-demi": "^0.14.0",
     "@vueuse/core": "^10.0.2",
@@ -86,12 +83,14 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.13",
+    "ol": "^10.9.0",
     "@vitejs/plugin-vue": "^4.1.0",
     "@vitejs/plugin-vue2": "^2.2.0",
     "cross-spawn": "^7.0.3",
     "vue": "^3.2.47",
     "vite": "^4.4.7",
-    "vue-tsc": "^1.4.1",
+    "vite-plugin-dts": "3.9.1",
+    "vue-tsc": "^3.3.7",
     "fs-extra": "^11.1.1"
   },
   "publishConfig": {

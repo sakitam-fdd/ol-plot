@@ -5,7 +5,10 @@ node_modules/
 node_modules
 dist
 coverage
+docs/.vitepress/cache
+docs/.vitepress/dist
 
 *.log
+*.tsbuildinfo
 .cache
 .DS_Store

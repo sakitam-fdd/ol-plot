@@ -38,7 +38,7 @@
 
 ## 开发环境搭建
 
-首先你需要 Node.js 16+ 和 PNPM 7+
+首先你需要 Node.js 22+ 和 pnpm 10（推荐使用 `.nvmrc` 中的 Node.js 24）。
 ```shell
 git clone https://github.com/sakitam-fdd/ol-plot.git
 pnpm i

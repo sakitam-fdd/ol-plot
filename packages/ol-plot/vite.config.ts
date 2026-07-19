@@ -39,6 +39,7 @@ export default defineConfig(({ command, mode }) => ({
     },
     rollupOptions: {
       output: {
+        exports: 'named',
         // assetFileNames: '[name].[ext]',
         assetFileNames: 'ol-plot.[ext]', // hack for css file
         globals: {
@@ -56,14 +57,14 @@ export default defineConfig(({ command, mode }) => ({
           'ol/interaction/DoubleClickZoom': 'ol.interaction.DoubleClickZoom',
         },
       },
-      external: (id) => /^ol/.test(id),
+      external: (id) => /^ol(?:\/|$)/.test(id),
     },
   },
   plugins: [
     dts({
-      rollupTypes: true,
+      bundleTypes: true,
       staticImport: true,
-      insertTypesEntry: true
+      insertTypesEntry: true,
     }),
     viteExternalsPlugin(),
     ...(mode === 'watch' ? [eslint()] : []),

@@ -1,103 +1,125 @@
 import 'ol/ol.css';
-import 'ol-plot/dist/ol-plot.css';
-import { Map, View } from 'ol';
-import { Tile } from 'ol/layer';
-import { OSM } from 'ol/source';
+import 'ol-plot/style.css';
+import './style.css';
 
-import Plot from 'ol-plot';
+import Map from 'ol/Map.js';
+import View from 'ol/View.js';
+import TileLayer from 'ol/layer/Tile.js';
+import OSM from 'ol/source/OSM.js';
+import { fromLonLat } from 'ol/proj.js';
+import Plot, { PlotTypes } from 'ol-plot';
+
+const toolGroups = [
+  {
+    label: '基础图形',
+    items: [
+      [PlotTypes.POINT, '点'],
+      [PlotTypes.POLYLINE, '折线'],
+      [PlotTypes.CURVE, '曲线'],
+      [PlotTypes.CIRCLE, '圆'],
+      [PlotTypes.ELLIPSE, '椭圆'],
+      [PlotTypes.RECTANGLE, '矩形'],
+      [PlotTypes.POLYGON, '多边形'],
+      [PlotTypes.SECTOR, '扇形'],
+    ],
+  },
+  {
+    label: '战术箭头',
+    items: [
+      [PlotTypes.STRAIGHT_ARROW, '直箭头'],
+      [PlotTypes.FINE_ARROW, '细箭头'],
+      [PlotTypes.ASSAULT_DIRECTION, '突击方向'],
+      [PlotTypes.ATTACK_ARROW, '进攻箭头'],
+      [PlotTypes.TAILED_ATTACK_ARROW, '燕尾进攻箭头'],
+      [PlotTypes.DOUBLE_ARROW, '双箭头'],
+      [PlotTypes.SQUAD_COMBAT, '分队战斗'],
+    ],
+  },
+  {
+    label: '区域与旗标',
+    items: [
+      [PlotTypes.CLOSED_CURVE, '闭合曲面'],
+      [PlotTypes.GATHERING_PLACE, '集结地'],
+      [PlotTypes.RECTFLAG, '矩形旗'],
+      [PlotTypes.TRIANGLEFLAG, '三角旗'],
+      [PlotTypes.CURVEFLAG, '曲线旗'],
+      [PlotTypes.TEXTAREA, '文本框'],
+    ],
+  },
+] as const;
 
 const map = new Map({
-  layers: [
-    new Tile({
-      source: new OSM({
-        url: 'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-      }),
-    }),
-  ],
-  view: new View({
-    // center: [108.93, 34.27],
-    center: [12095486.34146684, 4085090.6140265367],
-    projection: 'EPSG:3857',
-    zoom: 5,
-  }),
   target: 'map',
+  layers: [new TileLayer({ source: new OSM({ crossOrigin: 'anonymous' }) })],
+  view: new View({ center: fromLonLat([105, 35]), zoom: 4.5 }),
 });
 
-/* eslint-disable-next-line */
-const plot = new Plot(map, {
-  zoomToExtent: true,
+const plot = new Plot(map, { pointTolerance: 5, zIndex: 30 });
+const toolRoot = document.querySelector<HTMLElement>('#tools');
+const activeTool = document.querySelector<HTMLElement>('#active-tool');
+const featureCount = document.querySelector<HTMLElement>('#feature-count');
+const notice = document.querySelector<HTMLElement>('#notice');
+
+function updateCount() {
+  if (featureCount) featureCount.textContent = String(plot.plotUtils.getFeatures().length);
+}
+
+function setStatus(label: string, message: string) {
+  if (activeTool) activeTool.textContent = label;
+  if (notice) notice.textContent = message;
+}
+
+toolGroups.forEach((group, groupIndex) => {
+  const section = document.createElement('section');
+  const heading = document.createElement('h2');
+  heading.textContent = group.label;
+  section.appendChild(heading);
+  group.items.forEach(([type, label], itemIndex) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.type = type;
+    button.innerHTML = `<span>${String(groupIndex * 10 + itemIndex + 1).padStart(2, '0')}</span>${label}`;
+    button.addEventListener('click', () => {
+      plot.plotEdit.deactivate();
+      plot.plotDraw.activate(type);
+      document.querySelectorAll('.tools button').forEach((item) => item.classList.toggle('active', item === button));
+      setStatus(label, '在地图上依次点击控制点；自由图形请双击结束');
+    });
+    section.appendChild(button);
+  });
+  toolRoot?.appendChild(section);
 });
 
-map.on('click', (event) => {
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-  if (feature && feature.get('isPlot') && !plot.plotDraw.isDrawing()) {
-    plot.plotEdit.activate(feature);
-  } else {
-    plot.plotEdit.deactivate();
+plot.plotDraw.on('drawEnd', (event: any) => {
+  document.querySelectorAll('.tools button').forEach((item) => item.classList.remove('active'));
+  setStatus('未选择', '绘制完成。点击图形可拖动或调整控制点');
+  if (event.feature) plot.plotEdit.activate(event.feature);
+  updateCount();
+});
+
+map.on('singleclick', (event) => {
+  if (plot.plotDraw.isDrawing()) return;
+  const feature = map.forEachFeatureAtPixel(event.pixel, (candidate) => candidate);
+  if (feature?.get('isPlot')) plot.plotEdit.activate(feature);
+  else plot.plotEdit.deactivate();
+});
+
+document.querySelector('#clear')?.addEventListener('click', () => {
+  plot.plotDraw.deactivate();
+  plot.plotEdit.deactivate();
+  plot.plotUtils.removeAllFeatures();
+  setStatus('未选择', '画布已清空');
+  updateCount();
+});
+
+document.querySelector('#export')?.addEventListener('click', async () => {
+  const snapshot = plot.plotUtils.getFeatures();
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(snapshot, null, 2));
+    setStatus('未选择', `已复制 ${snapshot.length} 个标绘要素的 JSON`);
+  } catch {
+    setStatus('未选择', '浏览器未开放剪贴板权限');
   }
 });
 
-// 绘制结束后，添加到FeatureOverlay显示。
-function onDrawEnd(event) {
-  console.log(event);
-  const feature = event.feature;
-  // 开始编辑
-  plot.plotEdit.activate(feature);
-}
-
-let isActive = true;
-
-// 你的外部图层事件
-map.on('click', (e) => {
-  if (isActive) return;
-  console.log('click');
-  // 你的逻辑
-});
-
-plot.plotDraw.on('drawStart', (e) => {
-  isActive = true;
-});
-
-plot.plotDraw.on('drawEnd', (e) => {
-  console.log('drawEnd');
-  isActive = false;
-});
-
-plot.plotDraw.on('drawStart', (e) => {
-  console.log(e);
-});
-plot.plotDraw.on('drawEnd', onDrawEnd);
-
-plot.plotEdit.on('activePlotChange', (e) => {
-  console.log(e);
-});
-plot.plotEdit.on('deactivatePlot', (e) => {
-  console.log(e);
-});
-
-plot.on('activeTextArea', (event) => {
-  const style = event.overlay.getStyle();
-  console.log(style);
-});
-plot.on('deactivateTextArea', (event) => {
-  const style = event.overlay.getStyle();
-  console.log(style);
-});
-
-// 指定标绘类型，开始绘制。
-function activate(type) {
-  plot.plotEdit.deactivate();
-  plot.plotDraw.activate(type);
-}
-
-function getFeatures() {
-  const features = plot.plotUtils.getFeatures();
-  plot.plotUtils.removeAllFeatures();
-  plot.plotEdit.deactivate();
-  plot.plotUtils.addFeatures(features);
-}
-
-window.plot = plot;
-window.activate = activate;
-window.getFeatures = getFeatures;
+window.addEventListener('beforeunload', () => plot.destroy(), { once: true });

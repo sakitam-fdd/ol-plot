@@ -1,0 +1,260 @@
+:root {
+  color: #eceef8;
+  background: #10121e;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+button {
+  font: inherit;
+}
+.app-shell {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  height: 100%;
+  overflow: hidden;
+}
+.sidebar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  border-right: 1px solid #282b3d;
+  background: #151725;
+  box-shadow: 12px 0 40px rgba(8, 9, 18, 0.2);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 18px 18px;
+}
+.brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: #635bff;
+  box-shadow: 0 10px 22px rgba(99, 91, 255, 0.28);
+  font-size: 22px;
+}
+.brand strong,
+.brand small {
+  display: block;
+}
+.brand strong {
+  letter-spacing: -0.03em;
+}
+.brand small {
+  margin-top: 2px;
+  color: #858aa2;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tools {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 84px;
+  scrollbar-width: thin;
+}
+.tools section {
+  margin-top: 16px;
+}
+.tools h2 {
+  margin: 0 8px 7px;
+  color: #70758e;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.tools button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 38px;
+  margin: 2px 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #b9bdd0;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.18s ease;
+}
+.tools button span {
+  width: 32px;
+  color: #696e86;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+}
+.tools button:hover {
+  color: #fff;
+  background: #202335;
+  transform: translateX(2px);
+}
+.tools button.active {
+  color: #fff;
+  background: #635bff;
+  box-shadow: 0 8px 24px rgba(99, 91, 255, 0.24);
+}
+.tools button.active span {
+  color: rgba(255, 255, 255, 0.6);
+}
+.sidebar-actions {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+  padding-top: 20px;
+  background: linear-gradient(transparent, #151725 28%);
+}
+.sidebar-actions button {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid #2d3043;
+  border-radius: 10px;
+  background: #1d2030;
+  color: #c9ccda;
+  cursor: pointer;
+}
+.sidebar-actions .danger {
+  color: #ff8e9a;
+}
+.workspace {
+  position: relative;
+  min-width: 0;
+}
+.map {
+  position: absolute;
+  inset: 0;
+  background: #dfe7e8;
+}
+.topbar {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 15px;
+  background: rgba(17, 19, 31, 0.85);
+  box-shadow: 0 14px 38px rgba(15, 19, 28, 0.2);
+  backdrop-filter: blur(14px);
+}
+.topbar div {
+  min-width: 94px;
+  padding: 8px 12px;
+}
+.topbar span,
+.topbar strong {
+  display: block;
+}
+.topbar span {
+  color: #888da5;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.topbar strong {
+  margin-top: 2px;
+  font-size: 13px;
+}
+.notice {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  left: 20px;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #292c3a;
+  box-shadow: 0 10px 32px rgba(15, 19, 28, 0.14);
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+}
+.ol-zoom {
+  top: 18px;
+  left: 18px;
+  padding: 4px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.9);
+}
+.ol-zoom button {
+  margin: 2px;
+  border-radius: 8px;
+  background: #fff;
+  color: #252737;
+}
+@media (max-width: 720px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 58px minmax(0, 1fr);
+  }
+  .sidebar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid #282b3d;
+  }
+  .brand {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+  }
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+  .brand div,
+  .tools h2,
+  .sidebar-actions {
+    display: none;
+  }
+  .tools {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 5px;
+    overflow: visible;
+    padding: 8px 12px 8px 0;
+  }
+  .tools section {
+    display: contents;
+  }
+  .tools button {
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    padding-right: 12px;
+  }
+  .topbar div:first-child {
+    display: none;
+  }
+  .topbar {
+    top: 12px;
+    right: 12px;
+  }
+  .topbar div {
+    min-width: 74px;
+    padding: 6px 8px;
+  }
+}

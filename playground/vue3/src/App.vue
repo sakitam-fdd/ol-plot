@@ -48,34 +48,9 @@
     margin: 0;
     padding: 0;
   }
-  ul,
-  li {
-    list-style: none;
-  }
-  .clearfix {
-    *zoom: 1;
-  }
-  .clearfix:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: ' ';
-    clear: both;
-    height: 0;
-  }
-  :focus {
-    outline: none;
-  }
-  a {
-    text-decoration: none;
-    outline: none;
-  }
   .map-box {
     position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    inset: 0;
     height: 100%;
     width: 100%;
     margin: 0;

@@ -4,7 +4,7 @@
     "rootDir": "src",
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "alwaysStrict": false,
     "noImplicitAny": false,
@@ -18,7 +18,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
-    "composite": true,
+    "composite": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -37,5 +37,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.*", "vitest.config.*", "./env.d.ts", "package.json"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "./env.d.ts"]
 }
