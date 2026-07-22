@@ -20,7 +20,7 @@
     "lint": "eslint \"packages/ol-plot/src/**/*.ts\"",
     "prettier": "prettier --parser=typescript --write **/*.{js,ts,md}",
     "test": "pnpm run -r test",
-    "type-check": "pnpm --filter ol-plot type-check && pnpm --filter ol-plot-vue type-check",
+    "type-check": "pnpm --filter ol-plot type-check && pnpm --filter ol-plot build && pnpm --filter ol-plot-vue type-check",
     "test-only": "pnpm run -r test-only",
     "coverage": "pnpm run -r coverage"
   },
