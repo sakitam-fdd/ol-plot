@@ -1,5 +1,7 @@
 {
   "name": "v2",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "dev": "npx vue-demi-switch 2 && vite",
     "build": "vite build",

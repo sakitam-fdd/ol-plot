@@ -38,6 +38,7 @@ export default defineConfig((env) => {
         external: (id) => /^ol/.test(id) || id === 'vue' || id === 'vue-demi',
         output: {
           globals: {
+            'ol-plot': 'olPlot',
             vue: 'Vue',
             'vue-demi': 'VueDemi',
             ol: 'ol',

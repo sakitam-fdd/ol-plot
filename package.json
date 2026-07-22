@@ -8,7 +8,7 @@
     "dev": "pnpm run -r dev",
     "build": "pnpm run -r build",
     "build:minify": "pnpm run -r build:minify",
-    "build:vue2": "cd packages/ol-plot-vue/vue2 && yarn && yarn build && cd ../../../",
+    "build:vue2": "cd packages/ol-plot-vue/vue2 && yarn install --frozen-lockfile && yarn build && cd ../../../",
     "copy-file": "cd packages/ol-plot-vue && pnpm postbuild && cd ../../",
     "docs": "pnpm --dir docs dev",
     "docs:build": "pnpm --dir docs build",
