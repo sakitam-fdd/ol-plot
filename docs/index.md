@@ -4,7 +4,7 @@ layout: home
 hero:
   name: OL Plot
   text: 把复杂标绘，变成清晰的地图交互
-  tagline: 面向 OpenLayers 6–10 的 TypeScript 标绘 SDK。27 种符号、可视化编辑、序列化恢复，一套 API 覆盖原生 JavaScript 与 Vue。
+  tagline: 面向 OpenLayers 6–10 的 TypeScript 标绘 SDK。29 种符号、可视化编辑、序列化恢复，一套 API 覆盖原生 JavaScript 与 Vue。
   actions:
     - theme: brand
       text: 5 分钟上手
@@ -17,7 +17,7 @@ hero:
 
 features:
   - icon: ◎
-    title: 27 种标绘符号
+    title: 29 种标绘符号
     details: 从基础点线面到进攻箭头、双箭头、集结地与旗标，覆盖常用 GIS 标绘语义。
   - icon: ↗
     title: 稳定的交互内核

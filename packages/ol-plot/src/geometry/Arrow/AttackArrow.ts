@@ -93,7 +93,13 @@ class AttackArrow extends Polygon {
           rightPnts.push(neckRight);
           leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
           rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
-          this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse())]);
+          const ring = leftPnts.concat(headPnts, rightPnts.reverse());
+          const first = ring[0];
+          const last = ring[ring.length - 1];
+          if (first && last && (first[0] !== last[0] || first[1] !== last[1])) {
+            ring.push(first);
+          }
+          this.setCoordinates([ring]);
         }
       }
     } catch (e) {
@@ -185,6 +191,9 @@ class AttackArrow extends Polygon {
    */
   getArrowBodyPoints(points, neckLeft, neckRight, tailWidthFactor): Array<Point> {
     const allLen = PlotUtils.wholeDistance(points);
+    if (allLen <= Constants.ZERO_TOLERANCE) {
+      return [];
+    }
     const len = PlotUtils.getBaseLength(points);
     const tailWidth = len * tailWidthFactor;
     const neckWidth = PlotUtils.MathDistance(neckLeft, neckRight);
@@ -196,7 +205,9 @@ class AttackArrow extends Polygon {
     for (let i = 1; i < points.length - 1; i++) {
       const angle = PlotUtils.getAngleOfThreePoints(points[i - 1], points[i], points[i + 1]) / 2;
       tempLen += PlotUtils.MathDistance(points[i - 1], points[i]);
-      const w = (tailWidth / 2 - (tempLen / allLen) * widthDif) / Math.sin(angle);
+      const sinAngle = Math.sin(angle);
+      const safeSin = Math.abs(sinAngle) < Constants.ZERO_TOLERANCE ? Constants.ZERO_TOLERANCE : sinAngle;
+      const w = (tailWidth / 2 - (tempLen / allLen) * widthDif) / safeSin;
       const left = PlotUtils.getThirdPoint(points[i - 1], points[i], Math.PI - angle, w, true);
       const right = PlotUtils.getThirdPoint(points[i - 1], points[i], angle, w, false);
       leftBodyPnts.push(left);

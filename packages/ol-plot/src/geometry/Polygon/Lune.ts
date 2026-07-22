@@ -57,6 +57,12 @@ class Lune extends Polygon {
     }
     // eslint-disable-next-line
     let [pnt1, pnt2, pnt3, startAngle, endAngle] = [pnts[0], pnts[1], pnts[2], 0, 0];
+    // Collinear control points cannot define a unique circle — degrade to a flat triangle
+    const twiceArea = (pnt2[0] - pnt1[0]) * (pnt3[1] - pnt1[1]) - (pnt2[1] - pnt1[1]) * (pnt3[0] - pnt1[0]);
+    if (Math.abs(twiceArea) <= 1e-10) {
+      this.setCoordinates([[pnt1, pnt2, pnt3, pnt1]]);
+      return;
+    }
     const center = PlotUtils.getCircleCenterOfThreePoints(pnt1, pnt2, pnt3);
     const radius = PlotUtils.MathDistance(pnt1, center);
     const angle1 = PlotUtils.getAzimuth(pnt1, center);

@@ -1,6 +1,6 @@
 # ol-plot
 
-OpenLayers 地图标绘 SDK，支持 OpenLayers 6.15–10.x、27 种标绘符号、控制点编辑、样式序列化和场景恢复。
+OpenLayers 地图标绘 SDK，支持 OpenLayers 6.15–10.x、29 种标绘符号、控制点编辑、样式序列化和场景恢复。
 
 ## 安装
 

@@ -11,16 +11,30 @@ import Plot, { PlotTypes } from 'ol-plot';
 
 const toolGroups = [
   {
-    label: '基础图形',
+    label: '点线',
     items: [
       [PlotTypes.POINT, '点'],
+      [PlotTypes.PENNANT, '旗标点'],
       [PlotTypes.POLYLINE, '折线'],
       [PlotTypes.CURVE, '曲线'],
+      [PlotTypes.FREEHANDLINE, '自由线'],
+      [PlotTypes.ARC, '圆弧'],
+    ],
+  },
+  {
+    label: '面域',
+    items: [
       [PlotTypes.CIRCLE, '圆'],
       [PlotTypes.ELLIPSE, '椭圆'],
       [PlotTypes.RECTANGLE, '矩形'],
+      [PlotTypes.RECTINCLINED1, '斜矩形1'],
+      [PlotTypes.RECTINCLINED2, '斜矩形2'],
       [PlotTypes.POLYGON, '多边形'],
+      [PlotTypes.FREE_POLYGON, '自由面'],
+      [PlotTypes.LUNE, '弓形'],
       [PlotTypes.SECTOR, '扇形'],
+      [PlotTypes.CLOSED_CURVE, '闭合曲面'],
+      [PlotTypes.GATHERING_PLACE, '集结地'],
     ],
   },
   {
@@ -33,13 +47,12 @@ const toolGroups = [
       [PlotTypes.TAILED_ATTACK_ARROW, '燕尾进攻箭头'],
       [PlotTypes.DOUBLE_ARROW, '双箭头'],
       [PlotTypes.SQUAD_COMBAT, '分队战斗'],
+      [PlotTypes.TAILED_SQUAD_COMBAT, '燕尾分队战斗'],
     ],
   },
   {
-    label: '区域与旗标',
+    label: '旗标与文本',
     items: [
-      [PlotTypes.CLOSED_CURVE, '闭合曲面'],
-      [PlotTypes.GATHERING_PLACE, '集结地'],
       [PlotTypes.RECTFLAG, '矩形旗'],
       [PlotTypes.TRIANGLEFLAG, '三角旗'],
       [PlotTypes.CURVEFLAG, '曲线旗'],
@@ -83,7 +96,7 @@ toolGroups.forEach((group, groupIndex) => {
       plot.plotEdit.deactivate();
       plot.plotDraw.activate(type);
       document.querySelectorAll('.tools button').forEach((item) => item.classList.toggle('active', item === button));
-      setStatus(label, '在地图上依次点击控制点；自由图形请双击结束');
+      setStatus(label, '在地图上依次点击控制点；自由图形请双击或再次单击结束');
     });
     section.appendChild(button);
   });

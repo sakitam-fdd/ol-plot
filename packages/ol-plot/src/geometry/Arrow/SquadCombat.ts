@@ -51,7 +51,13 @@ class SquadCombat extends AttackArrow {
           rightPnts.push(neckRight);
           leftPnts = PlotUtils.getQBSplinePoints(leftPnts);
           rightPnts = PlotUtils.getQBSplinePoints(rightPnts);
-          this.setCoordinates([leftPnts.concat(headPnts, rightPnts.reverse())]);
+          const ring = leftPnts.concat(headPnts, rightPnts.reverse());
+          const first = ring[0];
+          const last = ring[ring.length - 1];
+          if (first && last && (first[0] !== last[0] || first[1] !== last[1])) {
+            ring.push(first);
+          }
+          this.setCoordinates([ring]);
         }
       }
     } catch (e) {

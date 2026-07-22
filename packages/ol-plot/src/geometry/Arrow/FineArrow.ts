@@ -77,7 +77,7 @@ class FineArrow extends Polygon {
       const headRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.headAngle, headWidth, true);
       const neckLeft = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, false);
       const neckRight = PlotUtils.getThirdPoint(pnt1, pnt2, this.neckAngle, neckWidth, true);
-      const pList = [tailLeft, neckLeft, headLeft, pnt2, headRight, neckRight, tailRight];
+      const pList = [tailLeft, neckLeft, headLeft, pnt2, headRight, neckRight, tailRight, tailLeft];
       this.setCoordinates([pList]);
     } catch (e) {
       console.log(e);

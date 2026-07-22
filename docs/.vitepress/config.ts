@@ -13,7 +13,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#635bff' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'OL Plot — OpenLayers 标绘 SDK' }],
-    ['meta', { property: 'og:description', content: '27 种标绘符号、可视化编辑与 OpenLayers 6–10 兼容。' }],
+    ['meta', { property: 'og:description', content: '29 种标绘符号、可视化编辑与 OpenLayers 6–10 兼容。' }],
   ],
   themeConfig: {
     siteTitle: 'OL Plot',

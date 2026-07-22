@@ -101,9 +101,9 @@ class CurveFlag extends Polygon {
       const curve1 = getBezierPoints([point1, point2, point3, point4, point5]);
       // 计算下曲线
       const curve2 = getBezierPoints([point6, point7, point8, point9, point10] as Point[]);
-      // 合并
+      // 合并并闭合到旗杆顶部起点
       components = curve1.concat(curve2);
-      components.push(point11);
+      components.push(point11, startPoint);
     }
     return components;
   }

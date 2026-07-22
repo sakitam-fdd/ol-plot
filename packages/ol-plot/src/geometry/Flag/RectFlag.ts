@@ -66,7 +66,7 @@ class RectFlag extends Polygon {
       const point2 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
       const point3 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
       const point4 = [startPoint[0], endPoint[1]];
-      components = [startPoint, point1, point2, point3, point4];
+      components = [startPoint, point1, point2, point3, point4, startPoint];
     }
     return components;
   }

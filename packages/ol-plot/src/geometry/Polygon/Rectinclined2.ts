@@ -6,6 +6,7 @@
 import { Map } from 'ol';
 import { Polygon as $Polygon } from 'ol/geom';
 import { PlotTypes } from '@/utils/PlotTypes';
+import * as Constants from '@/constants';
 import type { Point } from '@/utils/utils';
 
 class Rectinclined extends $Polygon {
@@ -49,15 +50,20 @@ class Rectinclined extends $Polygon {
     }
     if (points === 2) {
       this.setCoordinates([this.points]);
-    } else {
-      const pnts = this.getPoints();
-      const [pnt1, pnt2, mouse] = [pnts[0], pnts[1], pnts[2]];
-      const intersect = this.calculateIntersectionPoint(pnt1, pnt2, mouse);
-      const pnt4 = this.calculateFourthPoint(pnt1, intersect, mouse);
-      const pList: Point[] = [];
-      pList.push(pnt1, intersect, mouse, pnt4, pnt1);
-      this.setCoordinates([pList]);
+      return;
     }
+
+    const pnts = this.getPoints();
+    const [pnt1, pnt2, mouse] = [pnts[0], pnts[1], pnts[2]];
+    const baseLen = Math.hypot(pnt2[0] - pnt1[0], pnt2[1] - pnt1[1]);
+    if (baseLen <= Constants.ZERO_TOLERANCE) {
+      this.setCoordinates([[pnt1, pnt2, mouse, pnt1]]);
+      return;
+    }
+
+    const intersect = this.calculateIntersectionPoint(pnt1, pnt2, mouse);
+    const pnt4 = this.calculateFourthPoint(pnt1, intersect, mouse);
+    this.setCoordinates([[pnt1, intersect, mouse, pnt4, pnt1]]);
   }
 
   /**
@@ -79,20 +85,16 @@ class Rectinclined extends $Polygon {
    * @param {*} p3
    */
   calculateIntersectionPoint(p1, p2, p3): Point {
-    const v = {
-      x: p2[0] - p1[0],
-      y: p2[1] - p1[1],
-    };
-    const u = {
-      x: p3[0] - p1[0],
-      y: p3[1] - p1[1],
-    };
-    const projectionLength = (u.x * v.x + u.y * v.y) / (v.x * v.x + v.y * v.y);
-    const intersectionPoint: { x: number; y: number } = {
-      x: p1[0] + v.x * projectionLength,
-      y: p1[1] + v.y * projectionLength,
-    };
-    return [intersectionPoint.x, intersectionPoint.y];
+    const vx = p2[0] - p1[0];
+    const vy = p2[1] - p1[1];
+    const denom = vx * vx + vy * vy;
+    if (denom <= Constants.ZERO_TOLERANCE) {
+      return [p1[0], p1[1]];
+    }
+    const ux = p3[0] - p1[0];
+    const uy = p3[1] - p1[1];
+    const projectionLength = (ux * vx + uy * vy) / denom;
+    return [p1[0] + vx * projectionLength, p1[1] + vy * projectionLength];
   }
 
   /**

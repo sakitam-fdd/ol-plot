@@ -57,7 +57,8 @@ class RectAngle extends Polygon {
       } else {
         const start = this.points[0];
         const end = this.points[1];
-        coordinates = [start, [start[0], end[1]], end, [end[0], start[1]], start];
+        // Polygon coordinates must be Coordinate[][] (closed ring wrapped in an array)
+        coordinates = [[start, [start[0], end[1]], end, [end[0], start[1]], start]];
       }
       this.setCoordinates(coordinates);
     }

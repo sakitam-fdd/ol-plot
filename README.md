@@ -5,7 +5,7 @@
 [![npm downloads](https://badgen.net/npm/dm/ol-plot)](https://npm.im/ol-plot)
 [![license](https://img.shields.io/badge/license-MIT-635bff.svg)](./LICENSE)
 
-面向 OpenLayers 的 TypeScript 地图标绘 SDK。包含 27 种点、线、面、箭头和旗标，支持控制点编辑、样式序列化与场景恢复。
+面向 OpenLayers 的 TypeScript 地图标绘 SDK。包含 29 种点、线、面、箭头和旗标，支持控制点编辑、样式序列化与场景恢复。
 
 - OpenLayers `6.15–10.x`
 - 原生 JavaScript / TypeScript 与 Vue 2 / Vue 3

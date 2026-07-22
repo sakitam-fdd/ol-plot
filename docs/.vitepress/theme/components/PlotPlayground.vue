@@ -7,6 +7,8 @@
   import { fromLonLat } from 'ol/proj';
   import Plot, { PlotTypes, type PlotSerializedFeature } from 'ol-plot';
 
+  type ToolItem = readonly [PlotTypes, string, string?];
+
   const target = ref<HTMLElement>();
   const map = shallowRef<Map>();
   const plot = shallowRef<Plot>();
@@ -14,27 +16,67 @@
   const featureCount = ref(0);
   const notice = ref('选择一种符号，然后在地图上点击控制点');
 
-  const groups = [
+  const groups: { label: string; items: ToolItem[] }[] = [
     {
-      label: '常用',
+      label: '点线',
       items: [
-        [PlotTypes.STRAIGHT_ARROW, '直箭头'],
-        [PlotTypes.FINE_ARROW, '细箭头'],
-        [PlotTypes.DOUBLE_ARROW, '双箭头'],
-        [PlotTypes.ATTACK_ARROW, '进攻箭头'],
+        [PlotTypes.POINT, '点', '单击落点即可完成'],
+        [PlotTypes.PENNANT, '旗标点', '单击落点即可完成'],
+        [PlotTypes.POLYLINE, '折线', '单击添加顶点，双击结束'],
+        [PlotTypes.CURVE, '曲线', '单击添加控制点，双击结束'],
+        [PlotTypes.FREEHANDLINE, '自由线', '按住移动绘制，单击结束'],
+        [PlotTypes.ARC, '圆弧', '依次点击 3 个控制点'],
       ],
     },
     {
-      label: '线面',
+      label: '面域',
       items: [
-        [PlotTypes.CURVE, '曲线'],
-        [PlotTypes.CLOSED_CURVE, '闭合曲面'],
-        [PlotTypes.CIRCLE, '圆'],
-        [PlotTypes.SECTOR, '扇形'],
-        [PlotTypes.RECTANGLE, '矩形'],
+        [PlotTypes.CIRCLE, '圆', '圆心 + 半径点'],
+        [PlotTypes.ELLIPSE, '椭圆', '对角两点确定轴对齐椭圆'],
+        [PlotTypes.RECTANGLE, '矩形', '对角两点'],
+        [PlotTypes.RECTINCLINED1, '斜矩形1', '底边两点 + 高度点'],
+        [PlotTypes.RECTINCLINED2, '斜矩形2', '底边两点 + 对角点'],
+        [PlotTypes.POLYGON, '多边形', '单击添加顶点，双击结束'],
+        [PlotTypes.FREE_POLYGON, '自由面', '按住移动绘制，单击结束'],
+        [PlotTypes.LUNE, '弓形', '弦端点 + 弧上一点'],
+        [PlotTypes.SECTOR, '扇形', '圆心 + 起止半径点'],
+        [PlotTypes.CLOSED_CURVE, '闭合曲面', '单击添加控制点，双击结束'],
+        [PlotTypes.GATHERING_PLACE, '集结地', '依次点击 3 个控制点'],
       ],
     },
-  ] as const;
+    {
+      label: '箭头',
+      items: [
+        [PlotTypes.STRAIGHT_ARROW, '直箭头', '起点 + 终点'],
+        [PlotTypes.FINE_ARROW, '细箭头', '起点 + 终点'],
+        [PlotTypes.ASSAULT_DIRECTION, '突击方向', '起点 + 终点'],
+        [PlotTypes.ATTACK_ARROW, '进攻箭头', '箭尾宽两点 + 中轴点，双击结束'],
+        [PlotTypes.TAILED_ATTACK_ARROW, '燕尾进攻箭头', '箭尾宽两点 + 中轴点，双击结束'],
+        [PlotTypes.SQUAD_COMBAT, '分队战斗', '沿中轴依次点击，双击结束'],
+        [PlotTypes.TAILED_SQUAD_COMBAT, '燕尾分队战斗', '沿中轴依次点击，双击结束'],
+        [PlotTypes.DOUBLE_ARROW, '双箭头', '依次点击最多 4 个控制点'],
+      ],
+    },
+    {
+      label: '旗标 / 文本',
+      items: [
+        [PlotTypes.RECTFLAG, '矩形旗', '旗杆顶 + 旗面对角'],
+        [PlotTypes.TRIANGLEFLAG, '三角旗', '旗杆顶 + 旗面对角'],
+        [PlotTypes.CURVEFLAG, '曲线旗', '旗杆顶 + 旗面对角'],
+        [PlotTypes.TEXTAREA, '文本框', '拖拽框选文本区域'],
+      ],
+    },
+  ];
+
+  const tipByType = computed(() => {
+    const mapTips = new Map<PlotTypes, string>();
+    for (const group of groups) {
+      for (const [type, , tip] of group.items) {
+        if (tip) mapTips.set(type, tip);
+      }
+    }
+    return mapTips;
+  });
 
   const activeLabel = computed(() => {
     for (const group of groups) {
@@ -53,10 +95,7 @@
     plot.value.plotEdit.deactivate();
     plot.value.plotDraw.activate(type);
     activeType.value = type;
-    notice.value =
-      type === PlotTypes.CURVE || type === PlotTypes.CLOSED_CURVE
-        ? '单击添加控制点，双击结束'
-        : '在地图上依次点击控制点';
+    notice.value = tipByType.value.get(type) ?? '在地图上依次点击控制点';
   }
 
   function clearAll() {
@@ -81,21 +120,51 @@
 
   function seedDemo() {
     if (!plot.value) return;
-    const points = [
-      [116.12, 39.72],
-      [116.62, 40.02],
-      [117.02, 39.66],
-    ].map((coordinate) => fromLonLat(coordinate) as [number, number]);
+    const toMap = (coordinate: [number, number]) => fromLonLat(coordinate) as [number, number];
     const features: PlotSerializedFeature[] = [
       {
         type: 'Feature',
         geometry: { type: 'Polygon', coordinates: [] },
         properties: {
           type: PlotTypes.ATTACK_ARROW,
-          points,
+          points: [
+            [116.12, 39.72],
+            [116.62, 40.02],
+            [117.02, 39.66],
+          ].map(toMap),
           style: {
             fill: { fillColor: 'rgba(99, 91, 255, .28)' },
             stroke: { strokeColor: '#635bff', strokeWidth: 3 },
+          },
+        },
+      },
+      {
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [] },
+        properties: {
+          type: PlotTypes.CIRCLE,
+          points: [
+            [116.35, 39.95],
+            [116.48, 39.95],
+          ].map(toMap),
+          style: {
+            fill: { fillColor: 'rgba(49, 196, 141, .18)' },
+            stroke: { strokeColor: '#31c48d', strokeWidth: 2 },
+          },
+        },
+      },
+      {
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [] },
+        properties: {
+          type: PlotTypes.FINE_ARROW,
+          points: [
+            [116.7, 39.55],
+            [117.15, 39.9],
+          ].map(toMap),
+          style: {
+            fill: { fillColor: 'rgba(245, 158, 11, .22)' },
+            stroke: { strokeColor: '#f59e0b', strokeWidth: 2 },
           },
         },
       },
@@ -149,19 +218,21 @@
         <span class="live-dot" aria-hidden="true"></span>
         Live playground
       </div>
-      <div v-for="group in groups" :key="group.label" class="tool-group">
-        <p>{{ group.label }}</p>
-        <button
-          v-for="([type, label], index) in group.items"
-          :key="type"
-          type="button"
-          :class="{ active: activeType === type }"
-          :aria-pressed="activeType === type"
-          @click="activate(type)"
-        >
-          <span class="tool-glyph">{{ String(index + 1).padStart(2, '0') }}</span>
-          {{ label }}
-        </button>
+      <div class="tool-scroll">
+        <div v-for="group in groups" :key="group.label" class="tool-group">
+          <p>{{ group.label }}</p>
+          <button
+            v-for="([type, label], index) in group.items"
+            :key="type"
+            type="button"
+            :class="{ active: activeType === type }"
+            :aria-pressed="activeType === type"
+            @click="activate(type)"
+          >
+            <span class="tool-glyph">{{ String(index + 1).padStart(2, '0') }}</span>
+            {{ label }}
+          </button>
+        </div>
       </div>
       <div class="panel-actions">
         <button type="button" @click="copyJSON">复制 JSON</button>
@@ -189,8 +260,8 @@
 <style scoped>
   .playground-shell {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    min-height: 560px;
+    grid-template-columns: 240px minmax(0, 1fr);
+    min-height: 620px;
     overflow: hidden;
     border: 1px solid var(--vp-c-divider);
     border-radius: 24px;
@@ -201,7 +272,10 @@
   .tool-panel {
     position: relative;
     z-index: 2;
-    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 20px 14px 72px;
     border-right: 1px solid var(--vp-c-divider);
     background: color-mix(in srgb, var(--vp-c-bg) 92%, #635bff 8%);
   }
@@ -210,7 +284,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 2px 8px 22px;
+    margin: 2px 8px 14px;
     font-size: 12px;
     font-weight: 750;
     letter-spacing: 0.08em;
@@ -225,8 +299,18 @@
     box-shadow: 0 0 0 5px rgba(49, 196, 141, 0.12);
   }
 
+  .tool-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
   .tool-group {
-    margin-top: 18px;
+    margin-top: 14px;
+  }
+  .tool-group:first-child {
+    margin-top: 0;
   }
   .tool-group p {
     margin: 0 8px 8px;
@@ -241,8 +325,8 @@
     display: flex;
     align-items: center;
     width: 100%;
-    min-height: 39px;
-    margin: 3px 0;
+    min-height: 36px;
+    margin: 2px 0;
     padding: 0 10px;
     border: 0;
     border-radius: 10px;
@@ -366,12 +450,10 @@
   @media (max-width: 760px) {
     .playground-shell {
       grid-template-columns: 1fr;
-      min-height: 680px;
+      min-height: 720px;
     }
     .tool-panel {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
+      display: block;
       padding: 12px;
       border-right: 0;
       border-bottom: 1px solid var(--vp-c-divider);
@@ -380,6 +462,12 @@
     .tool-group p,
     .panel-actions {
       display: none;
+    }
+    .tool-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
     .tool-group {
       display: contents;

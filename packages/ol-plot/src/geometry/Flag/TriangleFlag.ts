@@ -66,7 +66,7 @@ class TriangleFlag extends Polygon {
       const point1 = [endPoint[0], (startPoint[1] + endPoint[1]) / 2];
       const point2 = [startPoint[0], (startPoint[1] + endPoint[1]) / 2];
       const point3 = [startPoint[0], endPoint[1]];
-      components = [startPoint, point1, point2, point3];
+      components = [startPoint, point1, point2, point3, startPoint];
     }
     return components;
   }

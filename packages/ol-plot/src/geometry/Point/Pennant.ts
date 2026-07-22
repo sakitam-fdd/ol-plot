@@ -25,7 +25,7 @@ class Pennant extends Point {
     this.type = PlotTypes.PENNANT;
     this.options = params || {};
     this.freehand = false;
-    this.fixPointCount = undefined;
+    this.fixPointCount = 1;
     this.set('params', this.options);
     if (point && point.length > 0) {
       this.setPoints(point);
@@ -43,7 +43,8 @@ class Pennant extends Point {
   }
 
   generate() {
-    this.setCoordinates(this.points);
+    const pnt = this.points[0];
+    this.setCoordinates(pnt as unknown as any[]);
   }
 
   /**

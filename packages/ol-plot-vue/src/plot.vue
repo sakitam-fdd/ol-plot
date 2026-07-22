@@ -196,7 +196,7 @@
           },
           {
             id: 'Arc',
-            name: '弓形',
+            name: '圆弧',
             alias: 'Arc',
             src: 'Arc',
           },

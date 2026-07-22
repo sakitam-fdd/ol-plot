@@ -6,6 +6,7 @@
 import { Map } from 'ol';
 import { Polygon as $Polygon } from 'ol/geom';
 import { PlotTypes } from '@/utils/PlotTypes';
+import * as Constants from '@/constants';
 import type { Point } from '@/utils/utils';
 
 class Rectinclined extends $Polygon {
@@ -49,73 +50,52 @@ class Rectinclined extends $Polygon {
     }
     if (points === 2) {
       this.setCoordinates([this.points]);
-    } else {
-      const pnts = this.getPoints();
-      const [pnt1, pnt2, mouse] = [pnts[0], pnts[1], pnts[2]];
-      const d = this.calculatePerpendicularDistance(pnt1, pnt2, mouse);
-      const direction = this.calculatePositionRelativeToLine(pnt1, pnt2, mouse);
-      const pnt3 = this.calculatePerpendicularPoint(pnt1, pnt2, direction * d);
-      const pnt4 = this.calculateFourthPoint(pnt1, pnt2, pnt3);
-      const pList: Point[] = [];
-      pList.push(pnt1, pnt2, pnt3, pnt4, pnt1);
-      this.setCoordinates([pList]);
+      return;
     }
+
+    const pnts = this.getPoints();
+    const [pnt1, pnt2, mouse] = [pnts[0], pnts[1], pnts[2]];
+    const baseLen = Math.hypot(pnt2[0] - pnt1[0], pnt2[1] - pnt1[1]);
+    if (baseLen <= Constants.ZERO_TOLERANCE) {
+      this.setCoordinates([[pnt1, pnt2, mouse, pnt1]]);
+      return;
+    }
+
+    const d = this.calculatePerpendicularDistance(pnt1, pnt2, mouse);
+    const direction = this.calculatePositionRelativeToLine(pnt1, pnt2, mouse);
+    const pnt3 = this.calculatePerpendicularPoint(pnt1, pnt2, direction * d);
+    const pnt4 = this.calculateFourthPoint(pnt1, pnt2, pnt3);
+    this.setCoordinates([[pnt1, pnt2, pnt3, pnt4, pnt1]]);
   }
 
   /**
    * 已知p1，p2，p3三点，计算p3到p1p2的垂直距离
-   * @param {*} p1
-   * @param {*} p2
-   * @param {*} p3
    */
   calculatePerpendicularDistance(p1, p2, p3) {
-    // 计算向量V的分量
     const vx = p2[0] - p1[0];
     const vy = p2[1] - p1[1];
-    // 计算P1P3的分量
+    const vMagnitude = Math.sqrt(vx * vx + vy * vy);
+    if (vMagnitude <= Constants.ZERO_TOLERANCE) {
+      return 0;
+    }
     const px = p3[0] - p1[0];
     const py = p3[1] - p1[1];
-    // 计算向量V的模长
-    const vMagnitude = Math.sqrt(vx * vx + vy * vy);
-    // 计算点积
-    const dotProduct = px * vx + py * vy;
-    // 计算投影长度
-    const projectionLength = dotProduct / vMagnitude;
-    // 计算P1P3的模长
-    const pMagnitude = Math.sqrt(px * px + py * py);
-    // 计算垂直距离
-    const perpendicularDistance = Math.sqrt(pMagnitude * pMagnitude - projectionLength * projectionLength);
-    return perpendicularDistance;
+    return Math.abs(vx * py - vy * px) / vMagnitude;
   }
 
   /**
-   * 已知p1，p2，两点，判断p3点在p1p2的左右，返回-1右侧，0线上，1左侧
-   * @param {*} p1
-   * @param {*} p2
-   * @param {*} p3
+   * 已知p1，p2，判断p3在有向线段左右：1 左侧，-1 右侧，0 线上
    */
   calculatePositionRelativeToLine(p1, p2, p3) {
-    const v1 = {
-      x: p2[0] - p1[0],
-      y: p2[1] - p1[1],
-    };
-    const v2 = {
-      x: p3[0] - p1[0],
-      y: p3[1] - p1[1],
-    };
-    const crossProduct = v1.x * v2.y - v1.y * v2.x;
-    const direction = crossProduct > 0 ? 1 : -1;
-    if (p1[1] > p2[1]) {
-      return direction;
+    const crossProduct = (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0]);
+    if (Math.abs(crossProduct) <= Constants.ZERO_TOLERANCE) {
+      return 0;
     }
-    return -direction;
+    return crossProduct > 0 ? 1 : -1;
   }
 
   /**
    * 已知p1，p2，p3点求矩形的p4点
-   * @param {*} p1
-   * @param {*} p2
-   * @param {*} p3
    */
   calculateFourthPoint(p1, p2, p3): Point {
     const x = p1[0] + p3[0] - p2[0];
@@ -124,30 +104,19 @@ class Rectinclined extends $Polygon {
   }
 
   /**
-   * 已知p1，p2两点和距离d，求距离p1p2垂直距离为d的点p3
-   * @param {*} p1
-   * @param {*} p2
-   * @param {*} d
+   * 已知底边与有符号距离 d，求相对 p2 的垂向角点
    */
   calculatePerpendicularPoint(p1, p2, d): Point {
-    // 计算p1p2的斜率
-    const m = (p2[1] - p1[1]) / (p2[0] - p1[0]);
-
-    let x, y;
-    // 计算垂线的斜率
-    if (m !== 0) {
-      const perpendicularSlope = -1 / m;
-      // 根据垂线斜率和已知点p2的坐标，得到垂线方程中的常数项
-      const c = p2[1] - perpendicularSlope * p2[0];
-      // 解垂线方程，求解x和y的值
-      x = d * Math.sqrt(1 / (1 + perpendicularSlope ** 2)) + p2[0];
-      y = perpendicularSlope * x + c;
-    } else {
-      x = p2[0];
-      y = p2[1] - d;
+    const vx = p2[0] - p1[0];
+    const vy = p2[1] - p1[1];
+    const vMagnitude = Math.sqrt(vx * vx + vy * vy);
+    if (vMagnitude <= Constants.ZERO_TOLERANCE) {
+      return [p2[0], p2[1]];
     }
-    // 返回垂线另一端点的坐标
-    return [x, y];
+    // 单位法向（逆时针旋转 90°）
+    const nx = -vy / vMagnitude;
+    const ny = vx / vMagnitude;
+    return [p2[0] + nx * d, p2[1] + ny * d];
   }
 
   /**
