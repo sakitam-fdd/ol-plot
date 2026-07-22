@@ -249,9 +249,11 @@ class PlotUtils {
     if (style) {
       const olStyle_ = style.getFill();
       if (olStyle_) {
-        fill = {};
         const color = olStyle_.getColor();
-        fill.fillColor = this.getColor(color);
+        if (color) {
+          fill = {};
+          fill.fillColor = this.getColor(color);
+        }
       }
     }
     return this.fixObject(fill);
@@ -368,10 +370,12 @@ class PlotUtils {
           // 获取icon
           const icon = this.getImage_(style);
           return {
-            fill: {
-              fillColor: backgroundColor,
-              opacity,
-            },
+            fill: fill
+              ? {
+                  fillColor: backgroundColor,
+                  opacity,
+                }
+              : undefined,
             stroke,
             image: icon,
             text,

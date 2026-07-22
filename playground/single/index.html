@@ -16,8 +16,11 @@
         </header>
         <nav id="tools" class="tools" aria-label="标绘工具"></nav>
         <footer class="sidebar-actions">
+          <button id="cancel-draw" type="button" disabled>取消绘制</button>
           <button id="export" type="button">复制 JSON</button>
-          <button id="clear" type="button" class="danger">清空</button>
+          <button id="save" type="button">保存场景</button>
+          <button id="restore" type="button" disabled>恢复场景</button>
+          <button id="clear" type="button" class="danger full">清空画布</button>
         </footer>
       </aside>
       <main class="workspace">
@@ -27,6 +30,51 @@
           <div><span>当前工具</span><strong id="active-tool">未选择</strong></div>
           <div><span>要素</span><strong id="feature-count">0</strong></div>
         </header>
+        <aside id="style-panel" class="style-panel" aria-hidden="true" aria-label="图形样式编辑器">
+          <header>
+            <div><span>当前选择</span><strong id="style-kind">未选择</strong></div>
+            <span id="edit-badge" class="live-badge">SELECTED</span>
+          </header>
+          <div class="edit-actions" aria-label="图形激活状态">
+            <button id="activate-edit" type="button">激活编辑</button>
+            <button id="deactivate-edit" type="button" disabled>取消激活</button>
+          </div>
+          <fieldset id="fill-controls">
+            <legend>填充</legend>
+            <label class="color-control">
+              <span>填充颜色</span>
+              <input id="fill-color" type="color" value="#635bff" />
+            </label>
+            <label>
+              <span>透明度 <output data-output="fillOpacity">28%</output></span>
+              <input id="fill-opacity" type="range" min="0.05" max="1" step="0.05" value="0.28" />
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>线条 / 边框</legend>
+            <label class="color-control">
+              <span>颜色</span>
+              <input id="stroke-color" type="color" value="#4338ca" />
+            </label>
+            <label>
+              <span>宽度 <output data-output="strokeWidth">2 px</output></span>
+              <input id="stroke-width" type="range" min="1" max="12" step="1" value="2" />
+            </label>
+          </fieldset>
+          <fieldset id="point-controls" hidden>
+            <legend>点符号</legend>
+            <label>
+              <span>大小 <output data-output="pointSize">8 px</output></span>
+              <input id="point-size" type="range" min="4" max="28" step="1" value="8" />
+            </label>
+          </fieldset>
+          <div class="preset-row" aria-label="样式配色预设">
+            <button type="button" title="靛蓝" style="--swatch: #635bff" data-preset data-fill="#635bff" data-stroke="#4338ca"></button>
+            <button type="button" title="翡翠" style="--swatch: #31c48d" data-preset data-fill="#31c48d" data-stroke="#047857"></button>
+            <button type="button" title="琥珀" style="--swatch: #f59e0b" data-preset data-fill="#f59e0b" data-stroke="#b45309"></button>
+            <button type="button" title="玫红" style="--swatch: #f43f5e" data-preset data-fill="#f43f5e" data-stroke="#be123c"></button>
+          </div>
+        </aside>
         <p id="notice" class="notice">选择左侧工具，然后在地图上点击控制点</p>
       </main>
     </div>

@@ -10,3 +10,5 @@ Modernize the SDK and documentation platform:
 - make pointer tolerance projection-independent and harden degenerate geometry handling
 - optimize curve sampling and correct factorial/binomial calculations
 - add the VitePress 2 documentation site and interactive examples
+- prevent a finishing drawing double-click from triggering map zoom across OpenLayers 6–10
+- add point, line and area style editing plus activate, cancel, save and restore Demo workflows

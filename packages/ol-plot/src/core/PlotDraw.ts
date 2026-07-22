@@ -45,6 +45,8 @@ class PlotDraw extends Observable {
 
   private dblClickZoomWasActive: boolean;
 
+  private mapToolsRestoreTimer: WithNull<ReturnType<typeof setTimeout>>;
+
   constructor(map: Map, params: PlotOptions | undefined, ctx: olPlot) {
     super();
     if (map && map instanceof Map) {
@@ -91,6 +93,7 @@ class PlotDraw extends Observable {
      */
     this.dblClickZoomInteraction = null;
     this.dblClickZoomWasActive = false;
+    this.mapToolsRestoreTimer = null;
 
     /**
      * draw交互工具
@@ -212,16 +215,19 @@ class PlotDraw extends Observable {
    * @param params
    */
   public activate(type: PlotTypes, params: PlotFeatureParams = {}) {
+    const isSupportedType = type === PlotTypes.TEXTAREA || Object.values(PlotTypes).includes(type);
+    if (!isSupportedType) {
+      console.warn('不存在的标绘类型！');
+      return;
+    }
     this.deactivate();
     this.deactiveMapTools();
     this.plotType = type;
     this.plotParams = params;
     if (type === PlotTypes.TEXTAREA) {
       this.activeInteraction();
-    } else if (Object.keys(PlotTypes).some((key) => PlotTypes[key] === type)) {
-      this.map.on('click', this.mapFirstClickHandler);
     } else {
-      console.warn('不存在的标绘类型！');
+      this.map.on('click', this.mapFirstClickHandler);
     }
   }
 
@@ -320,6 +326,11 @@ class PlotDraw extends Observable {
    * 取消激活状态
    */
   public deactivate() {
+    this.resetDrawingState(false);
+  }
+
+  /** Reset drawing state and restore host interactions. */
+  private resetDrawingState(deferMapToolsRestore: boolean) {
     this.removeEventHandlers();
     if (this.drawInteraction_) {
       this.map.removeInteraction(this.drawInteraction_);
@@ -330,7 +341,11 @@ class PlotDraw extends Observable {
     this.feature = null;
     this.plotType = null;
     this.plotParams = null;
-    this.activateMapTools();
+    if (deferMapToolsRestore) {
+      this.scheduleMapToolsRestore();
+    } else {
+      this.activateMapTools();
+    }
   }
 
   /**
@@ -408,12 +423,16 @@ class PlotDraw extends Observable {
    * @param event
    */
   private mapDoubleClickHandler(event) {
-    event.preventDefault();
+    const isDoubleClick = event?.type === 'dblclick';
+    if (isDoubleClick) {
+      event.preventDefault?.();
+      event.stopPropagation?.();
+    }
 
     if (!this.plot) return;
 
     this.plot.finishDrawing();
-    this.drawEnd(event);
+    this.drawEnd(event, isDoubleClick);
   }
 
   /**
@@ -461,7 +480,7 @@ class PlotDraw extends Observable {
   /**
    * 绘制结束
    */
-  private drawEnd(event) {
+  private drawEnd(event, deferMapToolsRestore = false) {
     this.dispatchEvent(
       new PlotEvent('drawEnd', {
         originalEvent: event,
@@ -472,7 +491,7 @@ class PlotDraw extends Observable {
     if (this.feature && this.options.isClear) {
       this.drawLayer.getSource()?.removeFeature(this.feature);
     }
-    this.deactivate();
+    this.resetDrawingState(deferMapToolsRestore);
   }
 
   /**
@@ -489,6 +508,7 @@ class PlotDraw extends Observable {
    * 取消激活地图交互工具
    */
   private deactiveMapTools() {
+    this.cancelMapToolsRestore();
     const interactions = this.map.getInteractions().getArray();
     interactions.every((item) => {
       if (item instanceof DoubleClickZoom) {
@@ -506,10 +526,31 @@ class PlotDraw extends Observable {
    * 还原之前状态
    */
   private activateMapTools() {
+    this.cancelMapToolsRestore();
     if (this.dblClickZoomInteraction) {
       this.dblClickZoomInteraction.setActive(this.dblClickZoomWasActive);
       this.dblClickZoomInteraction = null;
       this.dblClickZoomWasActive = false;
+    }
+  }
+
+  /**
+   * A map dblclick listener runs before interactions handle the same browser
+   * event. Restoring DoubleClickZoom synchronously would let it consume the
+   * finishing dblclick, so restore it on the next macrotask instead.
+   */
+  private scheduleMapToolsRestore() {
+    this.cancelMapToolsRestore();
+    this.mapToolsRestoreTimer = setTimeout(() => {
+      this.mapToolsRestoreTimer = null;
+      this.activateMapTools();
+    }, 0);
+  }
+
+  private cancelMapToolsRestore() {
+    if (this.mapToolsRestoreTimer !== null) {
+      clearTimeout(this.mapToolsRestoreTimer);
+      this.mapToolsRestoreTimer = null;
     }
   }
 }

@@ -17,6 +17,11 @@ body,
 button {
   font: inherit;
 }
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #817aff;
+  outline-offset: 2px;
+}
 .app-shell {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
@@ -66,7 +71,7 @@ button {
 .tools {
   flex: 1;
   overflow-y: auto;
-  padding: 0 12px 84px;
+  padding: 0 12px 170px;
   scrollbar-width: thin;
 }
 .tools section {
@@ -118,19 +123,27 @@ button {
   right: 12px;
   bottom: 12px;
   left: 12px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 6px;
   padding-top: 20px;
   background: linear-gradient(transparent, #151725 28%);
 }
 .sidebar-actions button {
-  flex: 1;
   padding: 10px 8px;
   border: 1px solid #2d3043;
   border-radius: 10px;
   background: #1d2030;
   color: #c9ccda;
   cursor: pointer;
+}
+.sidebar-actions button:disabled,
+.edit-actions button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+.sidebar-actions .full {
+  grid-column: 1 / -1;
 }
 .sidebar-actions .danger {
   color: #ff8e9a;
@@ -175,6 +188,156 @@ button {
   margin-top: 2px;
   font-size: 13px;
 }
+.style-panel {
+  position: absolute;
+  z-index: 3;
+  top: 100px;
+  right: 18px;
+  width: min(256px, calc(100% - 36px));
+  max-height: calc(100% - 170px);
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(17, 19, 31, 0.91);
+  box-shadow: 0 18px 54px rgba(15, 19, 28, 0.25);
+  opacity: 0;
+  color: #eceef8;
+  pointer-events: none;
+  transform: translateX(14px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(18px);
+}
+.style-panel.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+.style-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.style-panel header span,
+.style-panel header strong {
+  display: block;
+}
+.style-panel header span {
+  color: #858aa2;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.style-panel header strong {
+  margin-top: 2px;
+  font-size: 15px;
+}
+.style-panel header .live-badge {
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: rgba(49, 196, 141, 0.14);
+  color: #5de0ac;
+}
+.style-panel header .live-badge.editing {
+  background: rgba(99, 91, 255, 0.2);
+  color: #b8b4ff;
+}
+.edit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 11px;
+}
+.edit-actions button {
+  min-height: 34px;
+  border: 1px solid #34374b;
+  border-radius: 9px;
+  background: #222538;
+  color: #c9ccda;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.edit-actions button:first-child:not(:disabled) {
+  border-color: #635bff;
+  background: #635bff;
+  color: #fff;
+}
+.style-panel fieldset {
+  margin: 0 0 10px;
+  padding: 12px;
+  border: 1px solid #303347;
+  border-radius: 13px;
+  background: rgba(35, 38, 56, 0.66);
+}
+.style-panel fieldset[hidden] {
+  display: none;
+}
+.style-panel legend {
+  padding: 0 5px;
+  color: #777c95;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.style-panel label {
+  display: grid;
+  color: #c9ccda;
+  font-size: 11px;
+  font-weight: 650;
+}
+.style-panel label + label {
+  margin-top: 13px;
+}
+.style-panel label > span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+.style-panel output {
+  color: #a8a3ff;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+}
+.style-panel input[type='range'] {
+  width: 100%;
+  accent-color: #817aff;
+  cursor: pointer;
+}
+.style-panel .color-control {
+  grid-template-columns: 1fr 34px;
+  align-items: center;
+  gap: 8px;
+}
+.style-panel .color-control span {
+  margin: 0;
+}
+.style-panel input[type='color'] {
+  width: 34px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid #3a3d52;
+  border-radius: 8px;
+  background: #202335;
+  cursor: pointer;
+}
+.preset-row {
+  display: flex;
+  gap: 8px;
+  padding: 3px 5px 1px;
+}
+.preset-row button {
+  width: 27px;
+  height: 27px;
+  border: 4px solid #202335;
+  border-radius: 50%;
+  outline: 1px solid #3a3d52;
+  background: var(--swatch);
+  cursor: pointer;
+}
 .notice {
   position: absolute;
   right: 20px;
@@ -207,13 +370,14 @@ button {
 @media (max-width: 720px) {
   .app-shell {
     grid-template-columns: 1fr;
-    grid-template-rows: 58px minmax(0, 1fr);
+    grid-template-rows: 108px minmax(0, 1fr);
   }
   .sidebar {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: 58px 50px;
     align-items: center;
-    overflow-x: auto;
+    overflow: hidden;
     border-right: 0;
     border-bottom: 1px solid #282b3d;
   }
@@ -226,15 +390,15 @@ button {
     height: 34px;
   }
   .brand div,
-  .tools h2,
-  .sidebar-actions {
+  .tools h2 {
     display: none;
   }
   .tools {
     display: flex;
     flex: 0 0 auto;
     gap: 5px;
-    overflow: visible;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 8px 12px 8px 0;
   }
   .tools section {
@@ -246,6 +410,23 @@ button {
     margin: 0;
     padding-right: 12px;
   }
+  .sidebar-actions {
+    position: static;
+    display: flex;
+    grid-column: 1 / -1;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 6px 12px;
+    background: #151725;
+  }
+  .sidebar-actions button {
+    flex: 0 0 auto;
+    min-width: 82px;
+    padding: 8px 10px;
+  }
+  .sidebar-actions .full {
+    grid-column: auto;
+  }
   .topbar div:first-child {
     display: none;
   }
@@ -256,5 +437,17 @@ button {
   .topbar div {
     min-width: 74px;
     padding: 6px 8px;
+  }
+  .style-panel {
+    top: auto;
+    right: 12px;
+    bottom: 62px;
+    left: 12px;
+    width: auto;
+    max-height: 48%;
+    transform: translateY(14px);
+  }
+  .style-panel.visible {
+    transform: translateY(0);
   }
 }

@@ -1,20 +1,45 @@
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef } from 'vue';
+  import Feature from 'ol/Feature';
   import Map from 'ol/Map';
   import View from 'ol/View';
   import TileLayer from 'ol/layer/Tile';
   import OSM from 'ol/source/OSM';
   import { fromLonLat } from 'ol/proj';
+  import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
+  import { asArray } from 'ol/color';
   import Plot, { PlotTypes, type PlotSerializedFeature } from 'ol-plot';
 
   type ToolItem = readonly [PlotTypes, string, string?];
+  type GeometryKind = 'point' | 'line' | 'area';
+
+  interface DemoStyle {
+    fillColor: string;
+    fillOpacity: number;
+    strokeColor: string;
+    strokeWidth: number;
+    pointSize: number;
+  }
 
   const target = ref<HTMLElement>();
   const map = shallowRef<Map>();
   const plot = shallowRef<Plot>();
   const activeType = ref<PlotTypes | null>(null);
+  const panelMode = ref<'tools' | 'style'>('tools');
+  const selectedFeature = shallowRef<Feature | null>(null);
+  const isEditing = ref(false);
+  const hasSavedScene = ref(false);
   const featureCount = ref(0);
   const notice = ref('选择一种符号，然后在地图上点击控制点');
+  const styleState = reactive<DemoStyle>({
+    fillColor: '#635bff',
+    fillOpacity: 0.28,
+    strokeColor: '#4338ca',
+    strokeWidth: 2,
+    pointSize: 8,
+  });
+  const storageKey = 'ol-plot:docs-playground:scene';
+  let savedScene: PlotSerializedFeature[] = [];
 
   const groups: { label: string; items: ToolItem[] }[] = [
     {
@@ -86,6 +111,104 @@
     return '未选择';
   });
 
+  const selectedKind = computed<GeometryKind | null>(() => {
+    const type = selectedFeature.value?.getGeometry()?.getType();
+    if (type === 'Point') return 'point';
+    if (type === 'LineString') return 'line';
+    if (type === 'Polygon') return 'area';
+    return null;
+  });
+
+  const selectedKindLabel = computed(() => {
+    if (selectedKind.value === 'point') return '点样式';
+    if (selectedKind.value === 'line') return '线样式';
+    if (selectedKind.value === 'area') return '面样式';
+    return '未选择图形';
+  });
+
+  function colorToHex(color: unknown, fallback: string) {
+    if (!color) return fallback;
+    try {
+      const [red, green, blue] = asArray(color as string);
+      return `#${[red, green, blue]
+        .map((channel) => Math.round(channel).toString(16).padStart(2, '0'))
+        .join('')}`;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function colorOpacity(color: unknown, fallback: number) {
+    if (!color) return fallback;
+    try {
+      return Number(asArray(color as string)[3] ?? fallback);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function resolveStyle(feature: Feature) {
+    const featureStyle = feature.getStyle();
+    if (featureStyle instanceof Style) return featureStyle;
+    const baseStyle = plot.value?.plotUtils.getBaseStyle(feature);
+    return baseStyle instanceof Style ? baseStyle : null;
+  }
+
+  function readStyle(feature: Feature) {
+    const style = resolveStyle(feature);
+    if (!style) return;
+    const image = style.getImage();
+    const fill = image instanceof CircleStyle ? image.getFill() : style.getFill();
+    const stroke = image instanceof CircleStyle ? image.getStroke() : style.getStroke();
+    styleState.fillColor = colorToHex(fill?.getColor(), styleState.fillColor);
+    styleState.fillOpacity = colorOpacity(fill?.getColor(), styleState.fillOpacity);
+    styleState.strokeColor = colorToHex(stroke?.getColor(), styleState.strokeColor);
+    styleState.strokeWidth = stroke?.getWidth() ?? styleState.strokeWidth;
+    if (image instanceof CircleStyle) styleState.pointSize = image.getRadius();
+  }
+
+  function selectFeature(feature: Feature | null, openStyle = true) {
+    selectedFeature.value = feature;
+    if (feature) {
+      readStyle(feature);
+      if (openStyle) panelMode.value = 'style';
+    }
+  }
+
+  function rgba(hex: string, opacity: number) {
+    const [red, green, blue] = asArray(hex);
+    return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+  }
+
+  function applyStyle() {
+    const feature = selectedFeature.value;
+    if (!feature || !selectedKind.value) return;
+    const stroke = new Stroke({ color: styleState.strokeColor, width: styleState.strokeWidth });
+    const fill = new Fill({ color: rgba(styleState.fillColor, styleState.fillOpacity) });
+    const style = new Style(
+      selectedKind.value === 'point'
+        ? {
+            image: new CircleStyle({
+              radius: styleState.pointSize,
+              fill,
+              stroke,
+            }),
+          }
+        : {
+            fill: selectedKind.value === 'area' ? fill : undefined,
+            stroke,
+          },
+    );
+    feature.setStyle(style);
+    notice.value = `${selectedKindLabel.value}已更新，并会随场景快照保存`;
+  }
+
+  function applyPreset(fillColor: string, strokeColor: string) {
+    styleState.fillColor = fillColor;
+    styleState.strokeColor = strokeColor;
+    applyStyle();
+  }
+
   function updateCount() {
     featureCount.value = plot.value?.plotUtils.getFeatures().length ?? 0;
   }
@@ -94,8 +217,82 @@
     if (!plot.value) return;
     plot.value.plotEdit.deactivate();
     plot.value.plotDraw.activate(type);
+    selectFeature(null, false);
     activeType.value = type;
+    panelMode.value = 'tools';
     notice.value = tipByType.value.get(type) ?? '在地图上依次点击控制点';
+  }
+
+  function cancelDrawing() {
+    if (!plot.value || !plot.value.plotDraw.isDrawing()) return;
+    plot.value.plotDraw.deactivate();
+    activeType.value = null;
+    notice.value = '已取消当前绘制，地图交互已恢复';
+  }
+
+  function activateSelected() {
+    if (!plot.value || !selectedFeature.value || isEditing.value) return;
+    cancelDrawing();
+    plot.value.plotEdit.activate(selectedFeature.value);
+    isEditing.value = true;
+    notice.value = '图形已激活：拖动主体可平移，拖动控制点可修改几何';
+  }
+
+  function deactivateEditing() {
+    if (!plot.value || !isEditing.value) return;
+    plot.value.plotEdit.deactivate();
+    isEditing.value = false;
+    notice.value = '已取消图形激活，选择仍保留，可再次激活或修改样式';
+  }
+
+  function zoomToSelected() {
+    const geometry = selectedFeature.value?.getGeometry();
+    if (!map.value || !geometry) return;
+    map.value.updateSize();
+    map.value.getView().fit(geometry.getExtent(), {
+      duration: 450,
+      maxZoom: 14,
+      padding: [72, 72, 72, 72],
+    });
+    notice.value = '已缩放到当前选中图形';
+  }
+
+  function saveScene() {
+    if (!plot.value) return;
+    savedScene = plot.value.plotUtils.getFeatures() as PlotSerializedFeature[];
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(savedScene));
+      hasSavedScene.value = true;
+      notice.value = `已保存 ${savedScene.length} 个图形到浏览器本地存储`;
+    } catch {
+      hasSavedScene.value = savedScene.length > 0;
+      notice.value = `已在当前页面保存 ${savedScene.length} 个图形`;
+    }
+  }
+
+  function restoreScene() {
+    if (!plot.value) return;
+    let snapshot = savedScene;
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) snapshot = JSON.parse(stored) as PlotSerializedFeature[];
+    } catch {
+      // Fall back to the current-page snapshot when storage is unavailable.
+    }
+    if (!Array.isArray(snapshot) || snapshot.length === 0) {
+      notice.value = '暂无可恢复的场景，请先保存至少一个图形';
+      return;
+    }
+    plot.value.plotDraw.deactivate();
+    plot.value.plotEdit.deactivate();
+    plot.value.plotUtils.removeAllFeatures();
+    plot.value.plotUtils.addFeatures(snapshot);
+    selectedFeature.value = null;
+    activeType.value = null;
+    isEditing.value = false;
+    panelMode.value = 'tools';
+    notice.value = `已恢复 ${snapshot.length} 个图形及其样式`;
+    updateCount();
   }
 
   function clearAll() {
@@ -103,6 +300,8 @@
     plot.value.plotDraw.deactivate();
     plot.value.plotEdit.deactivate();
     plot.value.plotUtils.removeAllFeatures();
+    selectFeature(null, false);
+    isEditing.value = false;
     activeType.value = null;
     notice.value = '画布已清空，可以开始新的标绘';
     updateCount();
@@ -188,18 +387,43 @@
     map.value = mapInstance;
     plot.value = plotInstance;
 
+    try {
+      const stored = localStorage.getItem(storageKey);
+      savedScene = stored ? (JSON.parse(stored) as PlotSerializedFeature[]) : [];
+      hasSavedScene.value = savedScene.length > 0;
+    } catch {
+      savedScene = [];
+    }
+
     plotInstance.plotDraw.on('drawEnd', (event) => {
       activeType.value = null;
       notice.value = '绘制完成。点击图形可拖动或调整控制点';
-      if (event.feature) plotInstance.plotEdit.activate(event.feature);
+      if (event.feature instanceof Feature) {
+        selectFeature(event.feature);
+        plotInstance.plotEdit.activate(event.feature);
+        isEditing.value = true;
+      }
       updateCount();
+    });
+
+    plotInstance.plotEdit.on('activePlotChange', () => {
+      isEditing.value = true;
+    });
+    plotInstance.plotEdit.on('deactivatePlot', () => {
+      isEditing.value = false;
     });
 
     mapInstance.on('singleclick', (event) => {
       if (plotInstance.plotDraw.isDrawing()) return;
       const feature = mapInstance.forEachFeatureAtPixel(event.pixel, (candidate) => candidate);
-      if (feature?.get('isPlot')) plotInstance.plotEdit.activate(feature);
-      else plotInstance.plotEdit.deactivate();
+      if (feature?.get('isPlot') && feature instanceof Feature) {
+        selectFeature(feature);
+        plotInstance.plotEdit.activate(feature);
+        isEditing.value = true;
+      } else {
+        selectFeature(null, false);
+        plotInstance.plotEdit.deactivate();
+      }
     });
 
     seedDemo();
@@ -218,7 +442,27 @@
         <span class="live-dot" aria-hidden="true"></span>
         Live playground
       </div>
-      <div class="tool-scroll">
+      <div class="panel-tabs" role="tablist" aria-label="Playground 面板">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="panelMode === 'tools'"
+          :class="{ active: panelMode === 'tools' }"
+          @click="panelMode = 'tools'"
+        >
+          绘制工具
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="panelMode === 'style'"
+          :class="{ active: panelMode === 'style' }"
+          @click="panelMode = 'style'"
+        >
+          样式<span v-if="selectedFeature" class="selection-dot" aria-label="已选择图形"></span>
+        </button>
+      </div>
+      <div v-if="panelMode === 'tools'" class="tool-scroll">
         <div v-for="group in groups" :key="group.label" class="tool-group">
           <p>{{ group.label }}</p>
           <button
@@ -234,9 +478,97 @@
           </button>
         </div>
       </div>
+      <div v-else class="style-editor">
+        <div v-if="!selectedFeature" class="empty-selection">
+          <span aria-hidden="true">◎</span>
+          <strong>选择一个图形</strong>
+          <p>完成绘制或点击地图中的图形后，可在这里调整颜色、边框与大小。</p>
+          <button type="button" @click="panelMode = 'tools'">返回绘制工具</button>
+        </div>
+        <template v-else>
+          <div class="selection-heading">
+            <div>
+              <span>当前选择</span>
+              <strong>{{ selectedKindLabel }}</strong>
+            </div>
+            <span class="geometry-pill" :class="{ editing: isEditing }">{{ isEditing ? 'Editing' : selectedFeature.getGeometry()?.getType() }}</span>
+          </div>
+
+          <div class="edit-actions" aria-label="图形激活状态">
+            <button type="button" :disabled="isEditing" @click="activateSelected">激活编辑</button>
+            <button type="button" :disabled="!isEditing" @click="deactivateEditing">取消激活</button>
+            <button type="button" @click="zoomToSelected">缩放到</button>
+          </div>
+
+          <fieldset v-if="selectedKind !== 'line'" class="style-group">
+            <legend>填充</legend>
+            <label class="color-field">
+              <span>填充颜色</span>
+              <input v-model="styleState.fillColor" type="color" @input="applyStyle" />
+              <code>{{ styleState.fillColor }}</code>
+            </label>
+            <label class="range-field">
+              <span>透明度 <output>{{ Math.round(styleState.fillOpacity * 100) }}%</output></span>
+              <input
+                v-model.number="styleState.fillOpacity"
+                type="range"
+                min="0.05"
+                max="1"
+                step="0.05"
+                @input="applyStyle"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="style-group">
+            <legend>{{ selectedKind === 'line' ? '线条' : '边框' }}</legend>
+            <label class="color-field">
+              <span>{{ selectedKind === 'line' ? '线颜色' : '边框颜色' }}</span>
+              <input v-model="styleState.strokeColor" type="color" @input="applyStyle" />
+              <code>{{ styleState.strokeColor }}</code>
+            </label>
+            <label class="range-field">
+              <span>{{ selectedKind === 'line' ? '线宽' : '边框宽度' }} <output>{{ styleState.strokeWidth }} px</output></span>
+              <input
+                v-model.number="styleState.strokeWidth"
+                type="range"
+                min="1"
+                max="12"
+                step="1"
+                @input="applyStyle"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset v-if="selectedKind === 'point'" class="style-group">
+            <legend>点符号</legend>
+            <label class="range-field">
+              <span>点大小 <output>{{ styleState.pointSize }} px</output></span>
+              <input
+                v-model.number="styleState.pointSize"
+                type="range"
+                min="4"
+                max="28"
+                step="1"
+                @input="applyStyle"
+              />
+            </label>
+          </fieldset>
+
+          <div class="preset-row" aria-label="样式配色预设">
+            <button type="button" title="靛蓝" style="--swatch: #635bff" @click="applyPreset('#635bff', '#4338ca')"></button>
+            <button type="button" title="翡翠" style="--swatch: #31c48d" @click="applyPreset('#31c48d', '#047857')"></button>
+            <button type="button" title="琥珀" style="--swatch: #f59e0b" @click="applyPreset('#f59e0b', '#b45309')"></button>
+            <button type="button" title="玫红" style="--swatch: #f43f5e" @click="applyPreset('#f43f5e', '#be123c')"></button>
+          </div>
+        </template>
+      </div>
       <div class="panel-actions">
+        <button type="button" :disabled="!activeType" @click="cancelDrawing">取消绘制</button>
         <button type="button" @click="copyJSON">复制 JSON</button>
-        <button type="button" class="danger" @click="clearAll">清空</button>
+        <button type="button" @click="saveScene">保存场景</button>
+        <button type="button" :disabled="!hasSavedScene" @click="restoreScene">恢复场景</button>
+        <button type="button" class="danger full" @click="clearAll">清空画布</button>
       </div>
     </aside>
 
@@ -275,7 +607,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding: 20px 14px 72px;
+    padding: 20px 14px 164px;
     border-right: 1px solid var(--vp-c-divider);
     background: color-mix(in srgb, var(--vp-c-bg) 92%, #635bff 8%);
   }
@@ -299,11 +631,225 @@
     box-shadow: 0 0 0 5px rgba(49, 196, 141, 0.12);
   }
 
+  .panel-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin: 0 4px 14px;
+    padding: 4px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--vp-c-bg) 72%, transparent);
+  }
+  .panel-tabs button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--vp-c-text-3);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .panel-tabs button.active {
+    background: var(--vp-c-bg);
+    color: var(--vp-c-text-1);
+    box-shadow: 0 4px 14px rgba(25, 25, 70, 0.08);
+  }
+  .selection-dot {
+    width: 6px;
+    height: 6px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background: #31c48d;
+  }
+
   .tool-scroll {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding-right: 2px;
+  }
+
+  .style-editor {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 2px 4px 12px;
+  }
+  .empty-selection {
+    display: grid;
+    justify-items: center;
+    padding: 42px 14px;
+    text-align: center;
+  }
+  .empty-selection > span {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    margin-bottom: 14px;
+    border: 1px dashed color-mix(in srgb, var(--vp-c-brand-1) 55%, var(--vp-c-divider));
+    border-radius: 16px;
+    color: var(--vp-c-brand-1);
+    font-size: 24px;
+  }
+  .empty-selection strong {
+    font-size: 14px;
+  }
+  .empty-selection p {
+    margin: 7px 0 16px;
+    color: var(--vp-c-text-3);
+    font-size: 12px;
+    line-height: 1.65;
+  }
+  .empty-selection button {
+    padding: 8px 12px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 9px;
+    background: var(--vp-c-bg);
+    color: var(--vp-c-text-2);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .selection-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 8px 16px;
+  }
+  .selection-heading span,
+  .selection-heading strong {
+    display: block;
+  }
+  .selection-heading span {
+    color: var(--vp-c-text-3);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .selection-heading strong {
+    margin-top: 3px;
+    font-size: 15px;
+  }
+  .selection-heading .geometry-pill {
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
+    color: var(--vp-c-brand-1);
+    font-family: ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .style-group {
+    min-width: 0;
+    margin: 0 0 10px;
+    padding: 13px 12px 14px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--vp-c-bg) 78%, transparent);
+  }
+  .style-group legend {
+    padding: 0 5px;
+    color: var(--vp-c-text-3);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .style-group label {
+    display: grid;
+    color: var(--vp-c-text-2);
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .style-group label + label {
+    margin-top: 14px;
+  }
+  .color-field {
+    grid-template-columns: minmax(0, 1fr) 32px auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .color-field input {
+    width: 32px;
+    height: 28px;
+    padding: 2px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    background: var(--vp-c-bg);
+    cursor: pointer;
+  }
+  .color-field code {
+    padding: 2px 0;
+    background: none;
+    color: var(--vp-c-text-3);
+    font-size: 10px;
+  }
+  .range-field span {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+  .range-field output {
+    color: var(--vp-c-brand-1);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+  }
+  .range-field input {
+    width: 100%;
+    accent-color: var(--vp-c-brand-1);
+    cursor: pointer;
+  }
+  .preset-row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 8px;
+  }
+  .preset-row button {
+    width: 28px;
+    height: 28px;
+    border: 4px solid var(--vp-c-bg);
+    border-radius: 50%;
+    outline: 1px solid var(--vp-c-divider);
+    background: var(--swatch);
+    cursor: pointer;
+  }
+  .edit-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .edit-actions button {
+    min-height: 34px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 10px;
+    background: var(--vp-c-bg);
+    color: var(--vp-c-text-2);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .edit-actions button:first-child:not(:disabled) {
+    border-color: var(--vp-c-brand-1);
+    background: var(--vp-c-brand-1);
+    color: #fff;
+  }
+  .edit-actions button:disabled,
+  .panel-actions button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+  }
+  .selection-heading .geometry-pill.editing {
+    background: rgba(49, 196, 141, 0.14);
+    color: #19976b;
   }
 
   .tool-group {
@@ -362,7 +908,8 @@
     right: 14px;
     bottom: 16px;
     left: 14px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
   }
   .panel-actions button {
@@ -372,6 +919,15 @@
   }
   .panel-actions button.danger {
     color: var(--vp-c-danger-1);
+  }
+  .panel-actions button.full {
+    grid-column: 1 / -1;
+  }
+
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--vp-c-brand-1);
+    outline-offset: 2px;
   }
 
   .map-stage {
@@ -450,18 +1006,24 @@
   @media (max-width: 760px) {
     .playground-shell {
       grid-template-columns: 1fr;
+      grid-template-rows: 280px minmax(440px, 1fr);
       min-height: 720px;
     }
     .tool-panel {
-      display: block;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      height: 280px;
+      overflow: hidden;
       padding: 12px;
       border-right: 0;
       border-bottom: 1px solid var(--vp-c-divider);
     }
     .tool-heading,
-    .tool-group p,
-    .panel-actions {
+    .tool-group p {
       display: none;
+    }
+    .panel-tabs {
+      margin: 0 0 10px;
     }
     .tool-scroll {
       display: flex;
@@ -480,6 +1042,20 @@
     }
     .tool-glyph {
       width: 24px;
+    }
+    .style-editor {
+      max-height: none;
+    }
+    .empty-selection {
+      padding: 18px 14px;
+    }
+    .panel-actions {
+      position: static;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 10px;
+    }
+    .panel-actions button.full {
+      grid-column: auto;
     }
     .map-status {
       top: 12px;

@@ -69,4 +69,4 @@ plot.plotDraw.on('drawEnd', (event) => {
 <button data-plot="TextArea">文本框</button>
 ```
 
-生产项目应为地图容器设置明确高度，并在销毁页面时调用 `plot.destroy()`。更完整的交互可直接参考仓库内 `playground/single`（覆盖全部 29 种符号）。
+生产项目应为地图容器设置明确高度，并在销毁页面时调用 `plot.destroy()`。更完整的交互可直接参考仓库内 `playground/single`：除全部 29 种符号外，还覆盖点线面样式编辑、图形激活/取消激活，以及场景保存/恢复。

@@ -21,6 +21,7 @@ export default defineConfig({
       { text: '指南', link: '/guide/getting-started' },
       { text: 'SDK', link: '/sdk/core-api' },
       { text: '在线示例', link: '/examples/playground' },
+      { text: '开发', link: '/development/architecture' },
       {
         text: 'v4.1',
         items: [
@@ -57,6 +58,17 @@ export default defineConfig({
             { text: '交互式 Playground', link: '/examples/playground' },
             { text: '原生 JavaScript', link: '/examples/vanilla' },
             { text: 'Vue 3', link: '/examples/vue' },
+          ],
+        },
+      ],
+      '/development/': [
+        {
+          text: '项目开发',
+          items: [
+            { text: 'SDK 架构', link: '/development/architecture' },
+            { text: 'OpenLayers 兼容实现', link: '/development/openlayers-compatibility' },
+            { text: 'Demo 规范', link: '/development/demos' },
+            { text: '验证清单', link: '/development/verification' },
           ],
         },
       ],
