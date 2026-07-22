@@ -8,6 +8,13 @@
   "commonjs": "dist/ol-plot-vue.cjs.js",
   "types": "dist/index.d.ts",
   "style": "dist/style.css",
+  "files": [
+    "dist",
+    "scripts/postinstall.js",
+    "CHANGELOG.md",
+    "README.md",
+    "package.json"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -51,6 +58,11 @@
   ],
   "author": "sakitam-fdd <smilefdd@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakitam-fdd/ol-plot.git",
+    "directory": "packages/ol-plot-vue"
+  },
   "homepage": "https://github.com/sakitam-fdd/ol-plot",
   "private": false,
   "scripts": {
@@ -86,7 +98,6 @@
     "ol": "^10.9.0",
     "@vitejs/plugin-vue": "^4.1.0",
     "@vitejs/plugin-vue2": "^2.2.0",
-    "cross-spawn": "^7.0.3",
     "vue": "^3.2.47",
     "vite": "^4.4.7",
     "vite-plugin-dts": "3.9.1",
